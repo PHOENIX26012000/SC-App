@@ -1,6 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    !-- App and Activity Names -->
     <string name="app_name">SmartCitiesApp</string>
+    <string name="title_activity_main">SmartCitiesApp</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 
     !-- Menu items -->
     <string name="menu_item_settings">Settings</string>
+
 </resources>

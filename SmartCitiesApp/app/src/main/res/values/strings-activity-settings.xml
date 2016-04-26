@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    !-- Settings headers -->
+    <string name="pref_header_test">Test</string>
+
+    !-- Settings items -->
+    <string name="pref_item_test">Test</string>
+
+</resources>
