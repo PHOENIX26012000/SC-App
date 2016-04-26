@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+    Please put here in particular the strings/names for the items in the settings activity/fragment.
+    -->
+
+    <!-- Settings headers -->
+    <string name="pref_header_test">Example header</string>
+
+    <!-- Settings items -->
+    <string name="pref_item_test">Example preference item</string>
+
+</resources>
