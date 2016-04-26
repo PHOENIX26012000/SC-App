@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    !-- App and Activity Names -->
+    <!--
+    Please put here all the strings/name that will be used somewhere in the app.
+    Please do not label things or use strings hardcoded in the app.
+    -->
+
+    <!-- App and Activity Names -->
     <string name="app_name">SmartCitiesApp</string>
     <string name="title_activity_main">SmartCitiesApp</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
-    !-- Menu items -->
+    <!-- Menu items -->
     <string name="menu_item_settings">Settings</string>
 
 </resources>

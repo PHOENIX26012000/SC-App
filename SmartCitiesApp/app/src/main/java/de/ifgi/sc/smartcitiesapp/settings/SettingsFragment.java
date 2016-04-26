@@ -1,4 +1,4 @@
-package de.ifgi.sc.smartcitiesapp.main;
+package de.ifgi.sc.smartcitiesapp.settings;
 
 
 import android.os.Bundle;

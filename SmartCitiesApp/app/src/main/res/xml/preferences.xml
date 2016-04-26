@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--
+    Please put here all the preferences for the settings activity/fragment.
+    A PreferenceCategory sets a header for a block.
+    -->
+
     <PreferenceCategory
         android:key="pref_category_key_map"
         android:title="@string/pref_header_test">
