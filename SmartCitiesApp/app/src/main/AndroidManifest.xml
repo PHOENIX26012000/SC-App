@@ -3,7 +3,14 @@
     package="de.ifgi.sc.smartcitiesapp">
 
     <!-- App permissions -->
+    <!-- P2P -->
+    <uses-sdk android:minSdkVersion="14" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Other -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <!-- Application and Activity definitions -->
