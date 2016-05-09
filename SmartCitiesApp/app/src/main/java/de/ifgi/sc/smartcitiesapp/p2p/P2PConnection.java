@@ -1,4 +1,4 @@
-package de.ifgi.sc.smartcitiesapp.server;
+package de.ifgi.sc.smartcitiesapp.p2p;
 
 import java.util.ArrayList;
 
@@ -6,12 +6,12 @@ import de.ifgi.sc.smartcitiesapp.interfaces.Connection;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 
 
-public class ServerConnection implements Connection {
+public class P2PConnection implements Connection {
 
     /**
      * Constructor
      */
-    public ServerConnection() {
+    public P2PConnection() {
 
     }
 
@@ -19,5 +19,4 @@ public class ServerConnection implements Connection {
     public void shareMessage(ArrayList<Message> m) {
 
     }
-
 }
