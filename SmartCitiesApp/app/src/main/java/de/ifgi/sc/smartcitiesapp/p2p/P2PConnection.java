@@ -15,6 +15,7 @@ public class P2PConnection implements Connection {
 
     }
 
+
     @Override
     public void shareMessage(ArrayList<Message> m) {
 
