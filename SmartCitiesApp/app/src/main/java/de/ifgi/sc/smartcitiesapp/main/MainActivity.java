@@ -8,6 +8,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import de.ifgi.sc.smartcitiesapp.R;
+import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
+
 
 public class MainActivity extends AppCompatActivity {
 
