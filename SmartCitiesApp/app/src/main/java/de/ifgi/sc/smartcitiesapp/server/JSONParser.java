@@ -1,6 +1,7 @@
 package de.ifgi.sc.smartcitiesapp.server;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -13,7 +14,7 @@ public class JSONParser {
 
 
     ArrayList<Message> messages = new ArrayList<Message>();
-    JSONArray jsonArray = new JSONArray();
+    JSONObject jsonObject = new JSONObject();
 
     /**
      * Constructor
@@ -25,21 +26,21 @@ public class JSONParser {
     /**
      *
      * @param messages ArrayList<Message>
-     * @return JSONArray
+     * @return JSONObject
      */
-    public JSONArray parseMessageToJSON(ArrayList<Message> messages){
+    public JSONObject parseMessagetoJSON(ArrayList<Message> messages){
 
         //todo parse ArrayList of Messages to an JSONArray
 
-        return jsonArray;
+        return jsonObject;
     }
 
     /**
      *
-     * @param jsonArray
+     * @param jsonObject
      * @return ArrayList<Message>
      */
-    public ArrayList<Message> parseJSONtoMessage(JSONArray jsonArray){
+    public ArrayList<Message> parseJSONtoMessage(JSONObject jsonObject){
 
         //todo parse JSONArray to an ArrayList of Messages
 

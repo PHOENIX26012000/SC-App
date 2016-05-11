@@ -1,6 +1,6 @@
 package de.ifgi.sc.smartcitiesapp.server;
 
-import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -12,7 +12,7 @@ public class ServerConnection implements Connection {
 
     JSONParser jsonParser = new JSONParser();
     ArrayList<Message> messages = new ArrayList<Message>();
-    JSONArray jsonArray = new JSONArray();
+    JSONObject jsonObject = new JSONObject();
 
     /**
      * Constructor
@@ -27,7 +27,7 @@ public class ServerConnection implements Connection {
      */
     public void shareMessage(ArrayList<Message> messages) {
         this.messages = messages;
-        jsonArray = jsonParser.parseMessagetoJSON(messages);
+        jsonObject = jsonParser.parseMessagetoJSON(messages);
 
         // todo push jsonArray to Server
     }
@@ -39,7 +39,7 @@ public class ServerConnection implements Connection {
 
         //todo request to server for Messages as JSONArray
 
-        messages = jsonParser.parseJSONtoMessage(jsonArray);
+        messages = jsonParser.parseJSONtoMessage(jsonObject);
         //todo call Messanger and pull Messages
     }
 
