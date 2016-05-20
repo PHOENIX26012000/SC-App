@@ -5,7 +5,6 @@ import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by SAAD on 5/11/2016.
@@ -32,6 +31,8 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
                     t_msg.getExpired_At().toString(),t_msg.getCategory(),t_msg.getTitle(),t_msg.getMsg());
 
         }
+        db.getAllMessages();
+        Log.i("Messages "," Fetched");
         db.close();
     }
 
