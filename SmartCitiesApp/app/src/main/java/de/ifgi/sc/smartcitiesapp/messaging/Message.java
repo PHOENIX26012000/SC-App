@@ -3,7 +3,6 @@ package de.ifgi.sc.smartcitiesapp.messaging;
 
 import android.util.Log;
 
-import java.security.PrivateKey;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -12,7 +11,7 @@ public class Message {
     private String Client_ID;
     private String Message_ID;
     private Integer Zone_ID;
-    private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private SimpleDateFormat D_form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private Date Ex_Dt;
     private String Category;
     private String Title;
