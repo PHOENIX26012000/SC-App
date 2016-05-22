@@ -43,9 +43,7 @@ public class Message {
     public void setCategory(String cat){
         Category=cat;
     }
-    public void setTitle(String tit){
-        Title=tit;
-    }
+    public void setTitle(String tit){   Title=tit;}
     public void setMsg(String   m){
         Msg=m;
     }
@@ -56,7 +54,7 @@ public class Message {
     public Date getExpired_At(){return Ex_Dt;};
     public String getCategory(){return Category;};
     public String getTitle(){return Title;};
-    public String getMsg(){return Title;};
+    public String getMsg(){return Msg;};
 
 
 }

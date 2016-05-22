@@ -17,13 +17,13 @@ import java.util.Date;
  * Created by SAAD on 5/18/2016.
  */
 public class DatabaseHelper {
-    public static final String CLIENT_ID = "C_id";
-    public static final String MESSAGE_ID = "M_id";
-    public static final String ZONE_ID = "Z_id";
-    public static final String EXPIRED_AT = "Exp_time";
-    public static final String CATEGORY = "Category";
-    public static final String TITLE = "Title";
-    public static final String MESSAGE = "Msg_Body";
+    private static final String  CLIENT_ID= "C_id";
+    private static final String  MESSAGE_ID= "M_id";
+    private static final String  ZONE_ID= "Z_id";
+    private static final String  EXPIRED_AT= "Exp_time";
+    private static final String  CATEGORY= "Category";
+    private static final String  TITLE= "Title";
+    private static final String  MESSAGE= "Msg_Body";
 
 
     private static final String DATABASE_NAME = "PeersData";
