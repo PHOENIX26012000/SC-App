@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 /**
  * Created by SAAD on 5/18/2016.
@@ -20,8 +21,10 @@ public class DatabaseHelper {
     private static final String  CLIENT_ID= "C_id";
     private static final String  MESSAGE_ID= "M_id";
     private static final String  ZONE_ID= "Z_id";
+    private static final String  LATITUDE= "Latitude";
+    private static final String  LONGITUDE= "Longitude";
     private static final String  EXPIRED_AT= "Exp_time";
-    private static final String  CATEGORY= "Category";
+    private static final String  TOPIC = "Topic";
     private static final String  TITLE= "Title";
     private static final String  MESSAGE= "Msg_Body";
 
@@ -30,8 +33,8 @@ public class DatabaseHelper {
     private static final String TABLE_NAME = "TABLE_1";
     private static final int DATABASE_VERSION = 1;
 
-    private SimpleDateFormat D_format = new SimpleDateFormat("EEE MMM DD HH:mm:ss z yyyy");
-    private Date startDate;
+    private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
 
     private DbHelper ourHelper;
     private final Context ourContext;
@@ -60,11 +63,14 @@ public class DatabaseHelper {
          */
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + TABLE_NAME + "(" + CLIENT_ID +
-                    " INTEGER NOT NULL, " + MESSAGE_ID + " INTEGER NOT NULL, " +
-                    ZONE_ID + " INTEGER NOT NULL, " + EXPIRED_AT + " DATETIME, " + TITLE + " TEXT NOT NULL, " +
-                    CATEGORY + " TEXT NOT NULL, " + MESSAGE + " TEXT NOT NULL);");
-            Log.i("Database Created", "yes");
+            String query="CREATE TABLE " + TABLE_NAME + "(" + CLIENT_ID +
+                    " TEXT NOT NULL, " + MESSAGE_ID + " TEXT NOT NULL, " +
+                    ZONE_ID + " INTEGER NOT NULL, " + LATITUDE + " DOUBLE, " +
+                    LONGITUDE + " DOUBLE, " +
+                    EXPIRED_AT + " DATETIME, " + TITLE + " TEXT NOT NULL, " +
+                    TOPIC + " TEXT NOT NULL, " + MESSAGE + " TEXT NOT NULL);";
+            db.execSQL(query);
+            Log.i("Db Created with Query ", query);
         }
 
         /**
@@ -124,19 +130,21 @@ public class DatabaseHelper {
         }
     }
 
-    //Need to change type ot ex_time here
-    public void createEntry(String c_id, String m_id, int z_id, String ex_time, String cat, String title, String msg) {
+
+    public void createEntry(String c_id, String m_id, int z_id,double lat,double lon, String  ex_time, String top, String title, String msg) {
         try {
             ContentValues cv = new ContentValues();
             cv.put(CLIENT_ID, c_id);
             cv.put(MESSAGE_ID, m_id);
             cv.put(ZONE_ID, z_id);
+            cv.put(LATITUDE, lat);
+            cv.put(LONGITUDE, lon);
             cv.put(EXPIRED_AT, ex_time);
-            cv.put(CATEGORY, cat);
+            cv.put(TOPIC, top);
             cv.put(TITLE, title);
             cv.put(MESSAGE, msg);
             ourDatabase.insert(TABLE_NAME, null, cv);
-            Log.i("Data Saved Msg: " + c_id, " Successfull");
+
         } catch (Exception e) {
             Log.i("Database Entry", "Entry failed");
         }
@@ -144,34 +152,37 @@ public class DatabaseHelper {
 
     }
 
+
+
+
     public ArrayList<Message> getAllMessages()
     {
+        Date ex_date = null;
+
         ArrayList<Message> array_list = new ArrayList<Message>();
-        DbHelper d= new DbHelper(ourContext);
-        Log.i("Messages ", "Retrieved");
-        SQLiteDatabase db1 = d.getReadableDatabase();
 
-        Log.i("Database ", "Opened");
-        Cursor res =  db1.rawQuery( "select * from Table_1", null );
+        Cursor res =  ourDatabase.rawQuery( "select * from Table_1", null );
         res.moveToFirst();
-
-
         while(res.isAfterLast() == false){
 
             try {
-                startDate = D_format.parse(res.getString(res.getColumnIndex(EXPIRED_AT)));
-                String newDateString = D_format.format(startDate);
-            }
+                ex_date= D_format.parse(res.getString(res.getColumnIndex(EXPIRED_AT)));
 
 
-            catch (ParseException e) {
+            }catch (ParseException e) {
                 e.printStackTrace();
             }
 
+
             Message mes = new Message(res.getString(res.getColumnIndex(CLIENT_ID)),res.getString(res.getColumnIndex(MESSAGE_ID)),
-                    Integer.parseInt(res.getString(res.getColumnIndex(ZONE_ID))), startDate,res.getString(res.getColumnIndex(CATEGORY)),
-                    res.getString(res.getColumnIndex(TITLE)),res.getString(res.getColumnIndex(MESSAGE)));
-            Log.i("Messages"+mes, "Ok");
+                                    Integer.parseInt(res.getString(res.getColumnIndex(ZONE_ID))),
+                                    Double.parseDouble(res.getString(res.getColumnIndex(LATITUDE))),
+                                    Double.parseDouble(res.getString(res.getColumnIndex(LATITUDE))),
+                                    ex_date,
+                                     res.getString(res.getColumnIndex(TOPIC)),
+                                    res.getString(res.getColumnIndex(TITLE)),res.getString(res.getColumnIndex(MESSAGE)));
+
+
             array_list.add(mes);
             res.moveToNext();
         }

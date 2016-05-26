@@ -24,12 +24,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        tempForMessage();
+        setContentView(R.layout.activity_main);
+
+    }
+
+    private void tempForMessage(){
         Log.i("Main Activity","Activity Started");
-       // SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         Log.i( date.toString(),"is Date");
-        Message m =new Message("123","356",23,date,"dads","dsad","sd");
-        Message m2 =new Message("345","356",23,date,"dads","dsad","sd");
+        Message m =new Message("123","356",23,36.989823,89.002323,date,"dads","dsad","sd");
+        Message m2 =new Message("345","356",23,34.45454,74.34324,date,"dads","dsad","sd");
         ArrayList<Message> msgList= new ArrayList<Message>();
         msgList.add(m);
         msgList.add(m2);
@@ -37,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         Messenger msgr=new Messenger(this);
         msgr.updateMessengerFromConnect(msgList);
-        setContentView(R.layout.activity_main);
-
+        msgr.getAllMessages();
     }
 
     // --- Menu ---
