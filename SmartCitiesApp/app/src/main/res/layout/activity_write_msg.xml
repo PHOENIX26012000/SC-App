@@ -3,83 +3,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="de.ifgi.sc.smartcitiesapp.main.WriteMsgActivity"
-    android:orientation="vertical">
+    tools:context="de.ifgi.sc.smartcitiesapp.main.WriteMsgActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/map"
-            class ="com.google.android.gms.maps.SupportMapFragment"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="3"/>
+            android:layout_weight="1.5"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Title:  "
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+            <EditText
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:hint="Message Title_"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:orientation="horizontal"
-            android:layout_weight="2">
+            android:layout_weight="3"
+            android:orientation="horizontal">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="0px"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="Text:  "
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="1"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:text="Category:"/>
-
-                <Spinner
-                    android:id="@+id/spn_category"
-                    android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="2">
-
-                </Spinner>
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="2"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:hint="Message Title_"/>
-
-            </LinearLayout>
-
-            <LinearLayout
+            <EditText
                 android:layout_width="0px"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_weight="1">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="1"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:text="Expires at:"/>
-
-                <DatePicker
-                    android:layout_width="match_parent"
-                    android:layout_height="0px"
-                    android:layout_weight="3">
-
-                </DatePicker>
-
-            </LinearLayout>
-
+                android:layout_weight="3"
+                android:hint="Message Text_"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         </LinearLayout>
 
@@ -89,21 +66,85 @@
             android:layout_weight="2"
             android:orientation="horizontal">
 
-        <EditText
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:hint="type your Message Text_"/>
-
-            <Button
+            <LinearLayout
                 android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Submit"/>
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="1"
+                    android:text="Category:"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                <Spinner
+                    android:id="@+id/spn_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="2">
+
+                </Spinner>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="1"
+                    android:text="Expires in:"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                <Spinner
+                    android:id="@+id/spn_expireTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="2">
+
+                </Spinner>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/chb_addlocation"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1"
+            android:checked="false"
+            android:text="Add a location?"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <LinearLayout
+            android:id="@+id/ll_mapcontainer"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:visibility="invisible"
+            android:layout_weight="5">
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/map"
+                class="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1.5"
+            android:text="Submit" />
 
     </LinearLayout>
-    </LinearLayout>
-
 
 </LinearLayout>

@@ -40,6 +40,6 @@ public class MessageView extends LinearLayout {
 
         titleView.setText(title);
         textView.setText(message);
-        expDateView.setText(expDate);
+        expDateView.setText("expires in: "+expDate);
     }
 }

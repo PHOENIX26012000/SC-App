@@ -44,13 +44,35 @@ public class MsgActivity extends AppCompatActivity {
         // add some random messages:
         Date now = new Date();
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        now.setTime(now.getTime()+1000*60*60*2);
 
-        shown_messages.add(
-                new MessageView(this,"title 1","Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum."
-                , dateFormatter.format(now)));
-        shown_messages.add(
-                new MessageView(this,"title 2","Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."
-                        , dateFormatter.format(now)));
+        ArrayList<String[]> msgs = new ArrayList<String[]>(); // TODO: Replace String[] with Message
+        msgs.add(new String[] {"title 1",
+                "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum."
+                , dateFormatter.format(now)}
+        );
+
+        now.setTime(now.getTime()+1000*60*30);
+        msgs.add(new String[] {"title 2",
+                "Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr.",
+                dateFormatter.format(now)}
+        );
+        // add each message to the user interface
+        for (String[] s : msgs){
+            // compute timedifference between expire date and right now:
+            Date currentTime = new Date();
+            long difference = ((now.getTime() - currentTime.getTime())/(60*1000));
+
+            int minutes = (int) (difference) % 60;
+            int hours = (int) (difference/60) % 24;
+            int days = (int) (difference/(60*24)) % 7;
+            String expireTime = days > 0? days + "days "+hours+"hours "+minutes+"min"
+                    : hours > 0 ? hours + "hours " + minutes +"min"
+                        : minutes+"min";
+
+            MessageView mv = new MessageView(this, s[0], s[1], expireTime);
+            shown_messages.add(mv);
+        }
 
         // add all messages onto the scrollview:
         for (MessageView mv : shown_messages) {

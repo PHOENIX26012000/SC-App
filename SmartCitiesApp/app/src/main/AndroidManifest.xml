@@ -1,31 +1,49 @@
-<?xml version="1.0" encoding="utf-8"?><manifest xmlns:android="http://schemas.android.com/apk/res/android"
-package="de.ifgi.sc.smartcitiesapp">
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="de.ifgi.sc.smartcitiesapp">
 
-<!-- App permissions -->
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.VIBRATE" />
+    <!-- App permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-<!-- Application and Activity definitions -->
-<application android:name=".main.App" android:allowBackup="true" android:icon="@mipmap/ic_launcher"
-    android:label="@string/app_name" android:supportsRtl="true" android:theme="@style/AppTheme">
-    <activity android:name=".main.MainActivity" android:label="@string/title_activity_main"
-        android:screenOrientation="portrait">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+    <!-- Application and Activity definitions -->
+    <application
+        android:name=".main.App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:logo="@drawable/logo_happyshare"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".main.MainActivity"
+            android:icon="@drawable/logo_happyshare"
+            android:label="@string/title_activity_main"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-    <activity android:name=".main.MsgActivity"></activity>
-    <activity android:name=".main.WriteMsgActivity"></activity>
-    <activity android:name=".settings.SettingsActivity" android:label="@string/title_activity_settings"
-        android:screenOrientation="portrait" android:parentActivityName=".main.MainActivity">
-        <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".main.MainActivity" />
-    </activity>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".main.MsgActivity"></activity>
+        <activity android:name=".main.WriteMsgActivity"></activity>
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".main.MainActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".main.MainActivity" />
+        </activity>
 
-    <meta-data android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyAkT5YnKIBFOjzdOee2SW2TLMycMrslwJg" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAkT5YnKIBFOjzdOee2SW2TLMycMrslwJg" />
 
-</application>
+    </application>
 
 </manifest>
