@@ -12,7 +12,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.StringTokenizer;
 
 /**
  * Created by SAAD on 5/18/2016.
@@ -65,8 +64,7 @@ public class DatabaseHelper {
         public void onCreate(SQLiteDatabase db) {
             String query="CREATE TABLE " + TABLE_NAME + "(" + CLIENT_ID +
                     " TEXT NOT NULL, " + MESSAGE_ID + " TEXT NOT NULL, " +
-                    ZONE_ID + " INTEGER NOT NULL, " + LATITUDE + " DOUBLE, " +
-                    LONGITUDE + " DOUBLE, " +
+                    ZONE_ID + " INTEGER NOT NULL, " + LATITUDE + " DOUBLE, " + LONGITUDE + " DOUBLE, " +
                     EXPIRED_AT + " DATETIME, " + TITLE + " TEXT NOT NULL, " +
                     TOPIC + " TEXT NOT NULL, " + MESSAGE + " TEXT NOT NULL);";
             db.execSQL(query);
@@ -161,7 +159,7 @@ public class DatabaseHelper {
 
         ArrayList<Message> array_list = new ArrayList<Message>();
 
-        Cursor res =  ourDatabase.rawQuery( "select * from Table_1", null );
+        Cursor res =  ourDatabase.rawQuery( "select * from TABLE_1", null );
         res.moveToFirst();
         while(res.isAfterLast() == false){
 
@@ -177,7 +175,7 @@ public class DatabaseHelper {
             Message mes = new Message(res.getString(res.getColumnIndex(CLIENT_ID)),res.getString(res.getColumnIndex(MESSAGE_ID)),
                                     Integer.parseInt(res.getString(res.getColumnIndex(ZONE_ID))),
                                     Double.parseDouble(res.getString(res.getColumnIndex(LATITUDE))),
-                                    Double.parseDouble(res.getString(res.getColumnIndex(LATITUDE))),
+                                    Double.parseDouble(res.getString(res.getColumnIndex(LONGITUDE))),
                                     ex_date,
                                      res.getString(res.getColumnIndex(TOPIC)),
                                     res.getString(res.getColumnIndex(TITLE)),res.getString(res.getColumnIndex(MESSAGE)));
@@ -191,6 +189,28 @@ public class DatabaseHelper {
 
     }
 
+    public int messageAlreadyExist(Message msg) {
+        int match = 1;
 
+        Cursor res =  ourDatabase.rawQuery( "select * from TABLE_1", null );
+        res.moveToFirst();
+        //Log.i("Kun "+ res.getString(res.getColumnIndex(MESSAGE_ID)), "jain" );
+        while(!res.isAfterLast() & match != 0){
+
+            if(msg.getMessage_ID().equals(res.getString(res.getColumnIndex(MESSAGE_ID))))
+            {
+                match = 0;
+            }
+
+            else
+            {res.moveToNext();
+                match = 1;
+          }
+
+        }
+
+        return match;
+
+    }
 
 }
