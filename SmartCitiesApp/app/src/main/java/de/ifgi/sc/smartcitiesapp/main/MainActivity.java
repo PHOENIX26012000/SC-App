@@ -43,22 +43,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * register the broadcast receiver with the intent values to be matched
-     */
     @Override
     protected void onResume() {
         super.onResume();
+        // register the broadcast receiver with the intent values to be matched
         registerReceiver(mReceiver, mIntentFilter);
     }
 
-
-    /**
-     * unregister the broadcast receiver
-     */
+    
     @Override
     protected void onPause() {
         super.onPause();
+        // unregister the broadcast receiver
         unregisterReceiver(mReceiver);
     }
 
