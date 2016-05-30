@@ -43,8 +43,8 @@ public class JSONParser {
     }
 
     /**
-     *
-     * @param msglist ArrayList<Message>
+     * parses a ArrayList of Messages to an JSONObject, containing a JSONArray with messages
+     * @param ArrayList<Message>
      * @return JSONObject
      */
     public JSONObject parseMessagetoJSON(ArrayList<Message> msglist){
@@ -106,7 +106,7 @@ public class JSONParser {
     }
 
     /**
-     *
+     * parses a jsonObject, containing a JsonArray, to an ArrayList of messages
      * @param jsonObject
      * @return ArrayList<Message>
      */
