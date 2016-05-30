@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import de.ifgi.sc.smartcitiesapp.R;
+import de.ifgi.sc.smartcitiesapp.p2p.MyWifiP2PManager;
 import de.ifgi.sc.smartcitiesapp.p2p.WiFiDirectBroadcastReceiver;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+        MyWifiP2PManager myWifiP2PManager = new MyWifiP2PManager(mManager);
 
     }
 
