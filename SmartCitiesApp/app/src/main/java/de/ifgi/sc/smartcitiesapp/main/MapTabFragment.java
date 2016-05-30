@@ -1,9 +1,15 @@
 package de.ifgi.sc.smartcitiesapp.main;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
@@ -13,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -58,9 +65,46 @@ public class MapTabFragment extends Fragment implements OnMapReadyCallback {
         return v;
     }
 
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+
+        // enable location button
+        try {
+            mMap.setMyLocationEnabled(true);
+
+            // enable location service on phone if its not enabled already:
+            LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            boolean gps_enabled = false;
+            boolean network_enabled = false;
+
+            try {
+                gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            } catch (Exception ex) {
+            }
+
+            try {
+                network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            } catch (Exception ex) {
+            }
+
+            if (!gps_enabled && !network_enabled) {
+                Toast.makeText(getActivity(),"Please enable location service",Toast.LENGTH_LONG).show();
+                // activate Location Service
+                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                MapTabFragment.this.startActivity(myIntent);
+            }
+        } catch (SecurityException e) {
+            Log.d("maptab","Security Exception: " + e);
+            // request location permission to the user:
+
+
+        } finally {
+
+        }
+
         // Add a marker in Germany and move the camera
         LatLng germany = new LatLng(51.9615, 7.6225);
 
@@ -94,13 +138,12 @@ public class MapTabFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        // some example messages on the map:
         Marker trafficjam = mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(51.96, 7.62))
                 .title("Traffic")
                 .snippet("Traffic Jam in the city center"));
 
-        //trafficjam.setAlpha(0.0f);
-        //trafficjam.setInfoWindowAnchor(.5f, 1.0f);
         trafficjam.showInfoWindow();
 
         Marker coffeecups = mMap.addMarker(new MarkerOptions()
@@ -108,11 +151,8 @@ public class MapTabFragment extends Fragment implements OnMapReadyCallback {
                 .title("Restaurant")
                 .snippet("Coffee “To-Go” with re-" + "\n" + "cycling cups at peet’s coffee."));
 
-        //coffeecups.setAlpha(0.0f);
-        //coffeecups.setInfoWindowAnchor(.5f, 1.0f);
         coffeecups.showInfoWindow();
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(germany, 14));
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -120,5 +160,6 @@ public class MapTabFragment extends Fragment implements OnMapReadyCallback {
                 return true;
             }
         });
+
     }
 }

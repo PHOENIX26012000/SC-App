@@ -1,8 +1,14 @@
 package de.ifgi.sc.smartcitiesapp.main;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,22 +34,11 @@ import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 10042; // just a random int resource.
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("Main Activity","Activity Started");
-       // SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date();
-        Log.i( date.toString(),"is Date");
-        //Message m =new Message("123","356",23,date,"dads","dsad","sd");
-        //Message m2 =new Message("345","356",23,date,"dads","dsad","sd");
-        ArrayList<Message> msgList= new ArrayList<Message>();
-        //msgList.add(m);
-        //msgList.add(m2);
-        Log.i("Array list ", "Created");
-
-        //Messenger msgr=new Messenger(this);
-        //msgr.updateMessengerFromConnect(msgList);
         setContentView(R.layout.activity_main);
 
         // create some sample topics:
@@ -69,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
         mTabHost.addTab(
                 mTabHost.newTabSpec("tab2").setIndicator("PLACES", null),
                 MapTabFragment.class, null);
+
+        // ask for permission ACCESS_COARSE_LOCATION:
+        ActivityCompat.requestPermissions( MainActivity.this,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                MY_PERMISSION_ACCESS_COARSE_LOCATION);
     }
 
     // --- Menu ---
@@ -93,4 +94,55 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSION_ACCESS_COARSE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    try {
+                        // enable Location service on phone if its not enabled already:
+                        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+                        boolean gps_enabled = false;
+                        boolean network_enabled = false;
+
+                        try {
+                            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                        } catch (Exception ex) {
+                        }
+
+                        try {
+                            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                        } catch (Exception ex) {
+                        }
+
+                        if (!gps_enabled && !network_enabled) {
+                            // activate Location Service
+                            Toast.makeText(this, "Please activate Location service.", Toast.LENGTH_LONG).show();
+                            Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            this.startActivity(myIntent);
+                        }
+                    } catch (SecurityException e) {
+                        Log.d("Maptab", "another security exception: " + e);
+                    }
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "Grant location permission for HappyShare in your phone settings for a location-button.", Toast.LENGTH_LONG).show();
+                }
+
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
 }

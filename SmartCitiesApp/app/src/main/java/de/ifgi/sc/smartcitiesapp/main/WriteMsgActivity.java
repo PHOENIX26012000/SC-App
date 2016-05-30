@@ -182,6 +182,7 @@ public class WriteMsgActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
+                    Log.d("MapTap", "Permission granted, hooray");
                     // permission was granted, yay! Do the
                     // location-related task you need to do.
                     try {
@@ -207,6 +208,7 @@ public class WriteMsgActivity extends AppCompatActivity {
                             WriteMsgActivity.this.startActivity(myIntent);
                         }
                     } catch (SecurityException e) {
+                        Log.d("MapTap", "2nd attempt also failed on security:"+ e);
                     }
 
                 } else {
