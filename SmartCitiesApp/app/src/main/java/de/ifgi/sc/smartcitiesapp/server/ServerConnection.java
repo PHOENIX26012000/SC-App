@@ -48,7 +48,7 @@ public class ServerConnection implements Connection {
         URL url = null;
         HttpURLConnection client = null;
         try {
-            url = new URL("http://www.giv-project6.uni-muenster.de/api/addmessages/");
+            url = new URL("http://giv-project6.uni-muenster.de:8080/api/addmessages/");
             client = (HttpURLConnection) url.openConnection();
             client.setRequestMethod("POST");
             client.setRequestProperty("Key","Value");
@@ -80,7 +80,7 @@ public class ServerConnection implements Connection {
     public void getMessages() throws MalformedURLException, IOException{
 
         //todo request to server for Messages as JSONArray
-        URL obj = new URL("http://www.giv-project6.uni-muenster.de/api/messages/");
+        URL obj = new URL("http://giv-project6.uni-muenster.de:8080/api/messages/");
         HttpURLConnection conn = null;
         try{
             conn = (HttpURLConnection) obj.openConnection();
@@ -111,6 +111,5 @@ public class ServerConnection implements Connection {
             conn.disconnect();
         }
     }
-
 
 }
