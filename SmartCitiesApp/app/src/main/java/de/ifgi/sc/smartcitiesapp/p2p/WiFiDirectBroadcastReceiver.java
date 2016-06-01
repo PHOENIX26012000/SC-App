@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.ifgi.sc.smartcitiesapp.interfaces.Connection;
 import de.ifgi.sc.smartcitiesapp.main.MainActivity;
@@ -22,11 +23,11 @@ import de.ifgi.sc.smartcitiesapp.messaging.Message;
  */
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements Connection {
 
-    private String TAG = "SmartCity";
-
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private MainActivity mActivity;
+
+    private ArrayList<WifiP2pDevice> mPeers = new ArrayList<WifiP2pDevice>();
 
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel,
                                        MainActivity activity) {
@@ -42,12 +43,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements Co
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-                Log.i( TAG + "BroadcastReceiver", "Discover peers succeeded");
+                Log.i( MainActivity.TAG + "BroadcastReceiver", "Discover peers succeeded");
             }
 
             @Override
             public void onFailure(int reasonCode) {
-                Log.i( TAG + "BroadcastReceiver", "Discover peers failed" + reasonCode);
+                Log.i( MainActivity.TAG + "BroadcastReceiver", "Discover peers failed" + reasonCode);
             }
         });
 
@@ -84,13 +85,15 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements Co
         int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
         if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
             // Wifi P2P is enabled
-            Log.i( TAG + "BroadcastReceiver", "Wifi P2P state changed: is enabled");
+            mActivity.setIsWifiP2pEnabled(true);
+
             //Testing
             shareMessage(new ArrayList<Message>());
         } else {
             // Wi-Fi P2P is not enabled
-            Log.i( TAG + "BroadcastReceiver", "Wifi P2P is state changed: is not enabled");
+            mActivity.setIsWifiP2pEnabled(false);
         }
+        Log.i( MainActivity.TAG + "BroadcastReceiver", "Wifi P2P state changed - " + state);
     }
 
     /**
@@ -99,13 +102,23 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements Co
      * @param intent
      */
     private void peersChangedAction(Context context, Intent intent) {
-        Log.i( TAG + "BroadcastReceiver", "Wifi P2P peers changed");
+        Log.i( MainActivity.TAG + "BroadcastReceiver", "Wifi P2P peers changed");
         if (mManager != null) {
             mManager.requestPeers(mChannel, new WifiP2pManager.PeerListListener() {
                 @Override
                 public void onPeersAvailable(WifiP2pDeviceList peers) {
-                    Log.i( TAG + "BroadcastReceiver", "Available peers" + peers);
+                    Log.i( MainActivity.TAG + "BroadcastReceiver", "Available peers" + peers);
+
+                    mPeers.clear();
+                    mPeers.addAll(peers.getDeviceList());
+
+                    if (mPeers.size() == 0) {
+                        Log.d(MainActivity.TAG, "No devices found");
+                        return;
+                    }
+
                     //Connect to every peer
+                    /*
                     for (  WifiP2pDevice peer : peers.getDeviceList()) {
                         final WifiP2pDevice device = peer;
                         WifiP2pConfig config = new WifiP2pConfig();
@@ -113,14 +126,15 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements Co
                         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
                             @Override
                             public void onSuccess() {
-                                Log.i( TAG + "BroadcastReceiver", "Successfully connected to peer" + device);
+                                Log.i( MainActivity.TAG + "BroadcastReceiver", "Successfully connected to peer" + device);
                             }
                             @Override
                             public void onFailure(int reason) {
-                                Log.i( TAG + "BroadcastReceiver", "Connection to peer failed" + device);
+                                Log.i( MainActivity.TAG + "BroadcastReceiver", "Connection to peer failed" + device);
                             }
                         });
                     }
+                    */
                 }
             });
         }
@@ -132,7 +146,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements Co
      * @param intent
      */
     private void connectionChangedAction(Context context, Intent intent) {
-        Log.i( TAG + "BroadcastReceiver", "Wifi P2P connection changed");
+        Log.i( MainActivity.TAG + "BroadcastReceiver", "Wifi P2P connection changed");
         //TODO
     }
 
@@ -142,7 +156,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements Co
      * @param intent
      */
     private void deviceChangedAction(Context context, Intent intent) {
-        Log.i( TAG + "BroadcastReceiver", "Wifi P2P device changed");
+        Log.i( MainActivity.TAG + "BroadcastReceiver", "Wifi P2P device changed");
         //TODO
     }
 }

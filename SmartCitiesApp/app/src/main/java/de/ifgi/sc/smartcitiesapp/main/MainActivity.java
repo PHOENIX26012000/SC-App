@@ -19,12 +19,13 @@ import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String TAG = "SmartCity";
+    public static final String TAG = "SmartCity";
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private BroadcastReceiver mReceiver;
     private IntentFilter mIntentFilter;
+    private boolean isWifiP2pEnabled = false;
 
 
     @Override
@@ -62,6 +63,15 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG + "Main", "OnPause");
         // unregister the broadcast receiver
         //unregisterReceiver(mReceiver);
+    }
+
+
+    /**
+     *
+     * @param isWifiP2pEnabled
+     */
+    public void setIsWifiP2pEnabled(boolean isWifiP2pEnabled) {
+        this.isWifiP2pEnabled = isWifiP2pEnabled;
     }
 
 
