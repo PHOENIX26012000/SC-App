@@ -1,7 +1,22 @@
 package de.ifgi.sc.smartcitiesapp.server;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import de.ifgi.sc.smartcitiesapp.interfaces.Connection;
@@ -17,30 +32,84 @@ public class ServerConnection implements Connection {
     /**
      * Constructor
      */
-    public ServerConnection() {
-        getMessages();
-    }
+    // public ServerConnection() {
+    //     getMessages();
+    // }
 
     @Override
     /**
      *  gets a set of Messages in form of an ArrayList and pushs it to the Server
      */
-    public void shareMessage(ArrayList<Message> messages) {
+    public void shareMessage(ArrayList<Message> messages){
         this.messages = messages;
         jsonObject = jsonParser.parseMessagetoJSON(messages);
+        //JSONArray share = new JSONArray();
+        //share.put(jsonObject);
+        URL url = null;
+        HttpURLConnection client = null;
+        try {
+            url = new URL("http://www.giv-project6.uni-muenster.de/api/addmessages/");
+            client = (HttpURLConnection) url.openConnection();
+            client.setRequestMethod("POST");
+            client.setRequestProperty("Key","Value");
+            client.setDoOutput(true);
+            client.setChunkedStreamingMode(0);
+            OutputStreamWriter out = new OutputStreamWriter(client.getOutputStream());
+            //writeStream(out);
+            out.write(jsonObject.toString());
+            out.flush();
+            out.close();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(client != null) // Make sure the connection is not null.
+                client.disconnect();
+        }
 
-        // todo push jsonArray to Server
+
+
     }
 
     /**
      *  requests the server for Messages and shares them with the Messanger
      */
-    public void getMessages(){
+    public void getMessages() throws MalformedURLException, IOException{
 
         //todo request to server for Messages as JSONArray
+        URL obj = new URL("http://www.giv-project6.uni-muenster.de/api/messages/");
+        HttpURLConnection conn = null;
+        try{
+            conn = (HttpURLConnection) obj.openConnection();
+            conn.setRequestMethod("GET");
+            conn.connect();
+            conn.setRequestProperty("Key","Value");
+            InputStream in = new BufferedInputStream(conn.getInputStream());
+            BufferedReader buff= new BufferedReader(new InputStreamReader(in));
+            StringBuilder responseStrBuilder = new StringBuilder();
 
-        messages = jsonParser.parseJSONtoMessage(jsonObject);
-        //todo call Messanger and pull Messages
+            String inputStr;
+            while((inputStr=buff.readLine())!=null)
+                responseStrBuilder.append(inputStr);
+
+            //String result = buff.readLine();
+            //JSONArray newJ= new JSONArray();
+            //newJ.put(result);
+            JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
+
+            messages = jsonParser.parseJSONtoMessage(jsonObject);
+            //todo call Messanger and push Messages
+        }
+        catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            if (conn != null);
+            conn.disconnect();
+        }
     }
 
 
