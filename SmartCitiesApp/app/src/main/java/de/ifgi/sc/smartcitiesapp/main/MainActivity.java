@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        tempForMessage();
+
         setContentView(R.layout.activity_main);
 
         // create some sample topics:
@@ -75,21 +75,6 @@ public class MainActivity extends AppCompatActivity {
                 MY_PERMISSION_ACCESS_COARSE_LOCATION);
     }
 
-    private void tempForMessage(){
-        Log.i("Main Activity","Activity Started");
-        Date date = new Date();
-        Log.i( date.toString(),"is Date");
-        Message m =new Message("123","136",23,36.989823,89.002323,date,"dads","dsad","sd");
-        Message m2 =new Message("345","156",23,34.45454,74.34324,date,"dads","dsad","sd");
-        ArrayList<Message> msgList= new ArrayList<Message>();
-        msgList.add(m);
-        msgList.add(m2);
-        Log.i("Array list ", "Created");
-
-        Messenger msgr=new Messenger(this);
-        msgr.updateMessengerFromConnect(msgList);
-        msgr.getAllMessages();
-    }
 
     // --- Menu ---
 
