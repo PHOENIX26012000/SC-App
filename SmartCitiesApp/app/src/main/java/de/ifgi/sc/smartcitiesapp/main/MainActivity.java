@@ -7,17 +7,19 @@ import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import de.ifgi.sc.smartcitiesapp.R;
-import de.ifgi.sc.smartcitiesapp.p2p.MyWifiP2PManager;
 import de.ifgi.sc.smartcitiesapp.p2p.WiFiDirectBroadcastReceiver;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    private String TAG = "SmartCity";
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
@@ -40,25 +42,26 @@ public class MainActivity extends AppCompatActivity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-
-        MyWifiP2PManager myWifiP2PManager = new MyWifiP2PManager(mManager);
-
+        registerReceiver(mReceiver, mIntentFilter);
+        Log.i(TAG + "Main", "Application started asdf");
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i(TAG + "Main", "OnResume");
         // register the broadcast receiver with the intent values to be matched
-        registerReceiver(mReceiver, mIntentFilter);
+        //registerReceiver(mReceiver, mIntentFilter);
     }
 
     
     @Override
     protected void onPause() {
         super.onPause();
+        Log.i(TAG + "Main", "OnPause");
         // unregister the broadcast receiver
-        unregisterReceiver(mReceiver);
+        //unregisterReceiver(mReceiver);
     }
 
 
