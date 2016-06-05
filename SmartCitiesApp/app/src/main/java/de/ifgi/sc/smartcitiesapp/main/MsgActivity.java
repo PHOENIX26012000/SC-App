@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import de.ifgi.sc.smartcitiesapp.R;
+import de.ifgi.sc.smartcitiesapp.messaging.Message;
 
 public class MsgActivity extends AppCompatActivity {
 
@@ -57,6 +58,15 @@ public class MsgActivity extends AppCompatActivity {
                 "Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr.",
                 dateFormatter.format(now)}
         );
+        // add message from UIMEssageManager:
+        ArrayList<Message> msgs2 = UIMessageManager.getInstance().getActiveMessages();
+
+        String[] s2 = new String[3];
+        s2[0] = msgs2.get(0).getTitle();
+        s2[1] = "bla";
+        s2[2] = "bla";
+        msgs.add(s2);
+
         // add each message to the user interface
         for (String[] s : msgs){
             // compute timedifference between expire date and right now:

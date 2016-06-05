@@ -68,7 +68,6 @@ public class Message {
         Log.i("Date format changed to ",D_format.format(ex_time));
 
         return D_format.format(ex_time);
-//        }
     }
 
 }

@@ -10,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTabHost;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,21 +18,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import de.ifgi.sc.smartcitiesapp.R;
-//import de.ifgi.sc.smartcitiesapp.messaging.DatabaseHelper;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
-import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 
 
 public class MainActivity extends AppCompatActivity {
 
+    protected App app;
     private final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 10042; // just a random int resource.
 
     @Override
@@ -70,10 +65,22 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions( MainActivity.this,
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                 MY_PERMISSION_ACCESS_COARSE_LOCATION);
+
+        // Get the application instance of UIMessageManager
+        app = (App)getApplication();
+
+        // Read the value of a variable in UIMessageManager
+        ArrayList<Message> messages = UIMessageManager.getInstance().getActiveMessages();
+
+        Date dat = new Date();
+        Message msg1 = new Message("CLIENT_ID123","MESSAGE_ID123",123,49.7,7.5,dat,"Traffic","Traffic jam in the city center","A traffic jam in the city center because a busdriver crashed into the dom and the entire city explodeeeeed.BOOOOM!");
+        messages.add(msg1);
+
+        UIMessageManager.getInstance().enqueueMessagesIntoUI(messages);
     }
 
-    // --- Menu ---
 
+    // --- Menu ---
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -144,5 +151,6 @@ public class MainActivity extends AppCompatActivity {
             // permissions this app might request
         }
     }
+
 
 }
