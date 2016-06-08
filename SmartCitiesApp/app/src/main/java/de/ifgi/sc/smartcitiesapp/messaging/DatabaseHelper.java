@@ -194,7 +194,7 @@ public class DatabaseHelper {
 
         Cursor res =  ourDatabase.rawQuery( "select * from TABLE_1", null );
         res.moveToFirst();
-        
+
         while(!res.isAfterLast() & match != 0){
 
             if(msg.getMessage_ID().equals(res.getString(res.getColumnIndex(MESSAGE_ID))))
