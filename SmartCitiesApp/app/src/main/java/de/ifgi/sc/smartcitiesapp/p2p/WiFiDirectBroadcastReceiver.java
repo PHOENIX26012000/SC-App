@@ -4,6 +4,7 @@ package de.ifgi.sc.smartcitiesapp.p2p;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
@@ -29,6 +30,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements Co
 
     private ArrayList<WifiP2pDevice> mPeers = new ArrayList<WifiP2pDevice>();
 
+
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel,
                                        MainActivity activity) {
         super();
@@ -38,17 +40,18 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements Co
 
     }
 
+
     @Override
     public void shareMessage(ArrayList<Message> m) {
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-                Log.i( MainActivity.TAG + "BroadcastReceiver", "Discover peers succeeded");
+                Log.i(MainActivity.TAG + "BroadcastReceiver", "Discover peers succeeded");
             }
 
             @Override
             public void onFailure(int reasonCode) {
-                Log.i( MainActivity.TAG + "BroadcastReceiver", "Discover peers failed" + reasonCode);
+                Log.i(MainActivity.TAG + "BroadcastReceiver", "Discover peers failed" + reasonCode);
             }
         });
 
@@ -59,104 +62,88 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements Co
         String action = intent.getAction();
 
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
-            stateChangedAction(context, intent);
-        } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-            // Call WifiP2pManager.requestPeers() to get a list of current peers
+            // Respond to state changes
 
+            int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
+            if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
+                // Wifi Direct mode is enabled
+                mActivity.setIsWifiP2pEnabled(true);
+
+                //Testing
+                shareMessage(new ArrayList<Message>());
+            } else {
+                // Wi-Fi P2P is not enabled
+                mActivity.setIsWifiP2pEnabled(false);
+            }
+            Log.i(MainActivity.TAG + "BroadcastReceiver", "P2P state changed - " + state);
+
+        } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             // request available peers from the wifi p2p manager. This is an
             // asynchronous call and the calling activity is notified with a
             // callback on PeerListListener.onPeersAvailable()
-            peersChangedAction(context, intent);
+
+            Log.i(MainActivity.TAG + "BroadcastReceiver", "P2P peers changed");
+            if (mManager != null) {
+                mManager.requestPeers(mChannel, new WifiP2pManager.PeerListListener() {
+                    @Override
+                    public void onPeersAvailable(WifiP2pDeviceList peers) {
+                        Log.i(MainActivity.TAG + "BroadcastReceiver", "P2P peers available");
+
+                        mPeers.clear();
+                        mPeers.addAll(peers.getDeviceList());
+
+                        if (peers.getDeviceList().isEmpty()) {
+                            Log.d(MainActivity.TAG, "No devices found");
+                            return;
+                        }
+
+                        //Connect to every peer
+                        for (int i = 0; i < mPeers.size(); i++) {
+                            Log.i(MainActivity.TAG + "BroadcastReceiver", "Peer number " + i + " is " + mPeers.get(i).toString());
+                            WifiP2pDevice device = mPeers.get(i);
+                            WifiP2pConfig config = new WifiP2pConfig();
+                            config.deviceAddress = device.deviceAddress;
+                            mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+                                @Override
+                                public void onSuccess() {
+                                    Log.i(MainActivity.TAG + "BroadcastReceiver", "P2P connection to peer successful");
+                                }
+
+                                @Override
+                                public void onFailure(int reason) {
+                                    Log.i(MainActivity.TAG + "BroadcastReceiver", "P2P connection to peer failed");
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+
+
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             // Respond to new connection or disconnections
-            connectionChangedAction(context, intent);
+
+            Log.i(MainActivity.TAG + "BroadcastReceiver", "P2P connection changed");
+            if (mManager == null) {
+                return;
+            }
+            NetworkInfo networkInfo = (NetworkInfo) intent
+                    .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+            if (networkInfo.isConnected()) {
+                // we are connected with the other device, request connection
+                // info to find group owner IP
+                Log.i(MainActivity.TAG + "BroadcastReceiver", "P2P connection is connected");
+                mManager.requestConnectionInfo(mChannel, null);
+            } else {
+                // It's a disconnect
+                Log.i(MainActivity.TAG + "BroadcastReceiver", "P2P connection is disconnected");
+            }
+
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             // Respond to this device's wifi state changing
-            deviceChangedAction(context, intent);
+
+            Log.i(MainActivity.TAG + "BroadcastReceiver", "P2P device changed");
         }
     }
 
-    /**
-     * Call when the state of the WIFI P2P changed, e.g. is enabled at the startup.
-     * @param context
-     * @param intent
-     */
-    private void stateChangedAction(Context context, Intent intent) {
-        int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
-        if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
-            // Wifi P2P is enabled
-            mActivity.setIsWifiP2pEnabled(true);
-
-            //Testing
-            shareMessage(new ArrayList<Message>());
-        } else {
-            // Wi-Fi P2P is not enabled
-            mActivity.setIsWifiP2pEnabled(false);
-        }
-        Log.i( MainActivity.TAG + "BroadcastReceiver", "Wifi P2P state changed - " + state);
-    }
-
-    /**
-     * Call when the peer of the WIFI P2P changed.
-     * @param context
-     * @param intent
-     */
-    private void peersChangedAction(Context context, Intent intent) {
-        Log.i( MainActivity.TAG + "BroadcastReceiver", "Wifi P2P peers changed");
-        if (mManager != null) {
-            mManager.requestPeers(mChannel, new WifiP2pManager.PeerListListener() {
-                @Override
-                public void onPeersAvailable(WifiP2pDeviceList peers) {
-                    Log.i( MainActivity.TAG + "BroadcastReceiver", "Available peers" + peers);
-
-                    mPeers.clear();
-                    mPeers.addAll(peers.getDeviceList());
-
-                    if (mPeers.size() == 0) {
-                        Log.d(MainActivity.TAG, "No devices found");
-                        return;
-                    }
-
-                    //Connect to every peer
-                    /*
-                    for (  WifiP2pDevice peer : peers.getDeviceList()) {
-                        final WifiP2pDevice device = peer;
-                        WifiP2pConfig config = new WifiP2pConfig();
-                        config.deviceAddress = device.deviceAddress;
-                        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
-                            @Override
-                            public void onSuccess() {
-                                Log.i( MainActivity.TAG + "BroadcastReceiver", "Successfully connected to peer" + device);
-                            }
-                            @Override
-                            public void onFailure(int reason) {
-                                Log.i( MainActivity.TAG + "BroadcastReceiver", "Connection to peer failed" + device);
-                            }
-                        });
-                    }
-                    */
-                }
-            });
-        }
-    }
-
-    /**
-     * Call when the connection of the WIFI P2P changed.
-     * @param context
-     * @param intent
-     */
-    private void connectionChangedAction(Context context, Intent intent) {
-        Log.i( MainActivity.TAG + "BroadcastReceiver", "Wifi P2P connection changed");
-        //TODO
-    }
-
-    /**
-     * Call when the device of the WIFI P2P changed.
-     * @param context
-     * @param intent
-     */
-    private void deviceChangedAction(Context context, Intent intent) {
-        Log.i( MainActivity.TAG + "BroadcastReceiver", "Wifi P2P device changed");
-        //TODO
-    }
 }
