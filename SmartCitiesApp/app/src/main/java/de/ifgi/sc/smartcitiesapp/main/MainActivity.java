@@ -1,6 +1,8 @@
 package de.ifgi.sc.smartcitiesapp.main;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,7 +10,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.nearby.Nearby;
+
 import de.ifgi.sc.smartcitiesapp.R;
+import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 
 
@@ -16,11 +23,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "SmartCity";
 
+    P2PManager mP2PManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mP2PManager = new P2PManager(this);
 
     }
 

@@ -40,6 +40,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.MainActivity" />
         </activity>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAkT5YnKIBFOjzdOee2SW2TLMycMrslwJg" />
     </application>
 
 </manifest>
