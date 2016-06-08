@@ -25,8 +25,10 @@ import java.util.Date;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import de.ifgi.sc.smartcitiesapp.R;
-//import de.ifgi.sc.smartcitiesapp.messaging.DatabaseHelper;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         // create some sample topics:
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                 MY_PERMISSION_ACCESS_COARSE_LOCATION);
     }
+
 
     // --- Menu ---
 

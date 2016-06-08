@@ -26,7 +26,7 @@ public class JSONParser {
     JSONObject jsonMsg = new JSONObject();
     String clientID = new String();
     String messageID = new String();
-    Integer zoneID;
+    String zoneID = new String();
     Date expiredAt;
     String topic = new String();
     String title = new String();
@@ -121,7 +121,7 @@ public class JSONParser {
                 jsonMsg = jsonMsgArray.getJSONObject(i);
                 clientID = (String) jsonMsg.getJSONObject("Client-id").get("Client-id");
                 messageID = (String) jsonMsg.getJSONObject("Message-id").get("Message-id");
-                zoneID = (Integer) jsonMsg.getJSONObject("Zone-id").get("Zone-id");
+                zoneID = (String) jsonMsg.getJSONObject("Zone-id").get("Zone-id");
                 expiredAt = (Date) jsonMsg.getJSONObject("Expired-at").get("Expired-at");
                 topic = (String) jsonMsg.getJSONObject("Topic").get("Topic");
                 title = (String) jsonMsg.getJSONObject("Title").get("Title");
