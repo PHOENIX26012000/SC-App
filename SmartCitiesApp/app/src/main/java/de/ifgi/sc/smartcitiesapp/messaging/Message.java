@@ -1,8 +1,6 @@
 package de.ifgi.sc.smartcitiesapp.messaging;
 
-
 import android.util.Log;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
