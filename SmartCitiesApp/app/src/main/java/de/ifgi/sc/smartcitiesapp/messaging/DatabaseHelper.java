@@ -11,6 +11,7 @@ import android.util.Log;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -33,6 +34,7 @@ public class DatabaseHelper {
     private static final int DATABASE_VERSION = 1;
 
     private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    Calendar c = Calendar.getInstance();
 
 
     private DbHelper ourHelper;
@@ -211,6 +213,10 @@ public class DatabaseHelper {
 
         return match;
 
+    }
+
+    public void deleteMessageWhenExpire(){
+        ourDatabase.execSQL("Delete from " + TABLE_NAME + "where Exp_time = " + c);
     }
 
 }
