@@ -22,7 +22,7 @@ import de.ifgi.sc.smartcitiesapp.messaging.Message;
 /**
  * A BroadcastReceiver that notifies of important Wi-Fi p2p events.
  */
-public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements Connection {
+public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
@@ -42,24 +42,9 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements Co
 
 
     @Override
-    public void shareMessage(ArrayList<Message> m) {
-        mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-                Log.i(MainActivity.TAG + "BroadcastReceiver", "Discover peers succeeded");
-            }
-
-            @Override
-            public void onFailure(int reasonCode) {
-                Log.i(MainActivity.TAG + "BroadcastReceiver", "Discover peers failed" + reasonCode);
-            }
-        });
-
-    }
-
-    @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+        Log.i(MainActivity.TAG + "BroadcastReceiver", "P2P onReceive - " + action);
 
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
             // Respond to state changes
@@ -68,9 +53,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements Co
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
                 // Wifi Direct mode is enabled
                 mActivity.setIsWifiP2pEnabled(true);
-
-                //Testing
-                shareMessage(new ArrayList<Message>());
             } else {
                 // Wi-Fi P2P is not enabled
                 mActivity.setIsWifiP2pEnabled(false);

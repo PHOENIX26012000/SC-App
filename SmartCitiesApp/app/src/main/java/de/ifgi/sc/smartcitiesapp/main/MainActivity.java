@@ -91,8 +91,20 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_item_settings:
                 // Open the settings activity
-                Intent intentSettings = new Intent(getApplicationContext(), SettingsActivity.class);
+/*                Intent intentSettings = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivity(intentSettings);
+                return true;*/
+                mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+                        Log.i(MainActivity.TAG + "BroadcastReceiver", "Discover peers succeeded");
+                    }
+
+                    @Override
+                    public void onFailure(int reasonCode) {
+                        Log.i(MainActivity.TAG + "BroadcastReceiver", "Discover peers failed" + reasonCode);
+                    }
+                });
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
