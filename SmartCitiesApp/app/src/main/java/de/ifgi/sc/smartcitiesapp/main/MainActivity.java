@@ -21,9 +21,9 @@ import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String TAG = "SmartCity";
+    public static final String TAG = MainActivity.class.getSimpleName();
 
-    P2PManager mP2PManager;
+    public P2PManager mP2PManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +46,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Log.i(TAG + "Main", "OnPause");
+    }
+
+
+    @Override
+    protected void onStop() {
+        mP2PManager.unpublish();
+        mP2PManager.unsubscribe();
+        super.onStop();
     }
 
 
