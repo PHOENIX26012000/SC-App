@@ -10,6 +10,7 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.nearby.Nearby;
+import com.google.android.gms.nearby.messages.MessageListener;
 
 import java.util.ArrayList;
 
@@ -22,15 +23,30 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
     MainActivity mActivity;
     GoogleApiClient mGoogleApiClient;
-
+    MessageListener mMessageListener;
 
     public P2PManager(MainActivity activity) {
         mActivity = activity;
+
         mGoogleApiClient = new GoogleApiClient.Builder(activity)
                 .addApi(Nearby.MESSAGES_API)
                 .addConnectionCallbacks(this)
                 .enableAutoManage(activity, this)
                 .build();
+
+        mMessageListener = new MessageListener() {
+            @Override
+            public void onFound(com.google.android.gms.nearby.messages.Message message) {
+                String messageAsString = new String(message.getContent());
+                Log.d(MainActivity.TAG, "Found message: " + messageAsString);
+            }
+
+            @Override
+            public void onLost(com.google.android.gms.nearby.messages.Message message) {
+                String messageAsString = new String(message.getContent());
+                Log.d(MainActivity.TAG, "Lost sight of message: " + messageAsString);
+            }
+        };
 
     }
 
@@ -42,6 +58,8 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(MainActivity.TAG, "P2PManager onConnected");
+        publish("Hello World");
+        subscribe();
     }
 
     @Override
@@ -56,4 +74,29 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
         Log.i(MainActivity.TAG, "P2PManager onConnectionFailed");
     }
+
+
+    /*
+     * Publish and Subscribe Methods
+     */
+
+    private void publish(String message) {
+        Log.i(MainActivity.TAG, "Publishing message: " + message);
+        mActiveMessage = new Message(message.getBytes());
+        Nearby.Messages.publish(mGoogleApiClient, mActiveMessage);
+    }
+
+    private void unpublish() {
+        Log.i(MainActivity.TAG, "Unpublishing.");
+        if (mActiveMessage != null) {
+            Nearby.Messages.unpublish(mGoogleApiClient, mActiveMessage);
+            mActiveMessage = null;
+        }
+    }
+
+    private void subscribe() {
+        Log.i(MainActivity.TAG, "Subscribing.");
+        Nearby.Messages.subscribe(mGoogleApiClient, mMessageListener, options);
+    }
+
 }
