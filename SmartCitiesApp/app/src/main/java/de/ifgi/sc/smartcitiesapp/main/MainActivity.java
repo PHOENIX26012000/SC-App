@@ -23,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
+    /**
+     * P2P Manager that handles the main p2p message sharing of the app
+     */
     public P2PManager mP2PManager;
 
     @Override
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Start P2P Messaging
         mP2PManager = new P2PManager(this);
 
     }
@@ -38,14 +42,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(TAG + "Main", "OnResume");
+        Log.i(TAG + " Main", "OnResume");
     }
 
-    
+
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(TAG + "Main", "OnPause");
+        Log.i(TAG + " Main", "OnPause");
     }
 
 
