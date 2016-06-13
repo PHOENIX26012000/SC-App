@@ -97,12 +97,14 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         mMessageListener = new MessageListener() {
             @Override
             public void onFound(Message message) {
+                // When receives a message
                 String messageAsString = new String(message.getContent());
                 Log.d(MainActivity.TAG + " P2P", "Found message: " + messageAsString);
             }
 
             @Override
             public void onLost(Message message) {
+                // When other device stops publishing
                 String messageAsString = new String(message.getContent());
                 Log.d(MainActivity.TAG + " P2P", "Lost sight of message: " + messageAsString);
             }
@@ -214,7 +216,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         Log.i(MainActivity.TAG + " P2P", "Subscribing");
         SubscribeOptions options = new SubscribeOptions.Builder()
                 //.setStrategy(SUB_STRATEGY)
-                .setFilter(MESSAGE_FILTER)  //defines topics to subscribe to
+                //.setFilter(MESSAGE_FILTER)  //defines topics to subscribe to
                 .setCallback(new SubscribeCallback() {
                     @Override
                     public void onExpired() {
