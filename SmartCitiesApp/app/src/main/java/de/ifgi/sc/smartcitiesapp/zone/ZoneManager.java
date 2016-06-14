@@ -9,6 +9,7 @@ import java.util.ArrayList;
  */
 public class ZoneManager {
     private ArrayList<Zone> zoneList;
+    private ArrayList<Zone> zoneDBList;
 
 
     /**
@@ -16,7 +17,9 @@ public class ZoneManager {
      * @param zoneList
      */
     public void updateZones(ArrayList<Zone> zoneList){
-
+        zoneDBList = getZonesfromDB();
+        //todo  compare zones from db to new zones from server
+        //todo save new zone in db
     }
 
     /**
@@ -25,7 +28,15 @@ public class ZoneManager {
      * @return
      */
     public ArrayList<Zone> getZone (LatLng position) {
-
+        zoneDBList = getZonesfromDB();
+        //todo polygone contains position?, yes -> add to zoneList
         return zoneList;
+    }
+
+    public ArrayList<Zone> getZonesfromDB (){
+        //todo get Zone from the database
+        //todo check if Zone from database are expired, if so delete them from db
+
+        return zoneDBList;
     }
 }
