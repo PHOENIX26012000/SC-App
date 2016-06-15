@@ -41,11 +41,17 @@ public class MainActivity extends AppCompatActivity {
         Topic sports = new Topic("Sports");
         Topic restaurants = new Topic("Restaurants");
         Topic shopping = new Topic("Shopping");
+        Topic cafe = new Topic("cafe");
+        Topic bars = new Topic("Bars");
         // add some msgs to the topics:
         traffic.addMsg("Traffic Jam in the city center");
+        traffic.addMsg("Better to walk rather than drive near.....");
         sports.addMsg("students beachvolleyball tournament at the castle");
         restaurants.addMsg("recyclable \\\"to-go\\\"-coffee cups at Franks Copy Shop");
+        restaurants.addMsg("Visit Paradise for a nice Biriyani");
         shopping.addMsg("Missed Black friday? Clothes are 100% off at my place");
+        cafe.addMsg("visit DarkCafe for a strong coffe");
+        bars.addMsg("Enjoy at ......... ");
 
         // store topics into sharedpref:
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
