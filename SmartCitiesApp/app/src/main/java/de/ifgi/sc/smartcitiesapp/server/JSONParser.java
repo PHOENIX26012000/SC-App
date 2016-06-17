@@ -1,38 +1,55 @@
 package de.ifgi.sc.smartcitiesapp.server;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
+import de.ifgi.sc.smartcitiesapp.zone.Zone;
 
 /**
  * Created by Clara on 09.05.2016.
  */
 public class JSONParser {
 
-
     private static final Logger logger =
             Logger.getLogger("JSONParser");
 
     ArrayList<Message> msglist = new ArrayList<Message>();
+
     JSONObject jsonObject = new JSONObject();
     JSONArray jsonMsgArray = new JSONArray();
     JSONObject jsonMsg = new JSONObject();
     String clientID = new String();
     String messageID = new String();
     String zoneID = new String();
-    Date expiredAt;
+    String crDt = new String();
+    String exDt = new String();
+    Date expiry = new Date();
     String topic = new String();
     String title = new String();
+    Double latitude;
+    Double longitude;
     String msg = new String();
     Message message = new Message();
+    Zone zone = new Zone();
     //LatLng location = new LatLng();
+    ArrayList<Zone> zonelist = new ArrayList<>();
+    JSONArray jsonZoneArray = new JSONArray();
+    JSONObject zoneMsg = new JSONObject();
+
+    String name = new String();
+    String zonerID = new String();
+    String expiredAt= new String();
+    String Topic= new String();
+    ArrayList<LatLng> polygon= new ArrayList<LatLng>();
+
+
+
 
 
     /**
@@ -44,7 +61,7 @@ public class JSONParser {
 
     /**
      * parses a ArrayList of Messages to an JSONObject, containing a JSONArray with messages
-     * @param ArrayList<Message>
+     * @param //ArrayList<Message>
      * @return JSONObject
      */
     public JSONObject parseMessagetoJSON(ArrayList<Message> msglist){
@@ -72,9 +89,12 @@ public class JSONParser {
             clientID = message.getClient_ID();
             messageID = message.getMessage_ID();
             zoneID = message.getZone_ID();
-            expiredAt = message.getExpired_At();
+             crDt = message.getCreated_At();
+            latitude = message.getLatitude();
+            longitude= message.getLongitude();
             topic = message.getTopic();
             title = message.getTitle();
+            exDt = message.getExpired_At();
             msg = message.getMsg();
             //todo get location form message
 
@@ -82,10 +102,14 @@ public class JSONParser {
                 this.jsonMsg.put("Client-id", clientID);
                 this.jsonMsg.put("Message-id", messageID);
                 this.jsonMsg.put("Zone-id", zoneID);
-                this.jsonMsg.put("Expired-at", expiredAt);
+                this.jsonMsg.put("Created-at",crDt);
+                this.jsonMsg.put("Expired-at", exDt);
                 this.jsonMsg.put("Topic", topic);
                 this.jsonMsg.put("Title", title);
-                this.jsonMsg.put("Message", message);
+                this.jsonMsg.put("Latitude",latitude);
+                this.jsonMsg.put("Longitude",longitude);
+                this.jsonMsg.put("Message", msg);
+
                 //todo put location into the array
                 this.jsonMsgArray.put(i,jsonMsg);
 
@@ -122,20 +146,27 @@ public class JSONParser {
                 clientID = (String) jsonMsg.getJSONObject("Client-id").get("Client-id");
                 messageID = (String) jsonMsg.getJSONObject("Message-id").get("Message-id");
                 zoneID = (String) jsonMsg.getJSONObject("Zone-id").get("Zone-id");
-                expiredAt = (Date) jsonMsg.getJSONObject("Expired-at").get("Expired-at");
+                crDt = (String) jsonMsg.getJSONObject("Created-at").get("Created-at");
+                exDt = (String) jsonMsg.getJSONObject("Expired-at").get("Expired-at");
+                latitude = (double) jsonMsg.getJSONObject("Latitude").get("Latitude");
+                longitude = (double) jsonMsg.getJSONObject("Longitude").get("Longitude");
                 topic = (String) jsonMsg.getJSONObject("Topic").get("Topic");
                 title = (String) jsonMsg.getJSONObject("Title").get("Title");
                 msg = (String) jsonMsg.getJSONObject("Message").get("Message");
+
                 //todo get location
 
 
                 message.setClient_ID(clientID);
                 message.setMessage_ID(messageID);
                 message.setZone_ID(zoneID);
-                message.setExpired_At(expiredAt);
-                message.setTopic(topic);
+                message.setCreated_At(crDt);
+                message.setExpired_At(expiry);
+                //message.setTopic(topic);
                 message.setTitle(title);
                 message.setMsg(msg);
+                message.setLatitude(latitude);
+                message.setLongitude(longitude);
                 //todo set location
                 this.msglist.add(message);
 
@@ -149,5 +180,39 @@ public class JSONParser {
         // todo testing the method
     }
 
+    public ArrayList<Zone> parseJSONtoZone(JSONObject jsonObject){
+
+    this.jsonObject=jsonObject;
+    this.zonelist.clear();
+
+        try{
+            jsonZoneArray= jsonObject.getJSONArray("Zones");
+            for (int i = 0; i < jsonZoneArray.length(); i++){
+                zoneMsg = jsonZoneArray.getJSONObject(i);
+                name = (String) zoneMsg.getJSONObject("Name").get("Name");
+                zonerID = (String) zoneMsg.getJSONObject("Zone-id").get("Zone-id");
+                Topic = (String) zoneMsg.getJSONObject("Topics").get("Topics");
+                expiredAt = (String) zoneMsg.getJSONObject("Expired-at").get("Expired-at");
+                polygon = (ArrayList<LatLng>) zoneMsg.getJSONObject("Polygon").get("Polygon");
+
+                zone.this.name(name);
+                zone.this.zoneID(zonerID);
+                zone.this.expiredAt(expiredAt);
+                zone.this.polygon(polygon);
+                zone.this.topics(Topic);
+                this.zonelist.add(zone);
+
+
+
+            }
+
+
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+            logger.log(Level.WARNING, "no such JSONObject");
+        }
+        return this.zonelist;
+    }
 
 }
