@@ -216,10 +216,11 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         }
 
         // Start publishing all active messages in the list
+        //TODO correct error here
         for (de.ifgi.sc.smartcitiesapp.messaging.Message mPubMessage : mPubMessages) {
             if (isActive(mPubMessage)) {
-                int duration = calculateDuration(mPubMessage);
-                publish(mPubMessage, duration);
+                //int duration = calculateDuration(mPubMessage);
+                publish(mPubMessage, 5);
 
             } else {
                 unpublish(mPubMessage);
@@ -227,7 +228,9 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         }
 
         publish(new de.ifgi.sc.smartcitiesapp.messaging.Message(), 5);
-
+        publish(new de.ifgi.sc.smartcitiesapp.messaging.Message(), 5);
+        publish(new de.ifgi.sc.smartcitiesapp.messaging.Message(), 5);
+        publish(new de.ifgi.sc.smartcitiesapp.messaging.Message(), 5);
     }
 
 
