@@ -1,10 +1,11 @@
 package de.ifgi.sc.smartcitiesapp.messaging;
 
 
+import java.io.Serializable;
 import java.security.PrivateKey;
 import java.text.SimpleDateFormat;
 
-public class Message {
+public class Message implements Serializable {
 
     private String Client_ID;
     private String Message_ID;

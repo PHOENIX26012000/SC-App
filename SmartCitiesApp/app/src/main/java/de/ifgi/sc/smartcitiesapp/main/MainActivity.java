@@ -41,23 +41,36 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        super.onResume();
         Log.i(TAG + " Main", "OnResume");
+        super.onResume();
     }
 
 
     @Override
     protected void onPause() {
-        super.onPause();
         Log.i(TAG + " Main", "OnPause");
+        super.onPause();
     }
 
+    @Override
+    protected void onStart() {
+        Log.i(TAG + " Main", "OnStart");
+        super.onStart();
+    }
 
     @Override
     protected void onStop() {
+        Log.i(TAG + " Main", "OnStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i(TAG + " Main", "OnDestroy");
         mP2PManager.unpublish();
         mP2PManager.unsubscribe();
-        super.onStop();
+        mP2PManager.disconnect();
+        super.onDestroy();
     }
 
 
