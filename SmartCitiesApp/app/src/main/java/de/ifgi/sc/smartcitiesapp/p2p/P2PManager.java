@@ -34,7 +34,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
     /**
      * The {@link Message} object used to broadcast information about the device to nearby devices.
      */
-    private Message mPubMessage;
+    private ArrayList<Message> mPubMessages;
 
     /**
      * Sets the publishing time in seconds
@@ -48,7 +48,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
             .setTtlSeconds(PUB_TTL_IN_SECONDS).build();
 
     /**
-     * Sets the subscribtion time in seconds
+     * Sets the subscription time in seconds
      */
     private static final int SUB_TTL_IN_SECONDS = 5;
 
@@ -59,7 +59,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
             .setTtlSeconds(SUB_TTL_IN_SECONDS).build();
 
     /**
-     * Sets the Message filter to apply to the subscritions
+     * Sets the Message filter to apply to the subscriptions
      */
     private MessageFilter MESSAGE_FILTER = new MessageFilter.Builder()
             .includeNamespacedType ("namespace", "type").build();
@@ -71,6 +71,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
      */
     public P2PManager(MainActivity activity) {
         mActivity = activity;
+        mPubMessages = new ArrayList<Message>();
         init();
     }
 
@@ -100,6 +101,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
                 // When receives a message
                 String messageAsString = new String(message.getContent());
                 Log.d(MainActivity.TAG + " P2P", "Found message: " + messageAsString);
+                //TODO forward message to messenger
             }
 
             @Override
@@ -152,6 +154,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
         // Pub/sub for testing
         publish("Hello World");
+        publish("HeyHo");
         subscribe();
     }
 
@@ -169,7 +172,6 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult result) {
         Log.e(MainActivity.TAG + " P2P", "GoogleApiClient connection failed");
-
         Log.i(MainActivity.TAG + " P2P", "P2PManager onConnectionFailed");
     }
 
@@ -178,7 +180,8 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
      * Publish and Subscribe Methods
      */
     private void publish(String message) {
-        mPubMessage = new Message(message.getBytes());
+        final Message mPubMessage = new Message(message.getBytes());
+        mPubMessages.add(mPubMessage);
 
         Log.i(MainActivity.TAG + " P2P", "Publishing " + message);
         PublishOptions options = new PublishOptions.Builder()
@@ -188,6 +191,8 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
                     public void onExpired() {
                         super.onExpired();
                         Log.i(MainActivity.TAG + " P2P", "No longer publishing");
+                        // TODO remove published message from array
+                        mPubMessages.remove(mPubMessage);
                     }
                 }).build();
 
@@ -206,9 +211,11 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
     public void unpublish() {
         Log.i(MainActivity.TAG + " P2P", "Unpublishing.");
-        if (mPubMessage != null) {
-            Nearby.Messages.unpublish(mGoogleApiClient, mPubMessage);
-            mPubMessage = null;
+        if (mPubMessages.size() > 0) {
+            for (Message mPubMessage : mPubMessages) {
+                Nearby.Messages.unpublish(mGoogleApiClient, mPubMessage);
+            }
+            mPubMessages.clear();
         }
     }
 
