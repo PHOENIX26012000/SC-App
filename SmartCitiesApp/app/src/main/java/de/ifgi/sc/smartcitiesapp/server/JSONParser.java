@@ -14,6 +14,7 @@ import de.ifgi.sc.smartcitiesapp.zone.Zone;
 /**
  * Created by Clara on 09.05.2016.
  */
+
 public class JSONParser {
 
     private static final Logger logger =
@@ -50,8 +51,6 @@ public class JSONParser {
 
 
 
-
-
     /**
      * Constructor
      */
@@ -64,6 +63,7 @@ public class JSONParser {
      * @param //ArrayList<Message>
      * @return JSONObject
      */
+
     public JSONObject parseMessagetoJSON(ArrayList<Message> msglist){
 
         this.msglist = msglist;
@@ -195,14 +195,15 @@ public class JSONParser {
                 expiredAt = (String) zoneMsg.getJSONObject("Expired-at").get("Expired-at");
                 polygon = (ArrayList<LatLng>) zoneMsg.getJSONObject("Polygon").get("Polygon");
 
-                zone.this.name(name);
-                zone.this.zoneID(zonerID);
-                zone.this.expiredAt(expiredAt);
-                zone.this.polygon(polygon);
-                zone.this.topics(Topic);
+
+
+                zone.name(name);
+                zone.zoneID(zonerID);
+                zone.expiredAt(expiredAt);
+                zone.polygon(polygon);
+                zone.topics(Topic);
+
                 this.zonelist.add(zone);
-
-
 
             }
 

@@ -1,26 +1,27 @@
 package de.ifgi.sc.smartcitiesapp.server;
 
-import org.json.JSONArray;
+//import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+//import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
+//import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
-import java.net.SocketTimeoutException;
+//import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 
 import de.ifgi.sc.smartcitiesapp.interfaces.Connection;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
+
 
 
 public class ServerConnection implements Connection {
@@ -112,4 +113,41 @@ public class ServerConnection implements Connection {
         }
     }
 
+    public void getZones() throws IOException {
+        URL obj = null;
+        try {
+            obj = new URL("http://giv-project6.uni-muenster.de:8080/api/zones");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        HttpURLConnection zoneCon = null;
+        try{
+            zoneCon = (HttpURLConnection) obj.openConnection();
+            zoneCon.setRequestMethod("GET");
+            zoneCon.connect();
+            zoneCon.setRequestProperty("Key","Value");
+            InputStream in = new BufferedInputStream(zoneCon.getInputStream());
+            BufferedReader buff= new BufferedReader(new InputStreamReader(in));
+            StringBuilder responseStrBuilder = new StringBuilder();
+
+            String inputStr;
+            while((inputStr=buff.readLine())!=null)
+                responseStrBuilder.append(inputStr);
+
+
+
+            JSONObject jsonObject = new JSONObject(responseStrBuilder.toString());
+
+            jsonParser.parseJSONtoZone(jsonObject);
+        }
+
+        catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        finally {
+            if (zoneCon != null);
+            zoneCon.disconnect();
+        }
+    }
 }
