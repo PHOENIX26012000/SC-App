@@ -21,6 +21,7 @@ import com.google.android.gms.nearby.messages.SubscribeOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -227,10 +228,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
             }
         }
 
-        publish(new de.ifgi.sc.smartcitiesapp.messaging.Message(), 5);
-        publish(new de.ifgi.sc.smartcitiesapp.messaging.Message(), 5);
-        publish(new de.ifgi.sc.smartcitiesapp.messaging.Message(), 5);
-        publish(new de.ifgi.sc.smartcitiesapp.messaging.Message(), 5);
+        publish(new de.ifgi.sc.smartcitiesapp.messaging.Message("c_id", "m_id", "z_id", new Date(), 51, 7, new Date(2016,6,21), "top", "tit", "msg"), 5);
     }
 
 

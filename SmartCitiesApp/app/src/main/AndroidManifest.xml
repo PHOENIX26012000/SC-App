@@ -50,12 +50,9 @@
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
             android:value="AIzaSyCo3Lpiyh96AncyVglM2ffRDq1bLs6kck4" />
-
-        <!--
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAkT5YnKIBFOjzdOee2SW2TLMycMrslwJg" />
-		-->
     </application>
 
 </manifest>

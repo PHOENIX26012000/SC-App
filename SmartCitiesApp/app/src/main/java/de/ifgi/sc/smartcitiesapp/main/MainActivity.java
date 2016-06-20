@@ -122,9 +122,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Log.i(TAG + " Main", "OnDestroy");
-        mP2PManager.unpublish();
-        mP2PManager.unsubscribe();
-        mP2PManager.disconnect();
+        try {
+            mP2PManager.unpublish();
+            mP2PManager.unsubscribe();
+            mP2PManager.disconnect();
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+            Log.i(MainActivity.TAG, "GoogleAPIClient is currently not connected");
+            // Add message to mPubMessages list anyway to be published on next connection
+        }
         super.onDestroy();
     }
 
