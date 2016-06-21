@@ -30,7 +30,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
             Log.i("This is Msg "+i," Number");
             t_msg= msgs.get(i);
             if(db.messageAlreadyExist(t_msg) == false){
-                    db.createEntry(t_msg.getClient_ID(),t_msg.getMessage_ID(),t_msg.getZone_ID(), t_msg.getCreated_At(),t_msg.getLatitude(),
+                    db.createEntry(t_msg.getMessage_ID(),t_msg.getZone_ID(), t_msg.getCreated_At(),t_msg.getLatitude(),
                     t_msg.getLongitude(), t_msg.getExpired_At(),t_msg.getTopic(),
                     t_msg.getTitle(),t_msg.getMsg());
 
