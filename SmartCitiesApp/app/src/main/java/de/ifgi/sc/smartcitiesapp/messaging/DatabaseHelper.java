@@ -22,7 +22,7 @@ import de.ifgi.sc.smartcitiesapp.zone.Zone;
  * Created by SAAD on 5/18/2016.
  */
 public class DatabaseHelper {
-    private static final String  CLIENT_ID= "C_id";
+
     private static final String  MESSAGE_ID= "M_id";
     private static final String  ZONE_ID= "Z_id";
     private static final String  CREATED_AT= "Cr_time";
@@ -106,8 +106,7 @@ public class DatabaseHelper {
         }
 
         private void createMessagesTable(SQLiteDatabase db) {
-            String query="CREATE TABLE " + TABLE_NAME + "(" + CLIENT_ID +
-                    " TEXT NOT NULL, " + MESSAGE_ID + " TEXT NOT NULL, " +
+            String query="CREATE TABLE " + TABLE_NAME + "(" + MESSAGE_ID + " TEXT NOT NULL, " +
                     ZONE_ID + " TEXT NOT NULL, " + CREATED_AT + " DATETIME, "+LATITUDE + " DOUBLE, " + LONGITUDE + " DOUBLE, " +
                     EXPIRED_AT + " DATETIME, " + TITLE + " TEXT NOT NULL, " +
                     TOPIC + " TEXT NOT NULL, " + MESSAGE + " TEXT NOT NULL);";
@@ -230,10 +229,10 @@ public class DatabaseHelper {
     }
 
 
-    public void createEntry(String c_id, String m_id, String z_id, String cr_time, double lat,double lon, String  ex_time, String top, String title, String msg) {
+    public void createEntry(String m_id, String z_id, String cr_time, double lat,double lon, String  ex_time, String top, String title, String msg) {
         try {
             ContentValues cv = new ContentValues();
-            cv.put(CLIENT_ID, c_id);
+
             cv.put(MESSAGE_ID, m_id);
             cv.put(ZONE_ID, z_id);
             cv.put(CREATED_AT, cr_time);
@@ -275,7 +274,7 @@ public class DatabaseHelper {
             }
 
 
-            Message mes = new Message(res.getString(res.getColumnIndex(CLIENT_ID)),res.getString(res.getColumnIndex(MESSAGE_ID)),
+            Message mes = new Message(res.getString(res.getColumnIndex(MESSAGE_ID)),
                                     res.getString(res.getColumnIndex(ZONE_ID)), cr_date,
                                     Double.parseDouble(res.getString(res.getColumnIndex(LATITUDE))),
                                     Double.parseDouble(res.getString(res.getColumnIndex(LONGITUDE))),
