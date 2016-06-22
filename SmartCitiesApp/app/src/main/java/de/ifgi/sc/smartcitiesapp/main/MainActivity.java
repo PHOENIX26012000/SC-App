@@ -19,6 +19,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +34,7 @@ import de.ifgi.sc.smartcitiesapp.R;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
+import de.ifgi.sc.smartcitiesapp.zone.Zone;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -43,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-
+        tempForZones();
         // create some sample topics:
         Topic traffic = new Topic("Traffic");
         Topic sports = new Topic("Sports");
@@ -75,6 +78,49 @@ public class MainActivity extends AppCompatActivity {
                 MY_PERMISSION_ACCESS_COARSE_LOCATION);
     }
 
+    private void tempForMessage(){
+        Log.i("Main Activity","Activity Started");
+        Date date = new Date();
+        Log.i( date.toString(),"is Date");
+        Message m =new Message("356","23",date,36.989823,89.002323,date,"dads","dsad","sd");
+        Message m2 =new Message("356","23",date,34.45454,74.34324,date,"dads","dsad","sd");
+        ArrayList<Message> msgList= new ArrayList<Message>();
+        msgList.add(m);
+        msgList.add(m2);
+        Log.i("Array list ", "Created");
+
+        Messenger msgr=new Messenger(this);
+        msgr.updateMessengerFromConnect(msgList);
+        msgr.getAllMessages();
+
+    }
+    private void tempForZones(){
+        Log.i("Main Activity","Activity Started");
+        Date date = new Date();
+        Log.i( date.toString(),"is Date");
+        String[] topics={"food","sports","Cycling"};
+        ArrayList<LatLng> coords=new ArrayList<LatLng>();
+        coords.add(new LatLng(52.21312,44.123123));
+        coords.add(new LatLng(47.21312,80.123123));
+        coords.add(new LatLng(80.21312,90.123123));
+        Zone z1=new Zone("Gesherweg","5831",date.toString(),topics,coords);
+        Zone z2=new Zone("Gievenbeck","7861",date.toString(),topics,coords);
+        ArrayList<Zone> zoneList=new ArrayList<Zone>();
+        zoneList.add(z1);
+        zoneList.add(z2);
+        zoneList.add(z1);
+        Messenger msgr=new Messenger(this);
+        msgr.updateZonesInDatabase(zoneList);
+        zoneList=msgr.getAllZonesfromDatabase();
+        for(int i=0;i<zoneList.size();i++){
+            z1=zoneList.get(i);
+            Log.i("Zone id "+z1.getZoneID()," retreived");
+
+
+        }
+
+
+    }
 
     // --- Menu ---
 
