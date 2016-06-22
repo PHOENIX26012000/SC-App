@@ -2,22 +2,38 @@ package de.ifgi.sc.smartcitiesapp.messaging;
 
 
 import android.util.Log;
-
+import java.io.Serializable;
+import java.security.PrivateKey;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Message {
+public class Message implements Serializable {
 
 
     private String message_ID;
+
+    // Unique zone ID
     private String zone_ID;
+
+    // Date when message was created
     private String cr_Dt;
+
+    // Date when message expires
     private String ex_Dt;
+
+    // Topic of message
     private String topic;
+
+    // Title of the message
     private String title;
+
+    // Content of the message
     private String message;
+
+    // Related coordinates
     private double latitude;
     private double longitude;
+
     private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     public Message(String m_id, String z_id, Date crDt, double lat,double lon, Date exDt, String top, String tit, String msg){
