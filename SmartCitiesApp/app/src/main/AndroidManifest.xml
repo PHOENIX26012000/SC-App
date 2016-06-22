@@ -49,10 +49,10 @@
         </activity>
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
-            android:value="AIzaSyCo3Lpiyh96AncyVglM2ffRDq1bLs6kck4" />
+            android:value="AIzaSyDw7Pv8XpkB-XqeWt1wLpR2hZ4TDNiIcaw" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAkT5YnKIBFOjzdOee2SW2TLMycMrslwJg" />
+            android:value="AIzaSyDw7Pv8XpkB-XqeWt1wLpR2hZ4TDNiIcaw" />
     </application>
 
 </manifest>
