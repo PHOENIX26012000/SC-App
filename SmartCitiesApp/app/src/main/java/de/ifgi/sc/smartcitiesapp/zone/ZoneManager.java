@@ -36,14 +36,17 @@ public class ZoneManager {
     public ArrayList<Zone> getZone (LatLng position) {
         currentZones.clear();
         allZones = getAllZonesfromDatabase();
-
+        Log.i("Info","Position: "+position);
         for(int i=0; i< allZones.size();i++){
             zone = allZones.get(i);
             polygon = zone.getPolygon();
+            Log.i("Info","Comparing Zone: "+ zone.getZoneID());
             if(polyUtil.containsLocation(position,polygon,true)){
                 currentZones.add(zone);
+                Log.i("Info","CurrentZone: "+ zone.getZoneID());
             }
         }
+        Log.i("Info", "Current Zones checked");
         return currentZones;
     }
 
