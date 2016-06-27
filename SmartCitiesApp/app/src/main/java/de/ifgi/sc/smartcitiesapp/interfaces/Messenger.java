@@ -10,7 +10,7 @@ import de.ifgi.sc.smartcitiesapp.messaging.Message;
 public interface Messenger {
 
     /**
-     * To be called by Server/Peer2Peer Classes to update Messages in Messenger
+     * To be called by Messenger to add new retrieved Messages into UserInterface
      * @param msgs
      */
     public void updateMessengerFromConnect(ArrayList<Message> msgs);

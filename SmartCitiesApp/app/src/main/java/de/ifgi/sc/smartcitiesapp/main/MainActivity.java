@@ -19,6 +19,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -43,6 +45,7 @@ import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    protected App app;
 	private final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 10042; // just a random int resource.
 	
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -66,11 +69,17 @@ public class MainActivity extends AppCompatActivity {
         Topic sports = new Topic("Sports");
         Topic restaurants = new Topic("Restaurants");
         Topic shopping = new Topic("Shopping");
+        Topic cafe = new Topic("cafe");
+        Topic bars = new Topic("Bars");
         // add some msgs to the topics:
         traffic.addMsg("Traffic Jam in the city center");
+        traffic.addMsg("Better to walk rather than drive near.....");
         sports.addMsg("students beachvolleyball tournament at the castle");
         restaurants.addMsg("recyclable \\\"to-go\\\"-coffee cups at Franks Copy Shop");
+        restaurants.addMsg("Visit Paradise for a nice Biriyani");
         shopping.addMsg("Missed Black friday? Clothes are 100% off at my place");
+        cafe.addMsg("visit DarkCafe for a strong coffe");
+        bars.addMsg("Enjoy at ......... ");
 
         // store topics into sharedpref:
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -91,6 +100,28 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                 MY_PERMISSION_ACCESS_COARSE_LOCATION);
 
+        // Get the application instance of UIMessageManager
+        app = (App)getApplication();
+
+        // Read the value of a variable in UIMessageManager
+        ArrayList<Message> messages = UIMessageManager.getInstance().getActiveMessages();
+
+        Date cre = new Date();
+        Date exp = new Date();
+        Message msg1 = new Message("CLIENT_ID123","MESSAGE_ID123","ZONE_ID123",cre,49.7,7.5,exp,"Traffic","Traffic jam in the city center","A traffic jam in the city center because a busdriver crashed into the dom and the entire city explodeeeeed.BOOOOM!");
+        messages.add(msg1);
+
+        UIMessageManager.getInstance().enqueueMessagesIntoUI(messages);
+
+        //Zone-Select-Button:
+        Button btn_selectZone = (Button) findViewById(R.id.btn_selectZone);
+        btn_selectZone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentSettings = new Intent(getApplicationContext(), SelectZoneActivity.class);
+                startActivity(intentSettings);
+            }
+        });
     }
 
 
@@ -133,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onDestroy();
     }
+
 
 
     // --- Menu ---
@@ -208,5 +240,6 @@ public class MainActivity extends AppCompatActivity {
             // permissions this app might request
         }
     }
+
 
 }
