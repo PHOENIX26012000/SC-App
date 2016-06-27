@@ -106,8 +106,9 @@ public class MainActivity extends AppCompatActivity {
         // Read the value of a variable in UIMessageManager
         ArrayList<Message> messages = UIMessageManager.getInstance().getActiveMessages();
 
-        Date dat = new Date();
-        Message msg1 = new Message("CLIENT_ID123","MESSAGE_ID123",123,49.7,7.5,dat,"Traffic","Traffic jam in the city center","A traffic jam in the city center because a busdriver crashed into the dom and the entire city explodeeeeed.BOOOOM!");
+        Date cre = new Date();
+        Date exp = new Date();
+        Message msg1 = new Message("CLIENT_ID123","MESSAGE_ID123","ZONE_ID123",cre,49.7,7.5,exp,"Traffic","Traffic jam in the city center","A traffic jam in the city center because a busdriver crashed into the dom and the entire city explodeeeeed.BOOOOM!");
         messages.add(msg1);
 
         UIMessageManager.getInstance().enqueueMessagesIntoUI(messages);
