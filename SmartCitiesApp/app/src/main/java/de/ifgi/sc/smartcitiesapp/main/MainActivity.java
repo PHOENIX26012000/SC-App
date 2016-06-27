@@ -9,7 +9,10 @@ import android.location.LocationManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,23 +23,46 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.nearby.Nearby;
+
 import de.ifgi.sc.smartcitiesapp.R;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
+import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
+import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 
 
 public class MainActivity extends AppCompatActivity {
 
     protected App app;
-    private final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 10042; // just a random int resource.
+	private final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 10042; // just a random int resource.
+	
+    public static final String TAG = MainActivity.class.getSimpleName();
+
+    /**
+     * P2P Manager that handles the main p2p message sharing of the app
+     */
+    public P2PManager mP2PManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
+        // Start P2P Messaging
+        mP2PManager = new P2PManager(this);
 
         // create some sample topics:
         Topic traffic = new Topic("Traffic");
@@ -98,13 +124,57 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onResume() {
+        Log.i(TAG + " Main", "OnResume");
+        super.onResume();
+    }
+
+
+    @Override
+    protected void onPause() {
+        Log.i(TAG + " Main", "OnPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.i(TAG + " Main", "OnStart");
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.i(TAG + " Main", "OnStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i(TAG + " Main", "OnDestroy");
+        try {
+            mP2PManager.unpublish();
+            mP2PManager.unsubscribe();
+            mP2PManager.disconnect();
+        } catch (java.lang.IllegalStateException e) {
+            e.printStackTrace();
+            Log.i(MainActivity.TAG, "GoogleAPIClient is currently not connected");
+            // Add message to mPubMessages list anyway to be published on next connection
+        }
+        super.onDestroy();
+    }
+
+
+
     // --- Menu ---
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
