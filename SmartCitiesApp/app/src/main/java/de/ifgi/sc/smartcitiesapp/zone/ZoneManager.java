@@ -26,6 +26,7 @@ public class ZoneManager {
 
     public ZoneManager(Context c){
         ourContext = c;
+        currentZones = new ArrayList<>();
     }
 
     /**
@@ -33,20 +34,17 @@ public class ZoneManager {
      * @param position LatLng
      * @return ArrayList<Zone>
      */
-    public ArrayList<Zone> getZone (LatLng position) {
+    public ArrayList<Zone> getCurrentZones (LatLng position) {
         currentZones.clear();
         allZones = getAllZonesfromDatabase();
-        Log.i("Info","Position: "+position);
         for(int i=0; i< allZones.size();i++){
             zone = allZones.get(i);
             polygon = zone.getPolygon();
-            Log.i("Info","Comparing Zone: "+ zone.getZoneID());
-            if(polyUtil.containsLocation(position,polygon,true)){
+            Boolean inside = polyUtil.containsLocation(position,polygon,false);
+            if(inside){
                 currentZones.add(zone);
-                Log.i("Info","CurrentZone: "+ zone.getZoneID());
             }
         }
-        Log.i("Info", "Current Zones checked");
         return currentZones;
     }
 
