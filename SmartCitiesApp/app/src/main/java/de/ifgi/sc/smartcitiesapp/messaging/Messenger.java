@@ -112,41 +112,4 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
         return msgs;
     }
 
-    //This methods will store all zones in database having unique Zone_IDs.
-    //Zone with prematching zoneID will simply be ignored
-    public void updateZonesInDatabase(ArrayList<Zone> zones){
-        //Checking size of Arraylist
-        int size;
-        size= zones.size();
-        Zone zn;
-
-        DatabaseHelper db = new DatabaseHelper(ourContext);
-        db.open();
-
-        for(int i=0;i<size;i++){
-            Log.i("This is Zone  "+i," Number");
-            zn= zones.get(i);
-            if(db.zoneAlreadyExist(zn) == false){
-                db.createZoneEntry(zn.getName(),zn.getZoneID(),zn.getExpiredAt(),zn.getTopics(),zn.getPolygon());
-
-            }
-
-        }
-        // db.getAllMessages();
-        Log.i("Zones  "," stored");
-        db.close();
-
-    }
-
-    //This method will return all zones stored in Database
-    public ArrayList<Zone> getAllZonesfromDatabase(){
-        DatabaseHelper db = new DatabaseHelper(ourContext);
-        db.open();
-        ArrayList<Zone> zones= db.getAllZones_DB();
-        db.close();
-
-        return zones;
-    }
-
-
 }
