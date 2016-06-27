@@ -49,6 +49,7 @@ public class UIMessageManager implements MessageUIManager {
      */
     public synchronized ArrayList<Message> getActiveMessages(){
         return this.activeMessages;
+        //
     }
 
     public synchronized ArrayList<Message> getFilteredMessages(){

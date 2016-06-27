@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -83,6 +85,16 @@ public class MainActivity extends AppCompatActivity {
         messages.add(msg1);
 
         UIMessageManager.getInstance().enqueueMessagesIntoUI(messages);
+
+        //Zone-Select-Button:
+        Button btn_selectZone = (Button) findViewById(R.id.btn_selectZone);
+        btn_selectZone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentSettings = new Intent(getApplicationContext(), SelectZoneActivity.class);
+                startActivity(intentSettings);
+            }
+        });
     }
 
 
