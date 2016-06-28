@@ -34,9 +34,11 @@ public class TopicTabFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        // TODO: Create values as topics recieved from current zone
         String[] values = new String[] { "Traffic", "Sports", "Restaurants",
                 "Shopping", "placeholder1", "placeholder2", "placeholder3", "placeholder4",
                 "placeholder5", "placeholder6" };
+        // TODO: get 1st msg from each topic from current zone
         String[] msgs = new String[] { "Traffic Jam in the city center", "students beachvolleyball tournament at the castle",
                 "recyclable \"to-go\"-coffee cups at Franks Copy Shop", "Missed Black friday? Clothes are 100% off at my place",
                 "bla..","bla..","bla..","bla..","bla..","bla.."

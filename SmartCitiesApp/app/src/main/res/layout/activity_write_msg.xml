@@ -29,6 +29,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <EditText
+                android:id="@+id/edt_msgTitle"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
@@ -52,6 +53,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <EditText
+                android:id="@+id/edt_msgText"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
@@ -140,10 +142,13 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/btn_submitMsg"
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="1.5"
-            android:text="Submit" />
+            android:text="Submit"/>
+        <!--
+            android:enabled="false" -->
 
     </LinearLayout>
 

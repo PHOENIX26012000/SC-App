@@ -31,6 +31,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -58,8 +59,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
+        // Create the application context and its global state variables.
+        app = (App)getApplication();
 
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
@@ -71,8 +74,15 @@ public class MainActivity extends AppCompatActivity {
         Topic shopping = new Topic("Shopping");
         Topic cafe = new Topic("cafe");
         Topic bars = new Topic("Bars");
+
         // add some msgs to the topics:
-        traffic.addMsg("Traffic Jam in the city center");
+        long expTime = System.currentTimeMillis()+1000*60*((int)Math.random()*7*24*60);
+        Date expDate = new Date(expTime);
+        Message m1 = new Message("Client_ID??", UUID.randomUUID().toString(),"ZONE ID??", new Date(),
+                (Math.random()/2+49), (Math.random()/2+7.5), expDate,"Traffic", "Traffic Jam in the City center", "Explosions, fireballz, collisions, burning people.");
+        traffic.addMsg(m1);
+
+        /**
         traffic.addMsg("Better to walk rather than drive near.....");
         sports.addMsg("students beachvolleyball tournament at the castle");
         restaurants.addMsg("recyclable \\\"to-go\\\"-coffee cups at Franks Copy Shop");
@@ -80,10 +90,7 @@ public class MainActivity extends AppCompatActivity {
         shopping.addMsg("Missed Black friday? Clothes are 100% off at my place");
         cafe.addMsg("visit DarkCafe for a strong coffe");
         bars.addMsg("Enjoy at ......... ");
-
-        // store topics into sharedpref:
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = sharedPref.edit();
+         */
 
         FragmentTabHost mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
@@ -99,19 +106,6 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions( MainActivity.this,
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                 MY_PERMISSION_ACCESS_COARSE_LOCATION);
-
-        // Get the application instance of UIMessageManager
-        app = (App)getApplication();
-
-        // Read the value of a variable in UIMessageManager
-        ArrayList<Message> messages = UIMessageManager.getInstance().getActiveMessages();
-
-        Date cre = new Date();
-        Date exp = new Date();
-        Message msg1 = new Message("CLIENT_ID123","MESSAGE_ID123","ZONE_ID123",cre,49.7,7.5,exp,"Traffic","Traffic jam in the city center","A traffic jam in the city center because a busdriver crashed into the dom and the entire city explodeeeeed.BOOOOM!");
-        messages.add(msg1);
-
-        UIMessageManager.getInstance().enqueueMessagesIntoUI(messages);
 
         //Zone-Select-Button:
         Button btn_selectZone = (Button) findViewById(R.id.btn_selectZone);
