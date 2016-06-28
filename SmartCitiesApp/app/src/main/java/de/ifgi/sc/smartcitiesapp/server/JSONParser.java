@@ -10,10 +10,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
+import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
-/**
- * Created by Clara on 09.05.2016.
- */
+
 
 public class JSONParser {
 
@@ -38,8 +37,10 @@ public class JSONParser {
     String msg = new String();
     Message message = new Message();
     Zone zone = new Zone();
+    ZoneManager zM = new ZoneManager();
     //LatLng location = new LatLng();
     ArrayList<Zone> zonelist = new ArrayList<>();
+
     JSONArray jsonZoneArray = new JSONArray();
     JSONObject zoneMsg = new JSONObject();
 
@@ -180,7 +181,7 @@ public class JSONParser {
         // todo testing the method
     }
 
-    public ArrayList<Zone> parseJSONtoZone(JSONObject jsonObject){
+    public void parseJSONtoZone(JSONObject jsonObject){
 
     this.jsonObject=jsonObject;
     this.zonelist.clear();
@@ -197,13 +198,12 @@ public class JSONParser {
 
 
 
-                zone.name(name);
-                zone.zoneID(zonerID);
-                zone.expiredAt(expiredAt);
-                zone.polygon(polygon);
-                zone.topics(Topic);
 
-                this.zonelist.add(zone);
+                zonelist.add(expiredAt);
+                zonelist.add(polygon);
+                zonelist.add(Topic);
+
+                zM.updateZones(zonelist);
 
             }
 
@@ -213,7 +213,7 @@ public class JSONParser {
             e.printStackTrace();
             logger.log(Level.WARNING, "no such JSONObject");
         }
-        return this.zonelist;
+
     }
 
 }
