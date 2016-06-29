@@ -35,6 +35,7 @@ import java.util.UUID;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.nearby.Nearby;
 
 import de.ifgi.sc.smartcitiesapp.R;
@@ -42,21 +43,26 @@ import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
+import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
+import de.ifgi.sc.smartcitiesapp.zone.Zone;
+import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 
 public class MainActivity extends AppCompatActivity {
 
     protected App app;
 	private final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 10042; // just a random int resource.
-	
+
     public static final String TAG = MainActivity.class.getSimpleName();
+
+    private Zone current_selected_zone;
+    private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    private String clientID;
 
     /**
      * P2P Manager that handles the main p2p message sharing of the app
      */
     public P2PManager mP2PManager;
-
-    public Messenger mMessenger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,34 +75,89 @@ public class MainActivity extends AppCompatActivity {
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
 
+        // create an example zone:
+        long expDateMillis = new Date().getTime()+1000*3600*24*14; // 2 weeks
+        Date expDate = new Date(expDateMillis);
+        String[] topics = new String[3];
+        topics[0] = "Traffic"; topics[1] = "Sports"; topics[2] = "Restaurants";
+        ArrayList<LatLng> pts = new ArrayList<LatLng>();
+        pts.add(new LatLng(51.9607, 7.6261));
+        pts.add(new LatLng(51.96, 7.617));
+        pts.add(new LatLng(51.978,7.622));
+        Zone zone1 = new Zone("examplezone1",UUID.randomUUID().toString(),D_format.format(expDate), topics,pts);
+        // create another example zone:
+        expDateMillis = new Date().getTime()+1000*3600*3; // 3 hours
+        expDate = new Date(expDateMillis);
+        topics = new String[2];
+        topics[0] = "Traffic"; topics[1] = "Shopping";
+        pts = new ArrayList<LatLng>();
+        pts.add(new LatLng(51.9607, 7.6261));
+        pts.add(new LatLng(51.978,7.622));
+        pts.add(new LatLng(51.968,7.631));
+        Zone zone2 = new Zone("examplezone2",UUID.randomUUID().toString(),D_format.format(expDate), topics,pts);
+
+        // add zone1, zone2 to ZoneManager:
+        ArrayList<Zone> zones = new ArrayList<Zone>();
+        zones.add(zone1);
+        zones.add(zone2);
+        // done once, so do not repeat the next line at several app starts!
+        // ZoneManager.getInstance().updateZonesInDatabase(zones);
+
+        // test if the saved zones are loaded from the ZoneManager methods:
+        ArrayList<Zone> zonesFromDB = new ArrayList<Zone>();
+        zonesFromDB = ZoneManager.getInstance().getAllZonesfromDatabase();
+        for (Zone z : zonesFromDB){
+            Log.d(TAG,"zone from db: "+z.getName());
+        }
+
+        // generate the Client_ID:
+        clientID = UUID.randomUUID().toString();
+
+        // create an example msg:
+        Date creationDate = new Date(); // now
+        expDateMillis = creationDate.getTime()+1000*3600*18; // 18 hours
+        expDate = new Date(expDateMillis);
+        Message msg1 = new Message(
+                clientID, UUID.randomUUID().toString(),
+                zonesFromDB.get(0).getZoneID(), creationDate,
+                51.9707, 7.6281, expDate, "Traffic", "Traffic Jam in the city center",
+                "There is a traffic jam in the city center"
+        );
+
+        // send msg1 to the Messenger:
+        ArrayList<Message> msgs = new ArrayList<Message>();
+        msgs.add(msg1);
+        // once done, dont repeat the next line at several app starts!
+        // Messenger.getInstance().updateMessengerFromConnect(msgs);
+
+        // test if the saved msgs are loaded from the Messenger methods:
+        ArrayList<Message> msgsFromMessenger = new ArrayList<Message>();
+        msgsFromMessenger = Messenger.getInstance().getAllMessages();
+        for (Message m : msgsFromMessenger){
+            Log.d(TAG,"msg from Messenger:" + m.getTitle()+":"+m.getMsg());
+        }
+
+        zonesFromDB = ZoneManager.getInstance().getAllZonesfromDatabase();
+        for (Zone z : zonesFromDB){
+            Log.d(TAG,"zone from db: "+z.getName());
+        }
+
+        try {
+            current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+        } catch (NoZoneCurrentlySelectedException e){
+            // what do, if no zone is currently selected?
+            // select the first zone of the zonemanager
+            current_selected_zone = zonesFromDB.get(0);
+            ZoneManager.getInstance().setCurrentZone(current_selected_zone);
+        }
+
         // Start Messenger
-        mMessenger = new Messenger(getApplicationContext(), mP2PManager);
+        Messenger mMessenger = new Messenger(getApplicationContext(), mP2PManager);
         mMessenger.initialStartup(); // do server connection ...
 
-        // create some sample topics:
-        Topic traffic = new Topic("Traffic");
-        Topic sports = new Topic("Sports");
-        Topic restaurants = new Topic("Restaurants");
-        Topic shopping = new Topic("Shopping");
-        Topic cafe = new Topic("cafe");
-        Topic bars = new Topic("Bars");
-
-        // add some msgs to the topics:
-        long expTime = System.currentTimeMillis()+1000*60*((int)Math.random()*7*24*60);
-        Date expDate = new Date(expTime);
-        Message m1 = new Message("Client_ID??", UUID.randomUUID().toString(),"ZONE ID??", new Date(),
-                (Math.random()/2+49), (Math.random()/2+7.5), expDate,"Traffic", "Traffic Jam in the City center", "Explosions, fireballz, collisions, burning people.");
-        traffic.addMsg(m1);
-
-        /**
-        traffic.addMsg("Better to walk rather than drive near.....");
-        sports.addMsg("students beachvolleyball tournament at the castle");
-        restaurants.addMsg("recyclable \\\"to-go\\\"-coffee cups at Franks Copy Shop");
-        restaurants.addMsg("Visit Paradise for a nice Biriyani");
-        shopping.addMsg("Missed Black friday? Clothes are 100% off at my place");
-        cafe.addMsg("visit DarkCafe for a strong coffe");
-        bars.addMsg("Enjoy at ......... ");
-         */
+        // use a setter instead?
+        // Messenger.getInstance().setP2PManager(mP2PManager);
+        // Messenger.getInstance().initialStartup();
 
         FragmentTabHost mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
@@ -119,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intentSettings = new Intent(getApplicationContext(), SelectZoneActivity.class);
-                startActivity(intentSettings);
+                startActivityForResult(intentSettings, 1);
             }
         });
     }
@@ -240,6 +301,5 @@ public class MainActivity extends AppCompatActivity {
             // permissions this app might request
         }
     }
-
 
 }

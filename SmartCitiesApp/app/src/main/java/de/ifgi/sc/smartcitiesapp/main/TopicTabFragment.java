@@ -18,13 +18,22 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
+import java.util.ArrayList;
+
 import de.ifgi.sc.smartcitiesapp.R;
+import de.ifgi.sc.smartcitiesapp.messaging.Message;
+import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
+import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
+import de.ifgi.sc.smartcitiesapp.zone.Zone;
+import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 public class TopicTabFragment extends ListFragment {
 
     private View v;
     private Button btn_writeMsg;
+    private Zone current_selected_zone;
+    private ArrayList<Message> current_msgs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,16 +43,37 @@ public class TopicTabFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // TODO: Create values as topics recieved from current zone
-        String[] values = new String[] { "Traffic", "Sports", "Restaurants",
-                "Shopping", "placeholder1", "placeholder2", "placeholder3", "placeholder4",
-                "placeholder5", "placeholder6" };
-        // TODO: get 1st msg from each topic from current zone
-        String[] msgs = new String[] { "Traffic Jam in the city center", "students beachvolleyball tournament at the castle",
-                "recyclable \"to-go\"-coffee cups at Franks Copy Shop", "Missed Black friday? Clothes are 100% off at my place",
-                "bla..","bla..","bla..","bla..","bla..","bla.."
-        };
-        MySimpleArrayAdapter adapter = new MySimpleArrayAdapter(getActivity(), values, msgs);
+
+        // Get the current selected zone:
+        try {
+            current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+        } catch (NoZoneCurrentlySelectedException e){
+            e.printStackTrace();
+        }
+        // get all topics within that zone:
+        String[] topics = current_selected_zone.getTopics();
+        Boolean[] done_topics = new Boolean[topics.length+1];
+
+        // get 1st msg from each topics:
+        String[] msgs = new String[topics.length+1];
+        current_msgs = Messenger.getInstance().getAllMessages();
+        // for each topic i in the current selected zone:
+        for (int i=0;i<topics.length;i++){
+            done_topics[i] = false;
+            // for each message m from the Messenger:
+            for (Message m : current_msgs){
+                // if m is inside current selected zone
+                if (m.getZone_ID().equals(current_selected_zone.getZoneID()))
+                    // if m has topic i and topic i undone
+                    if ((m.getTopic().equals(topics[i])) && (!done_topics[i])) {
+                        // msgs[i] = m.msgtext;
+                        msgs[i] = m.getMsg();
+                        // topic i done.
+                        done_topics[i] = true;
+                    }
+            }
+        }
+        MySimpleArrayAdapter adapter = new MySimpleArrayAdapter(getActivity(), topics, msgs);
         setListAdapter(adapter);
     }
 

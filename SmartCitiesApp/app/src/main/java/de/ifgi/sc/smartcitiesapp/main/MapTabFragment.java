@@ -30,7 +30,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
 import de.ifgi.sc.smartcitiesapp.R;
+import de.ifgi.sc.smartcitiesapp.messaging.Message;
+import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
+import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
+import de.ifgi.sc.smartcitiesapp.zone.Zone;
+import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 public class MapTabFragment extends Fragment implements OnMapReadyCallback {
 
@@ -38,11 +45,34 @@ public class MapTabFragment extends Fragment implements OnMapReadyCallback {
     private SupportMapFragment mapFragment;
     private GoogleMap mMap;
     private Context mContext;
+    private Zone current_selected_zone;
+    private ArrayList<Message> msgs;
+    private ArrayList<Message> msgs_in_current_zone;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity();
+
+        // Get the current selected zone:
+        try {
+            current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+        } catch (NoZoneCurrentlySelectedException e){
+            // TODO: if no zone is currently selected
+            e.printStackTrace();
+        }
+
+        // get all msgs for this current selected zone:
+        msgs = Messenger.getInstance().getAllMessages();
+        msgs_in_current_zone = new ArrayList<Message>();
+        // for each message m from the Messenger:
+        for (Message m : msgs){
+            // if m is inside current selected zone
+            if (m.getZone_ID().equals(current_selected_zone.getZoneID()))
+                    // TODO: and m has location information:
+                    //&& ())
+                msgs_in_current_zone.add(m);
+        }
     }
 
     @Override
@@ -100,14 +130,22 @@ public class MapTabFragment extends Fragment implements OnMapReadyCallback {
             Log.d("maptab","Security Exception: " + e);
             // request location permission to the user:
 
-
         } finally {
 
         }
 
-        // Add a marker in Germany and move the camera
-        LatLng germany = new LatLng(51.9615, 7.6225);
+        // for each msg m in the current selected zone
+        for (Message m : msgs_in_current_zone){
+            // add a marker on the map:
+            Marker currentMarker = mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(m.getLatitude(), m.getLongitude()))
+                .title(m.getTitle())
+                .snippet(m.getMsg()));
+            // show the info-window:
+            currentMarker.showInfoWindow();
+        }
 
+        // change the showInfoWindow behaviour:
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
             @Override
@@ -137,21 +175,6 @@ public class MapTabFragment extends Fragment implements OnMapReadyCallback {
                 return info;
             }
         });
-
-        // some example messages on the map:
-        Marker trafficjam = mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(51.96, 7.62))
-                .title("Traffic")
-                .snippet("Traffic Jam in the city center"));
-
-        trafficjam.showInfoWindow();
-
-        Marker coffeecups = mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(51.963, 7.625))
-                .title("Restaurant")
-                .snippet("Coffee “To-Go” with re-" + "\n" + "cycling cups at peet’s coffee."));
-
-        coffeecups.showInfoWindow();
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
