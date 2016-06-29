@@ -1,23 +1,21 @@
 package de.ifgi.sc.smartcitiesapp.server;
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
-import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 
 
 public class JSONParser {
-
-    private static final Logger logger =
-            Logger.getLogger("JSONParser");
 
     ArrayList<Message> msglist = new ArrayList<Message>();
 
@@ -38,7 +36,7 @@ public class JSONParser {
     Double longitude;
     String msg = new String();
     Message message;
-    Zone zone;
+    private Zone zone;
     ArrayList<Zone> zonelist = new ArrayList<>();
 
     JSONArray jsonZoneArray = new JSONArray();
@@ -69,7 +67,7 @@ public class JSONParser {
 
         this.msglist = msglist;
 
-        //clear the jsonObject
+        //clear the jsonObject and the jsonArrays
         this.jsonObject.remove("Messages");
         for(int j = 0; j<jsonMsgArray.length();j++) {
             this.jsonMsgArray.remove(j);
@@ -82,6 +80,9 @@ public class JSONParser {
         this.jsonMsg.remove("Title");
         this.jsonMsg.remove("Message");
         this.jsonLoc.remove("Coordinate");
+        for(int j = 0; j<jsonCoords.length();j++){
+            this.jsonCoords.remove(j);
+        }
 
         // get Messages from msglist and write them into the jsonArray
         for(int i = 0; i < msglist.size(); i++){
@@ -100,7 +101,6 @@ public class JSONParser {
             longitude = message.getLongitude();
             latitude = message.getLatitude();
 
-
             try {
                 this.jsonMsg.put("Client-id", clientID);
                 this.jsonMsg.put("Message-id", messageID);
@@ -110,17 +110,16 @@ public class JSONParser {
                 this.jsonMsg.put("Topic", topic);
                 this.jsonMsg.put("Title", title);
                 this.jsonMsg.put("Message", msg);
-                this.jsonMsg.put("Location",jsonLoc);
 
-                // todo implementing location proberly
-                this.jsonMsg.put("Latitude",latitude);
-                this.jsonMsg.put("Longitude",longitude);
+                this.jsonCoords.put(0,latitude+","+longitude);
+                this.jsonLoc.put("Coordinate",jsonCoords);
+                this.jsonMsg.put("Location",jsonLoc);
 
                 this.jsonMsgArray.put(i,jsonMsg);
 
             } catch (JSONException e) {
                 e.printStackTrace();
-                logger.log(Level.WARNING,"Writing into Jsonarray didn't work");
+                Log.w("msgToJson","Writing into Jsonarray of Messages didn't work");
             }
 
         }
@@ -129,7 +128,7 @@ public class JSONParser {
             jsonObject.put("Messages",jsonMsgArray);
         } catch (JSONException e) {
             e.printStackTrace();
-            logger.log(Level.WARNING,"putting jsonArray into jsonObject didn't work");
+            Log.w("MsgToJSON","putting jsonArray into jsonObject didn't work");
         }
         return jsonObject;
     }
@@ -182,7 +181,7 @@ public class JSONParser {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            logger.log(Level.WARNING, "no such JSONObject");
+            Log.w("JsonToMessage", "no such JSONObject");
         }
 
         return this.msglist;
@@ -216,7 +215,7 @@ public class JSONParser {
         }
         catch (JSONException e) {
             e.printStackTrace();
-            logger.log(Level.WARNING, "no such JSONObject");
+            Log.w("JsonToZone", "no such JSONObject");
         }
 
     }
