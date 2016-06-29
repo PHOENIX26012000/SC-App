@@ -84,7 +84,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         mActivity = activity;
         mPubMessages = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message>();
         mReceivedMessages = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message>();
-        mMessenger = new de.ifgi.sc.smartcitiesapp.messaging.Messenger(mActivity.getApplicationContext());
+        mMessenger = new de.ifgi.sc.smartcitiesapp.messaging.Messenger(mActivity.getApplicationContext(), this);
         init();
     }
 
