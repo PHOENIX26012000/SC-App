@@ -20,12 +20,14 @@ import com.google.android.gms.nearby.messages.SubscribeCallback;
 import com.google.android.gms.nearby.messages.SubscribeOptions;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import de.ifgi.sc.smartcitiesapp.interfaces.Connection;
+import de.ifgi.sc.smartcitiesapp.interfaces.Messenger;
 import de.ifgi.sc.smartcitiesapp.main.MainActivity;
 
 
@@ -35,11 +37,14 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
     private GoogleApiClient mGoogleApiClient;
     private MessageListener mMessageListener;
     private Boolean subscribed = false;
+    private Messenger mMessenger;
 
     /**
      * The {@link Message} object used to broadcast information about the device to nearby devices.
      */
     private ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mPubMessages;
+
+    private ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mReceivedMessages;
 
     /**
      * Sets the publishing time in seconds
@@ -78,6 +83,8 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
     public P2PManager(MainActivity activity) {
         mActivity = activity;
         mPubMessages = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message>();
+        mReceivedMessages = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message>();
+        mMessenger = new de.ifgi.sc.smartcitiesapp.messaging.Messenger(mActivity.getApplicationContext());
         init();
     }
 
@@ -94,7 +101,8 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
                 de.ifgi.sc.smartcitiesapp.messaging.Message messageIn;
                 try {
                     messageIn = Serializer.deserialize(message.getContent());
-
+                    mReceivedMessages.clear();
+                    mReceivedMessages.add(messageIn);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.i(MainActivity.TAG, "Could not read message");
@@ -105,7 +113,9 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
                     return;
                 }
                 Log.d(MainActivity.TAG + " P2P", "Found message: " + messageIn);
-                //TODO forward message to messenger
+
+                // forward message to messenger
+                mMessenger.updateMessengerFromConnect(mReceivedMessages);
             }
 
             @Override
