@@ -13,7 +13,7 @@ import de.ifgi.sc.smartcitiesapp.zone.Zone;
  */
 public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger {
 
-    private final Context ourContext;
+    private Context ourContext;
 
     public static Messenger instance; // global singleton instance
 

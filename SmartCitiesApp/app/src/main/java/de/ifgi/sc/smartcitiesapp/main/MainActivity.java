@@ -64,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
      */
     public P2PManager mP2PManager;
 
-    public Messenger mMessenger;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -154,33 +152,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Start Messenger
-        mMessenger = new Messenger(getApplicationContext(), mP2PManager);
+        Messenger mMessenger = new Messenger(getApplicationContext(), mP2PManager);
         mMessenger.initialStartup(); // do server connection ...
 
-        // create some sample topics:
-        Topic traffic = new Topic("Traffic");
-        Topic sports = new Topic("Sports");
-        Topic restaurants = new Topic("Restaurants");
-        Topic shopping = new Topic("Shopping");
-        Topic cafe = new Topic("cafe");
-        Topic bars = new Topic("Bars");
-
-        // add some msgs to the topics:
-        long expTime = System.currentTimeMillis()+1000*60*((int)Math.random()*7*24*60);
-        Date expDate = new Date(expTime);
-        Message m1 = new Message("Client_ID??", UUID.randomUUID().toString(),"ZONE ID??", new Date(),
-                (Math.random()/2+49), (Math.random()/2+7.5), expDate,"Traffic", "Traffic Jam in the City center", "Explosions, fireballz, collisions, burning people.");
-        traffic.addMsg(m1);
-
-        /**
-        traffic.addMsg("Better to walk rather than drive near.....");
-        sports.addMsg("students beachvolleyball tournament at the castle");
-        restaurants.addMsg("recyclable \\\"to-go\\\"-coffee cups at Franks Copy Shop");
-        restaurants.addMsg("Visit Paradise for a nice Biriyani");
-        shopping.addMsg("Missed Black friday? Clothes are 100% off at my place");
-        cafe.addMsg("visit DarkCafe for a strong coffe");
-        bars.addMsg("Enjoy at ......... ");
-         */
+        // use a setter instead?
+        // Messenger.getInstance().setP2PManager(mP2PManager);
+        // Messenger.getInstance().initialStartup();
 
         FragmentTabHost mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
