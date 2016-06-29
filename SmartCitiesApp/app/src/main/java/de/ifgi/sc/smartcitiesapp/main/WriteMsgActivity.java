@@ -35,6 +35,10 @@ import java.util.UUID;
 
 import de.ifgi.sc.smartcitiesapp.R;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
+import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
+import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
+import de.ifgi.sc.smartcitiesapp.zone.Zone;
+import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 public class WriteMsgActivity extends AppCompatActivity {
 
@@ -52,6 +56,7 @@ public class WriteMsgActivity extends AppCompatActivity {
     private Date msg_exp = null;
     private Date msg_create = null;
     private String msg_topic = "";
+    private Zone current_selected_zone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,20 +76,29 @@ public class WriteMsgActivity extends AppCompatActivity {
 
         // Add categories to the spinner:
         Spinner spn_category = (Spinner) findViewById(R.id.spn_category);
-        final String[] values = new String[]{"Traffic", "Sports", "Restaurants",
-                "Shopping", "placeholder1", "placeholder2", "placeholder3", "placeholder4",
-                "placeholder5", "placeholder6"};
+
+        // Get the current selected zone:
+        try {
+            current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+        } catch (NoZoneCurrentlySelectedException e){
+            // TODO: if no zone is currently selected
+            e.printStackTrace();
+        }
+
+        // get all topics within that zone:
+        String[] topics = current_selected_zone.getTopics();
+
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this,
-                android.R.layout.simple_spinner_item, values);
+                android.R.layout.simple_spinner_item, topics);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spn_category.setAdapter(adapter);
         // check out position of selected_topic in values:
         int index = 0;
-        for (int i = 0; i < values.length; i++) {
-            if (selected_topic.equals(values[i])) {
+        for (int i = 0; i < topics.length; i++) {
+            if (selected_topic.equals(topics[i])) {
                 index = i;
                 break;
             }
@@ -189,21 +203,20 @@ public class WriteMsgActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isFormFilled()){
                     Message newMessage = null;
-                    Log.d("HappyShare","Title:"+msg_title+", Text:"+msg_txt+", " +
-                            ", CreateDate:"+msg_create+", ExpireDate:"+msg_exp+", Topic:"+msg_topic);
+
+                    String zoneID = current_selected_zone.getZoneID();
                     String msg_id = UUID.randomUUID().toString();
                     if (msg_pos!=null){
-                        Log.d("HappyShare", ", LatLng:"+ msg_pos.latitude+","+msg_pos.longitude);
-                        newMessage = new Message("CLIENT_ID123",msg_id,"ZONE_ID123",msg_create,msg_pos.latitude,msg_pos.longitude,msg_exp,msg_topic, msg_title, msg_txt);
+                        // TODO: Take the Client ID from somewhere else :)
+                        newMessage = new Message(UUID.randomUUID().toString(),msg_id, zoneID,msg_create,msg_pos.latitude,msg_pos.longitude,msg_exp,msg_topic, msg_title, msg_txt);
                     } else {
-                        // TODO: Create msg without LatLng information
                         // newMessage = new Message but without lat and lon .. er ..?
                     }
 
                     // create new UUID
                     ArrayList<Message> msgs = new ArrayList<Message>();
                     msgs.add(newMessage);
-                    UIMessageManager.getInstance().enqueueMessagesIntoUI(msgs);
+                    Messenger.getInstance().updateMessengerFromConnect(msgs);
                     finish();
                 } else {
                     Toast.makeText(getApplicationContext(), "You must set a title and a text!", Toast.LENGTH_LONG).show();

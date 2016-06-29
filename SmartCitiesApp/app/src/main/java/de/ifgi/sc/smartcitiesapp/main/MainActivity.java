@@ -43,6 +43,7 @@ import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
+import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
 import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
@@ -54,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
+    private Zone current_selected_zone;
     private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    private String clientID;
 
     /**
      * P2P Manager that handles the main p2p message sharing of the app
@@ -82,16 +85,70 @@ public class MainActivity extends AppCompatActivity {
         pts.add(new LatLng(51.96, 7.617));
         pts.add(new LatLng(51.978,7.622));
         Zone zone1 = new Zone("examplezone1",UUID.randomUUID().toString(),D_format.format(expDate), topics,pts);
+        // create another example zone:
+        expDateMillis = new Date().getTime()+1000*3600*3; // 3 hours
+        expDate = new Date(expDateMillis);
+        topics = new String[2];
+        topics[0] = "Traffic"; topics[1] = "Shopping";
+        pts = new ArrayList<LatLng>();
+        pts.add(new LatLng(51.9607, 7.6261));
+        pts.add(new LatLng(51.978,7.622));
+        pts.add(new LatLng(51.968,7.631));
+        Zone zone2 = new Zone("examplezone2",UUID.randomUUID().toString(),D_format.format(expDate), topics,pts);
 
-        // add zone1 to ZoneManager:
+        // add zone1, zone2 to ZoneManager:
         ArrayList<Zone> zones = new ArrayList<Zone>();
         zones.add(zone1);
-        // done once, so do not repeat the next line!
-        //ZoneManager.getInstance().updateZonesInDatabase(zones);
+        zones.add(zone2);
+        // done once, so do not repeat the next line at several app starts!
+        // ZoneManager.getInstance().updateZonesInDatabase(zones);
+
+        // test if the saved zones are loaded from the ZoneManager methods:
         ArrayList<Zone> zonesFromDB = new ArrayList<Zone>();
         zonesFromDB = ZoneManager.getInstance().getAllZonesfromDatabase();
         for (Zone z : zonesFromDB){
             Log.d(TAG,"zone from db: "+z.getName());
+        }
+
+        // generate the Client_ID:
+        clientID = UUID.randomUUID().toString();
+
+        // create an example msg:
+        Date creationDate = new Date(); // now
+        expDateMillis = creationDate.getTime()+1000*3600*18; // 18 hours
+        expDate = new Date(expDateMillis);
+        Message msg1 = new Message(
+                clientID, UUID.randomUUID().toString(),
+                zonesFromDB.get(0).getZoneID(), creationDate,
+                51.9707, 7.6281, expDate, "Traffic", "Traffic Jam in the city center",
+                "There is a traffic jam in the city center"
+        );
+
+        // send msg1 to the Messenger:
+        ArrayList<Message> msgs = new ArrayList<Message>();
+        msgs.add(msg1);
+        // once done, dont repeat the next line at several app starts!
+        // Messenger.getInstance().updateMessengerFromConnect(msgs);
+
+        // test if the saved msgs are loaded from the Messenger methods:
+        ArrayList<Message> msgsFromMessenger = new ArrayList<Message>();
+        msgsFromMessenger = Messenger.getInstance().getAllMessages();
+        for (Message m : msgsFromMessenger){
+            Log.d(TAG,"msg from Messenger:" + m.getTitle()+":"+m.getMsg());
+        }
+
+        zonesFromDB = ZoneManager.getInstance().getAllZonesfromDatabase();
+        for (Zone z : zonesFromDB){
+            Log.d(TAG,"zone from db: "+z.getName());
+        }
+
+        try {
+            current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+        } catch (NoZoneCurrentlySelectedException e){
+            // what do, if no zone is currently selected?
+            // select the first zone of the zonemanager
+            current_selected_zone = zonesFromDB.get(0);
+            ZoneManager.getInstance().setCurrentZone(current_selected_zone);
         }
 
         FragmentTabHost mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
@@ -115,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intentSettings = new Intent(getApplicationContext(), SelectZoneActivity.class);
-                startActivity(intentSettings);
+                startActivityForResult(intentSettings, 1);
             }
         });
     }
@@ -236,6 +293,5 @@ public class MainActivity extends AppCompatActivity {
             // permissions this app might request
         }
     }
-
 
 }

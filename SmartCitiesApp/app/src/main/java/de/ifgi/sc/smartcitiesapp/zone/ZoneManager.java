@@ -123,5 +123,10 @@ public class ZoneManager {
         this.currentZone = zone;
     }
 
+    public synchronized Zone getCurrentZone() throws NoZoneCurrentlySelectedException{
+        if (currentZone!=null)
+            return currentZone;
+        throw new NoZoneCurrentlySelectedException();
+    }
 
 }

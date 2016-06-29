@@ -2,6 +2,7 @@ package de.ifgi.sc.smartcitiesapp.main;
 
 import android.app.Application;
 
+import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 /**
@@ -24,6 +25,7 @@ public class App extends Application {
 
         UIMessageManager.initInstance();    // Singleton of UIMessageManager
         ZoneManager.initInstance(this);     // Singleton of ZoneManager
+        Messenger.initInstance(this);
 
         // add your singleton classes below:
 

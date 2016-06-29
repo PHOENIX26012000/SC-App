@@ -12,12 +12,29 @@ import de.ifgi.sc.smartcitiesapp.zone.Zone;
  */
 public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger {
 
+    private Context ourContext;
 
-    private final Context ourContext;
+    public static Messenger instance; // global singleton instance
+
+    public static void initInstance(Context c){
+        if (instance == null){
+            // Create the instance
+            instance = new Messenger();
+            instance.ourContext = c;
+        }
+    }
+
+    public Messenger(){
+    }
+
+    public static Messenger getInstance(){
+        // Return the instance
+        return instance;
+    }
 
 
     @Override
-    public void updateMessengerFromConnect(ArrayList<Message> msgs){
+    public synchronized void updateMessengerFromConnect(ArrayList<Message> msgs){
         //Checking size of Arraylist
         int size;
         size= msgs.size();
@@ -43,17 +60,13 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
     }
 
     //Need to be implemented yet
-
-
     @Override
-    public void updateMessengerFromUI(ArrayList<Message> msgs) {
+    public synchronized void updateMessengerFromUI(ArrayList<Message> msgs) {
 
     }
-    public Messenger(Context C){
-            ourContext = C;
-    }
 
-    public ArrayList<Message> getAllMessages(){
+
+    public synchronized ArrayList<Message> getAllMessages(){
         DatabaseHelper db = new DatabaseHelper(ourContext);
         db.open();
         ArrayList<Message> msgs= db.getAllMessages();
