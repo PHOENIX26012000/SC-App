@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -28,7 +29,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.UUID;
+
 import de.ifgi.sc.smartcitiesapp.R;
+import de.ifgi.sc.smartcitiesapp.messaging.Message;
 
 public class WriteMsgActivity extends AppCompatActivity {
 
@@ -40,6 +46,12 @@ public class WriteMsgActivity extends AppCompatActivity {
     private boolean markerPlacedPreviously = false;
 
     private String selected_topic;
+    private String msg_title = "";
+    private String msg_txt = "";
+    private LatLng msg_pos = null;
+    private Date msg_exp = null;
+    private Date msg_create = null;
+    private String msg_topic = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +183,96 @@ public class WriteMsgActivity extends AppCompatActivity {
                 }
             }
         });
+        Button btn_submit =  (Button) findViewById(R.id.btn_submitMsg);
+        btn_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isFormFilled()){
+                    Message newMessage = null;
+                    Log.d("HappyShare","Title:"+msg_title+", Text:"+msg_txt+", " +
+                            ", CreateDate:"+msg_create+", ExpireDate:"+msg_exp+", Topic:"+msg_topic);
+                    String msg_id = UUID.randomUUID().toString();
+                    if (msg_pos!=null){
+                        Log.d("HappyShare", ", LatLng:"+ msg_pos.latitude+","+msg_pos.longitude);
+                        newMessage = new Message("CLIENT_ID123",msg_id,"ZONE_ID123",msg_create,msg_pos.latitude,msg_pos.longitude,msg_exp,msg_topic, msg_title, msg_txt);
+                    } else {
+                        // TODO: Create msg without LatLng information
+                        // newMessage = new Message but without lat and lon .. er ..?
+                    }
+
+                    // create new UUID
+                    ArrayList<Message> msgs = new ArrayList<Message>();
+                    msgs.add(newMessage);
+                    UIMessageManager.getInstance().enqueueMessagesIntoUI(msgs);
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "You must set a title and a text!", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private boolean isFormFilled(){
+        boolean allFilled = true;
+        EditText edt_msgTitle = (EditText) findViewById(R.id.edt_msgTitle);
+        EditText edt_msgText = (EditText) findViewById(R.id.edt_msgText);
+        Spinner spn_selectTopic = (Spinner) findViewById(R.id.spn_category);
+        Spinner spn_selectExpire = (Spinner) findViewById(R.id.spn_expireTime);
+
+        msg_title = edt_msgTitle.getText().toString();
+        if (msg_title.length() < 1)
+            allFilled = false;
+
+        msg_txt = edt_msgText.getText().toString();
+        if (msg_txt.length() < 1)
+            allFilled = false;
+
+        msg_create = new Date(); // now
+        long theFuture  = 0;
+        switch (spn_selectExpire.getSelectedItemPosition()) {
+            case 0: // + 7 days
+                theFuture = System.currentTimeMillis() + (86400 * 7 * 1000);
+                break;
+            case 1:
+                theFuture = System.currentTimeMillis() + (86400 * 5 * 1000);
+                break;
+            case 2:
+                theFuture = System.currentTimeMillis() + (86400 * 3* 1000);
+                break;
+            case 3:
+                theFuture = System.currentTimeMillis() + (86400 * 2 * 1000);
+                break;
+            case 4:
+                theFuture = System.currentTimeMillis() + (86400 * 1 * 1000);
+                break;
+            case 5:
+                theFuture = System.currentTimeMillis() + (18 * 3600 * 1000);
+                break;
+            case 6:
+                theFuture = System.currentTimeMillis() + (12 * 3600 * 1000);
+                break;
+            case 7:
+                theFuture = System.currentTimeMillis() + (6 * 3600 * 1000);
+                break;
+            case 8:
+                theFuture = System.currentTimeMillis() + (3 * 3600 * 1000);
+                break;
+            default:
+                break;
+        }
+        msg_exp = new Date(theFuture);
+
+        // get marked position:
+        if (msgLocMarker==null){
+            msg_pos = null;
+        } else {
+            msg_pos = msgLocMarker.getPosition();
+        }
+
+        // get selected topic:
+        msg_topic = spn_selectTopic.getSelectedItem().toString();
+
+        return allFilled;
     }
 
     @Override

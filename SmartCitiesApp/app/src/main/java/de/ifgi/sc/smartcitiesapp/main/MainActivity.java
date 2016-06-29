@@ -19,6 +19,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -29,6 +31,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -43,6 +46,7 @@ import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    protected App app;
 	private final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 10042; // just a random int resource.
 	
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -55,8 +59,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
+        // Create the application context and its global state variables.
+        app = (App)getApplication();
 
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
@@ -66,15 +72,25 @@ public class MainActivity extends AppCompatActivity {
         Topic sports = new Topic("Sports");
         Topic restaurants = new Topic("Restaurants");
         Topic shopping = new Topic("Shopping");
+        Topic cafe = new Topic("cafe");
+        Topic bars = new Topic("Bars");
+
         // add some msgs to the topics:
-        traffic.addMsg("Traffic Jam in the city center");
+        long expTime = System.currentTimeMillis()+1000*60*((int)Math.random()*7*24*60);
+        Date expDate = new Date(expTime);
+        Message m1 = new Message("Client_ID??", UUID.randomUUID().toString(),"ZONE ID??", new Date(),
+                (Math.random()/2+49), (Math.random()/2+7.5), expDate,"Traffic", "Traffic Jam in the City center", "Explosions, fireballz, collisions, burning people.");
+        traffic.addMsg(m1);
+
+        /**
+        traffic.addMsg("Better to walk rather than drive near.....");
         sports.addMsg("students beachvolleyball tournament at the castle");
         restaurants.addMsg("recyclable \\\"to-go\\\"-coffee cups at Franks Copy Shop");
+        restaurants.addMsg("Visit Paradise for a nice Biriyani");
         shopping.addMsg("Missed Black friday? Clothes are 100% off at my place");
-
-        // store topics into sharedpref:
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = sharedPref.edit();
+        cafe.addMsg("visit DarkCafe for a strong coffe");
+        bars.addMsg("Enjoy at ......... ");
+         */
 
         FragmentTabHost mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
@@ -91,6 +107,15 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                 MY_PERMISSION_ACCESS_COARSE_LOCATION);
 
+        //Zone-Select-Button:
+        Button btn_selectZone = (Button) findViewById(R.id.btn_selectZone);
+        btn_selectZone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentSettings = new Intent(getApplicationContext(), SelectZoneActivity.class);
+                startActivity(intentSettings);
+            }
+        });
     }
 
 
@@ -133,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onDestroy();
     }
+
 
 
     // --- Menu ---
@@ -208,5 +234,6 @@ public class MainActivity extends AppCompatActivity {
             // permissions this app might request
         }
     }
+
 
 }
