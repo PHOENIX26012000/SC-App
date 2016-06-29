@@ -19,12 +19,19 @@ import java.util.Date;
 
 import de.ifgi.sc.smartcitiesapp.R;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
+import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
+import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
+import de.ifgi.sc.smartcitiesapp.zone.Zone;
+import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 public class MsgActivity extends AppCompatActivity {
 
     ArrayList<MessageView> shown_messages = new ArrayList<MessageView>();
     private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private String selected_topic;
+    private Zone current_selected_zone;
+    private ArrayList<Message> msgs;
+    private ArrayList<Message> msgs_in_current_zone;
 
     @Override
     protected void onResume() {
@@ -34,22 +41,37 @@ public class MsgActivity extends AppCompatActivity {
         ll_messages.removeAllViews();
         shown_messages = new ArrayList<MessageView>();
 
-        // add message from UIMessageManager:
-        ArrayList<Message> msgs2 = UIMessageManager.getInstance().getActiveMessages();
-        Log.d("HS_msgs",msgs2.size()+"");
+        // Get the current selected zone:
+        try {
+            current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+        } catch (NoZoneCurrentlySelectedException e){
+            // TODO: if no zone is currently selected
+            e.printStackTrace();
+        }
 
-        for (Message msg: msgs2){
-            // TODO: Only select those msgs, which are relevant according to the topic
+        // get all msgs for this current selected zone:
+        msgs = Messenger.getInstance().getAllMessages();
+        msgs_in_current_zone = new ArrayList<Message>();
+        // for each message m from the Messenger:
+        for (Message m : msgs){
+            // if m is inside current selected zone
+            if (m.getZone_ID().equals(current_selected_zone.getZoneID()))
+                msgs_in_current_zone.add(m);
+        }
+
+        // add message from UIMessageManager:
+        Log.d("HS_msgs",msgs.size()+"");
+
+        for (Message msg: msgs){
             if (msg.getTopic().equals(selected_topic)) {
+                // create MessageView from msg for the layout:
                 Date exp_date = new Date();
                 try {
                     exp_date = D_format.parse(msg.getExpired_At());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                Log.d("HS_Time", "now Date:" + new Date() + ",  exp Date:" + msg.getExpired_At());
                 long timeDiffInMillis = exp_date.getTime() - new Date().getTime();
-                Log.d("HS_dTime", "TimeDiff: " + timeDiffInMillis);
                 int days = (int) timeDiffInMillis / (1000 * 60 * 60 * 24);
                 long restDiff = timeDiffInMillis - days * (1000 * 60 * 60 * 24);
                 int hours = (int) restDiff / (1000 * 60 * 60);
