@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
      */
     public P2PManager mP2PManager;
 
+    public Messenger mMessenger;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
+
+        // Start Messenger
+        mMessenger = new Messenger(getApplicationContext(), mP2PManager);
+        mMessenger.initialStartup(); // do server connection ...
 
         // create some sample topics:
         Topic traffic = new Topic("Traffic");
