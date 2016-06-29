@@ -24,6 +24,8 @@ public class JSONParser {
     JSONObject jsonObject = new JSONObject();
     JSONArray jsonMsgArray = new JSONArray();
     JSONObject jsonMsg = new JSONObject();
+    JSONObject jsonLoc = new JSONObject();
+    JSONArray jsonCoords = new JSONArray();
     String clientID = new String();
     String messageID = new String();
     String zoneID = new String();
@@ -35,10 +37,8 @@ public class JSONParser {
     Double latitude;
     Double longitude;
     String msg = new String();
-    Message message = new Message();
-    Zone zone = new Zone();
-    ZoneManager zM = new ZoneManager();
-    //LatLng location = new LatLng();
+    Message message;
+    Zone zone;
     ArrayList<Zone> zonelist = new ArrayList<>();
 
     JSONArray jsonZoneArray = new JSONArray();
@@ -81,7 +81,7 @@ public class JSONParser {
         this.jsonMsg.remove("Topic");
         this.jsonMsg.remove("Title");
         this.jsonMsg.remove("Message");
-        //todo clear jsonMsg from location
+        this.jsonLoc.remove("Coordinate");
 
         // get Messages from msglist and write them into the jsonArray
         for(int i = 0; i < msglist.size(); i++){
@@ -97,7 +97,9 @@ public class JSONParser {
             title = message.getTitle();
             exDt = message.getExpired_At();
             msg = message.getMsg();
-            //todo get location form message
+            longitude = message.getLongitude();
+            latitude = message.getLatitude();
+
 
             try {
                 this.jsonMsg.put("Client-id", clientID);
@@ -107,11 +109,13 @@ public class JSONParser {
                 this.jsonMsg.put("Expired-at", exDt);
                 this.jsonMsg.put("Topic", topic);
                 this.jsonMsg.put("Title", title);
+                this.jsonMsg.put("Message", msg);
+                this.jsonMsg.put("Location",jsonLoc);
+
+                // todo implementing location proberly
                 this.jsonMsg.put("Latitude",latitude);
                 this.jsonMsg.put("Longitude",longitude);
-                this.jsonMsg.put("Message", msg);
 
-                //todo put location into the array
                 this.jsonMsgArray.put(i,jsonMsg);
 
             } catch (JSONException e) {
@@ -144,19 +148,23 @@ public class JSONParser {
             jsonMsgArray = jsonObject.getJSONArray("Messages");
             for(int i = 0; i < jsonMsgArray.length(); i++){
                 jsonMsg = jsonMsgArray.getJSONObject(i);
-                clientID = (String) jsonMsg.getJSONObject("Client-id").get("Client-id");
-                messageID = (String) jsonMsg.getJSONObject("Message-id").get("Message-id");
-                zoneID = (String) jsonMsg.getJSONObject("Zone-id").get("Zone-id");
-                crDt = (String) jsonMsg.getJSONObject("Created-at").get("Created-at");
-                exDt = (String) jsonMsg.getJSONObject("Expired-at").get("Expired-at");
-                latitude = (double) jsonMsg.getJSONObject("Latitude").get("Latitude");
-                longitude = (double) jsonMsg.getJSONObject("Longitude").get("Longitude");
-                topic = (String) jsonMsg.getJSONObject("Topic").get("Topic");
-                title = (String) jsonMsg.getJSONObject("Title").get("Title");
-                msg = (String) jsonMsg.getJSONObject("Message").get("Message");
+                clientID = (String) jsonMsg.get("Client-id");
+                messageID = (String) jsonMsg.get("Message-id");
+                zoneID = (String) jsonMsg.get("Zone-id");
+                crDt = (String) jsonMsg.get("Created-at");
+                exDt = (String) jsonMsg.get("Expired-at");
+                topic = (String) jsonMsg.get("Topic");
+                title = (String) jsonMsg.get("Title");
+                msg = (String) jsonMsg.get("Message");
+                jsonLoc = jsonMsg.getJSONObject("Location");
+                jsonCoords = jsonMsg.getJSONArray("Coordinate");
+                for(int j = 0; i < jsonCoords.length(); i++){
+                    jsonCoords.get(i);
 
+                }
                 //todo get location
-
+                //latitude = (double) jsonMsg.getJSONObject("Latitude").get("Latitude");
+                //longitude = (double) jsonMsg.getJSONObject("Longitude").get("Longitude");
 
                 message.setClient_ID(clientID);
                 message.setMessage_ID(messageID);
@@ -181,6 +189,11 @@ public class JSONParser {
         // todo testing the method
     }
 
+
+    /**
+     *
+     * @param jsonObject
+     */
     public void parseJSONtoZone(JSONObject jsonObject){
 
     this.jsonObject=jsonObject;
@@ -196,14 +209,6 @@ public class JSONParser {
                 expiredAt = (String) zoneMsg.getJSONObject("Expired-at").get("Expired-at");
                 polygon = (ArrayList<LatLng>) zoneMsg.getJSONObject("Polygon").get("Polygon");
 
-
-
-
-                zonelist.add(expiredAt);
-                zonelist.add(polygon);
-                zonelist.add(Topic);
-
-                zM.updateZones(zonelist);
 
             }
 
