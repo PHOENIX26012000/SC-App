@@ -35,6 +35,7 @@ import java.util.UUID;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.nearby.Nearby;
 
 import de.ifgi.sc.smartcitiesapp.R;
@@ -42,14 +43,18 @@ import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
+import de.ifgi.sc.smartcitiesapp.zone.Zone;
+import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 
 public class MainActivity extends AppCompatActivity {
 
     protected App app;
 	private final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 10042; // just a random int resource.
-	
+
     public static final String TAG = MainActivity.class.getSimpleName();
+
+    private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     /**
      * P2P Manager that handles the main p2p message sharing of the app
@@ -67,30 +72,27 @@ public class MainActivity extends AppCompatActivity {
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
 
-        // create some sample topics:
-        Topic traffic = new Topic("Traffic");
-        Topic sports = new Topic("Sports");
-        Topic restaurants = new Topic("Restaurants");
-        Topic shopping = new Topic("Shopping");
-        Topic cafe = new Topic("cafe");
-        Topic bars = new Topic("Bars");
+        // create an example zone:
+        long expDateMillis = new Date().getTime()+1000*3600*24*14; // 2 weeks
+        Date expDate = new Date(expDateMillis);
+        String[] topics = new String[3];
+        topics[0] = "Traffic"; topics[1] = "Sports"; topics[2] = "Restaurants";
+        ArrayList<LatLng> pts = new ArrayList<LatLng>();
+        pts.add(new LatLng(51.9607, 7.6261));
+        pts.add(new LatLng(51.96, 7.617));
+        pts.add(new LatLng(51.978,7.622));
+        Zone zone1 = new Zone("examplezone1",UUID.randomUUID().toString(),D_format.format(expDate), topics,pts);
 
-        // add some msgs to the topics:
-        long expTime = System.currentTimeMillis()+1000*60*((int)Math.random()*7*24*60);
-        Date expDate = new Date(expTime);
-        Message m1 = new Message("Client_ID??", UUID.randomUUID().toString(),"ZONE ID??", new Date(),
-                (Math.random()/2+49), (Math.random()/2+7.5), expDate,"Traffic", "Traffic Jam in the City center", "Explosions, fireballz, collisions, burning people.");
-        traffic.addMsg(m1);
-
-        /**
-        traffic.addMsg("Better to walk rather than drive near.....");
-        sports.addMsg("students beachvolleyball tournament at the castle");
-        restaurants.addMsg("recyclable \\\"to-go\\\"-coffee cups at Franks Copy Shop");
-        restaurants.addMsg("Visit Paradise for a nice Biriyani");
-        shopping.addMsg("Missed Black friday? Clothes are 100% off at my place");
-        cafe.addMsg("visit DarkCafe for a strong coffe");
-        bars.addMsg("Enjoy at ......... ");
-         */
+        // add zone1 to ZoneManager:
+        ArrayList<Zone> zones = new ArrayList<Zone>();
+        zones.add(zone1);
+        // done once, so do not repeat the next line!
+        //ZoneManager.getInstance().updateZonesInDatabase(zones);
+        ArrayList<Zone> zonesFromDB = new ArrayList<Zone>();
+        zonesFromDB = ZoneManager.getInstance().getAllZonesfromDatabase();
+        for (Zone z : zonesFromDB){
+            Log.d(TAG,"zone from db: "+z.getName());
+        }
 
         FragmentTabHost mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
