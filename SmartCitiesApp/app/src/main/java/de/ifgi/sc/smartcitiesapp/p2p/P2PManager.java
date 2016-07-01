@@ -228,7 +228,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
             }
         }
 
-        publish(new de.ifgi.sc.smartcitiesapp.messaging.Message( "m_id", "z_id", new Date(), 51, 7, new Date(2016,6,21), "top", "tit", "msg"), 5);
+        publish(new de.ifgi.sc.smartcitiesapp.messaging.Message( "m_id", "z_id", new Date(), 51.5, 7.55, new Date(2016,6,21), "top", "tit", "msg"), 5);
     }
 
 
