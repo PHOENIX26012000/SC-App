@@ -42,6 +42,7 @@ import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
+import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-		tempForZones();
+		tempForMessage();
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
 
@@ -142,15 +143,27 @@ public class MainActivity extends AppCompatActivity {
         Date date = new Date();
         Log.i( date.toString(),"is Date");
         Message m =new Message("356","23",date,36.989823,89.002323,date,"dads","dsad","sd");
+
         Message m2 =new Message("356","23",date,34.45454,74.34324,date,"dads","dsad","sd");
+        Message m3 =new Message("7777","3434",date,date,"dads","dsad","sd");
+
+        Log.i("Msg id "+m3.getLatitude()," retreived");
         ArrayList<Message> msgList= new ArrayList<Message>();
         msgList.add(m);
         msgList.add(m2);
+        msgList.add(m3);
         Log.i("Array list ", "Created");
 
         Messenger msgr=new Messenger(this);
         msgr.updateMessengerFromConnect(msgList);
-        msgr.getAllMessages();
+        msgList=msgr.getAllMessages();
+
+        for(int i=0;i<msgList.size();i++){
+            m=msgList.get(i);
+            Log.i("Msg id "+m.getLatitude()," retreived");
+
+
+        }
 
     }
     private void tempForZones(){
@@ -168,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         zoneList.add(z1);
         zoneList.add(z2);
         zoneList.add(z1);
-        Messenger msgr=new Messenger(this);
+        ZoneManager msgr=new ZoneManager(this);
         msgr.updateZonesInDatabase(zoneList);
         zoneList=msgr.getAllZonesfromDatabase();
         for(int i=0;i<zoneList.size();i++){
