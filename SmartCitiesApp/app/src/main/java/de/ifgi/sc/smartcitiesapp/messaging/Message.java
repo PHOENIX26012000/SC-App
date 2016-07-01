@@ -31,12 +31,14 @@ public class Message implements Serializable {
     private String message;
 
     // Related coordinates
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
+
+
 
     private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    public Message(String m_id, String z_id, Date crDt, double lat,double lon, Date exDt, String top, String tit, String msg){
+    public Message(String m_id, String z_id, Date crDt, Double lat,Double lon, Date exDt, String top, String tit, String msg){
 
         message_ID=m_id;
         zone_ID=z_id;
@@ -50,6 +52,20 @@ public class Message implements Serializable {
 
     }
 
+    //This constructor will be called when user does not specify coordinates of location
+    public Message(String m_id, String z_id, Date crDt, Date exDt, String top, String tit, String msg){
+
+        message_ID=m_id;
+        zone_ID=z_id;
+        cr_Dt = changeDateFormat(crDt);
+        latitude= null;
+        longitude=null;
+        ex_Dt=changeDateFormat(exDt);
+        topic=top;
+        title=tit;
+        message=msg;
+
+    }
 
     public void setMessage_ID(String id){
         message_ID=id;
@@ -58,8 +74,8 @@ public class Message implements Serializable {
         zone_ID=id;
     }
     public void setCreated_At(Date dt){cr_Dt=changeDateFormat(dt);}
-    public void setLatitude(double lat)  { latitude=lat; };
-    public void setLongitude(double lon) {longitude=lon; };
+    public void setLatitude(Double lat)  { latitude=lat; };
+    public void setLongitude(Double lon) {longitude=lon; };
     public void setExpired_At(Date dt){
         ex_Dt=changeDateFormat(dt);
     }
@@ -71,8 +87,8 @@ public class Message implements Serializable {
     public String getMessage_ID(){return message_ID;};
     public String getZone_ID(){return zone_ID;};
     public String getCreated_At(){return cr_Dt;};
-    public double getLatitude(){return latitude;};
-    public double getLongitude(){return longitude;};
+    public Double getLatitude(){return latitude;};
+    public Double getLongitude(){return longitude;};
     public String getExpired_At(){return ex_Dt;};
     public String getTopic(){return topic;};
     public String getTitle(){return title;};
