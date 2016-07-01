@@ -229,7 +229,7 @@ public class DatabaseHelper {
     }
 
 
-    public void createEntry(String m_id, String z_id, String cr_time, double lat,double lon, String  ex_time, String top, String title, String msg) {
+    public void createEntry(String m_id, String z_id, String cr_time, Double lat,Double lon, String  ex_time, String top, String title, String msg) {
         try {
             ContentValues cv = new ContentValues();
 
@@ -259,6 +259,7 @@ public class DatabaseHelper {
     {
         Date ex_date = null;
         Date cr_date = null;
+        Message mes;
         ArrayList<Message> array_list = new ArrayList<Message>();
 
         Cursor res =  ourDatabase.rawQuery( "select * from TABLE_1", null );
@@ -272,15 +273,26 @@ public class DatabaseHelper {
             }catch (ParseException e) {
                 e.printStackTrace();
             }
+            Log.i("Lat and long",res.getString(res.getColumnIndex(LATITUDE))+" "+ res.getString(res.getColumnIndex(LONGITUDE)));
+            //Checking for null value in database otherwise will raise exception while parsing for Double
+            if(res.getString(res.getColumnIndex(LATITUDE))!=null) {
+                Double lat = Double.parseDouble(res.getString(res.getColumnIndex(LATITUDE)));
+                Double lon = Double.parseDouble(res.getString(res.getColumnIndex(LONGITUDE)));
+                mes = new Message(res.getString(res.getColumnIndex(MESSAGE_ID)),
+                        res.getString(res.getColumnIndex(ZONE_ID)), cr_date,
+                        lat,
+                        lon,
+                        ex_date,
+                        res.getString(res.getColumnIndex(TOPIC)),
+                        res.getString(res.getColumnIndex(TITLE)), res.getString(res.getColumnIndex(MESSAGE)));
+            }else{
+                 mes = new Message(res.getString(res.getColumnIndex(MESSAGE_ID)),
+                        res.getString(res.getColumnIndex(ZONE_ID)), cr_date,
 
-
-            Message mes = new Message(res.getString(res.getColumnIndex(MESSAGE_ID)),
-                                    res.getString(res.getColumnIndex(ZONE_ID)), cr_date,
-                                    Double.parseDouble(res.getString(res.getColumnIndex(LATITUDE))),
-                                    Double.parseDouble(res.getString(res.getColumnIndex(LONGITUDE))),
-                                    ex_date,
-                                     res.getString(res.getColumnIndex(TOPIC)),
-                                    res.getString(res.getColumnIndex(TITLE)),res.getString(res.getColumnIndex(MESSAGE)));
+                        ex_date,
+                        res.getString(res.getColumnIndex(TOPIC)),
+                        res.getString(res.getColumnIndex(TITLE)),res.getString(res.getColumnIndex(MESSAGE)));
+            }
 
 
             array_list.add(mes);
