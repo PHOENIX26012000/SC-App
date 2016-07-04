@@ -62,7 +62,6 @@ public class JSONParser {
      * @param //ArrayList<Message>
      * @return JSONObject
      */
-
     public JSONObject parseMessagetoJSON(ArrayList<Message> msglist){
 
         this.msglist = msglist;
