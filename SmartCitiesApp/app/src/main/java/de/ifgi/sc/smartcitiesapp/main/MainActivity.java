@@ -3,16 +3,11 @@ package de.ifgi.sc.smartcitiesapp.main;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTabHost;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,19 +18,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.UUID;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.nearby.Nearby;
 
 import de.ifgi.sc.smartcitiesapp.R;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
@@ -68,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
+        ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mPubMessagesTest = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> ();
+        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("c_id", "m_id", "z_id", new Date(), 51, 7, new Date(), "top", "tit", "msg"));
+        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("c_id1", "m_id1", "z_id1", new Date(), 51, 7, new Date(), "top1", "tit1", "msg1"));
+        mP2PManager.shareMessage(mPubMessagesTest);
 
         // Start Messenger
         mMessenger = new Messenger(getApplicationContext(), mP2PManager);
@@ -147,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         Log.i(TAG + " Main", "OnStop");
+        mP2PManager.setDisconnected();
         super.onStop();
     }
 
