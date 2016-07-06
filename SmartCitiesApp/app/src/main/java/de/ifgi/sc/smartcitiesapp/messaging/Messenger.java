@@ -16,6 +16,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
     private Context ourContext;
 
     public static Messenger instance; // global singleton instance
+    private P2PManager mP2PManager;
 
     public static void initInstance(Context c){
         if (instance == null){
@@ -26,15 +27,13 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
     }
 
     public Messenger(){
+        // leave it empty, cause its a singleton now.
     }
 
     public static Messenger getInstance(){
         // Return the instance
         return instance;
     }
-
-    private P2PManager mP2PManager;
-
 
     /** This method will receive messages from Server and PeerConnection separately
      * and write them in database
@@ -44,7 +43,6 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
      * Messages need to have unique MessageID, otherwise they won't get stored.
      * @param msgs Raw Array list of Messages received from Server or Peers
      */
-
     @Override
     public synchronized void updateMessengerFromConnect(ArrayList<Message> msgs){
 
@@ -108,11 +106,6 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
 
     }
 
-    public Messenger(Context C, P2PManager p2pmanager) {
-        ourContext = C;
-        mP2PManager = p2pmanager;
-    }
-
     /**
      * This method will create a Message entry in database
      * @param db
@@ -124,9 +117,8 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
                 t_msg.getTitle(),t_msg.getMsg());
     }
 
-
-    public Messenger(Context C){
-            ourContext = C;
+    public synchronized void setP2PManager(P2PManager p2pmanager){
+        instance.mP2PManager = p2pmanager;
     }
 
     public void initialStartup() {

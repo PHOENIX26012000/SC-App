@@ -3,16 +3,22 @@ package de.ifgi.sc.smartcitiesapp.main;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -20,26 +26,37 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.maps.android.PolyUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
 import de.ifgi.sc.smartcitiesapp.R;
+import de.ifgi.sc.smartcitiesapp.interfaces.MessagesObtainedListener;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
 import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
+/**
+ * Activity that is opened when the user clicked on "Write Message..." in order to specify the message content
+ * such as Title, Text, location, expiretime, topic.
+ */
 public class WriteMsgActivity extends AppCompatActivity {
 
     private SupportMapFragment mapFragment;
@@ -57,6 +74,9 @@ public class WriteMsgActivity extends AppCompatActivity {
     private Date msg_create = null;
     private String msg_topic = "";
     private Zone current_selected_zone;
+    private EnhancedPolygon current_zone;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +86,47 @@ public class WriteMsgActivity extends AppCompatActivity {
         // add Back Button on Actionbar:
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        // Change default behaviour of the edittext MessageTitle: On Enter: close EditText:
+        final EditText edt_msgTitle = (EditText) findViewById(R.id.edt_msgTitle);
+        edt_msgTitle.setFocusableInTouchMode(true);
+        edt_msgTitle.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                if ((actionId == EditorInfo.IME_ACTION_DONE) || ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN))) {
+                    // if the "enter"-key was pressed, close the shown Keyboard
+                    InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                    in.hideSoftInputFromWindow(v.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        // Change default behaviour of the edittext for the MessageText: On Enter: close EditText:
+        final EditText edt_msgText = (EditText) findViewById(R.id.edt_msgText);
+        edt_msgText.setFocusableInTouchMode(true);
+        edt_msgText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                if ((actionId == EditorInfo.IME_ACTION_DONE) || ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN))) {
+                    // if the "enter"-key was pressed, close the shown Keyboard
+                    InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                    in.hideSoftInputFromWindow(v.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
 
         // which topic was selected?
         Bundle extras = getIntent().getExtras();
@@ -181,13 +242,38 @@ public class WriteMsgActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onMapClick(LatLng latLng) {
-                                    if (markerPlacedPreviously) {
-                                        msgLocMarker.remove();
+                                    // check, if the click was inside the polygon:
+                                    if (PolyUtil.containsLocation(latLng, current_selected_zone.getPolygon(), true)) {
+                                        if (markerPlacedPreviously) {
+                                            msgLocMarker.remove();
+                                        }
+                                        msgLocMarker = mMap.addMarker(new MarkerOptions().position(latLng));
+                                        markerPlacedPreviously = true;
+                                    } else {
+                                        // if click was outside mapregion: do nothing
                                     }
-                                    msgLocMarker = mMap.addMarker(new MarkerOptions().position(latLng));
-                                    markerPlacedPreviously = true;
                                 }
                             });
+
+                            // create a map polygon for the current selected Zone:
+                            int[] rgb = {100,255,100};
+                            current_zone = new EnhancedPolygon(
+                                    current_selected_zone.getPolygon(),
+                                    rgb,
+                                    current_selected_zone.getName());
+
+                            // add zone's polygon onto the map + safe its polygon reference:
+                            current_zone.setPolygon(mMap.addPolygon(current_zone.getPolygon()));
+
+                            // zoom into the polygon of the current selected zone:
+                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                            for (LatLng point : current_zone.getPoints()){
+                                builder.include(point);
+                            }
+                            LatLngBounds bounds = builder.build();
+                            int padding = 0;
+                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                            mMap.animateCamera(cu);
                         }
                     });
                 } else {
