@@ -45,7 +45,6 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
     private GoogleApiClient mGoogleApiClient;
     private MessageListener mMessageListener;
     private Boolean subscribed = false;
-    private Messenger mMessenger;
     private Boolean isConnected = false;
 
     /**
@@ -93,7 +92,6 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         mActivity = activity;
         mPubMessages = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message>();
         mReceivedMessages = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message>();
-        mMessenger = new de.ifgi.sc.smartcitiesapp.messaging.Messenger(mActivity.getApplicationContext(), this);
         init();
     }
 
@@ -126,7 +124,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
                 Log.d(MainActivity.TAG + " P2P", "Found message: " + messageIn);
 
                 // forward message to messenger
-                mMessenger.updateMessengerFromConnect(mReceivedMessages);
+                de.ifgi.sc.smartcitiesapp.messaging.Messenger.getInstance().updateMessengerFromConnect(mReceivedMessages);
             }
 
             @Override
