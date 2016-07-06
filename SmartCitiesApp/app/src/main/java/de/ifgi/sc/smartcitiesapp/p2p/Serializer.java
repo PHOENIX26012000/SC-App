@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import de.ifgi.sc.smartcitiesapp.messaging.Message;
-
 public class Serializer {
 
     public static byte[] serialize(Object obj) throws IOException {
@@ -19,10 +17,10 @@ public class Serializer {
         }
     }
 
-    public static Message deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
+    public static Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
         try(ByteArrayInputStream b = new ByteArrayInputStream(bytes)){
             try(ObjectInputStream o = new ObjectInputStream(b)){
-                return (Message) o.readObject();
+                return o.readObject();
             }
         }
     }

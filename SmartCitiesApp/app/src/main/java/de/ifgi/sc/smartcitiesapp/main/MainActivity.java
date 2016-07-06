@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
      */
     public P2PManager mP2PManager;
 
+    public Messenger mMessenger;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Start Messenger
-        Messenger mMessenger = new Messenger(getApplicationContext(), mP2PManager);
+        mMessenger = new Messenger(getApplicationContext(), mP2PManager);
         mMessenger.initialStartup(); // do server connection ...
 
         // use a setter instead?
@@ -208,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         Log.i(TAG + " Main", "OnStop");
+        mP2PManager.setDisconnected();
         super.onStop();
     }
 
