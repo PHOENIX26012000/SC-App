@@ -147,9 +147,9 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         de.ifgi.sc.smartcitiesapp.messaging.Message m = null;
         try {
-            m = new de.ifgi.sc.smartcitiesapp.messaging.Message(list.get(1), list.get(3), list.get(5),
-                    format.parse(list.get(7)), Double.parseDouble(list.get(17)), Double.parseDouble(list.get(19)), format.parse(list.get(9)), list.get(11),
-                    list.get(13),list.get(15));
+            m = new de.ifgi.sc.smartcitiesapp.messaging.Message(list.get(1), list.get(3),
+                    format.parse(list.get(5)), Double.parseDouble(list.get(15)), Double.parseDouble(list.get(17)), format.parse(list.get(7)), list.get(9),
+                    list.get(11),list.get(13));
         } catch (ParseException e) {
             e.printStackTrace();
         }

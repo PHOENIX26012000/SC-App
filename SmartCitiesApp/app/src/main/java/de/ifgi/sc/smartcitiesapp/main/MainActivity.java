@@ -23,6 +23,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -70,10 +72,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+		tempForMessage();
 
-        // Create the application context and its global state variables.
+		// Create the application context and its global state variables.
         app = (App)getApplication();
-
+        
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
 
@@ -119,16 +122,18 @@ public class MainActivity extends AppCompatActivity {
         Date creationDate = new Date(); // now
         expDateMillis = creationDate.getTime()+1000*3600*18; // 18 hours
         expDate = new Date(expDateMillis);
+        /*
         Message msg1 = new Message(
                 clientID, UUID.randomUUID().toString(),
                 zonesFromDB.get(0).getZoneID(), creationDate,
                 51.9707, 7.6281, expDate, "Traffic", "Traffic Jam in the city center",
                 "There is a traffic jam in the city center"
         );
+        */
 
         // send msg1 to the Messenger:
         ArrayList<Message> msgs = new ArrayList<Message>();
-        msgs.add(msg1);
+//        msgs.add(msg1);
         // once done, dont repeat the next line at several app starts!
         // Messenger.getInstance().updateMessengerFromConnect(msgs);
 
@@ -229,6 +234,61 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    private void tempForMessage(){
+        Log.i("Main Activity","Activity Started");
+        Date date = new Date();
+        Log.i( date.toString(),"is Date");
+        Message m =new Message("356","23",date,36.989823,89.002323,date,"dads","dsad","sd");
+
+        Message m2 =new Message("356","23",date,34.45454,74.34324,date,"dads","dsad","sd");
+        Message m3 =new Message("7777","3434",date,date,"dads","dsad","sd");
+
+        Log.i("Msg id "+m3.getLatitude()," retreived");
+        ArrayList<Message> msgList= new ArrayList<Message>();
+        msgList.add(m);
+        msgList.add(m2);
+        msgList.add(m3);
+        Log.i("Array list ", "Created");
+
+        Messenger msgr=new Messenger(this);
+        msgr.updateMessengerFromConnect(msgList);
+        msgList=msgr.getAllMessages();
+
+        for(int i=0;i<msgList.size();i++){
+            m=msgList.get(i);
+            Log.i("Msg id "+m.getLatitude()," retreived");
+
+
+        }
+
+    }
+    private void tempForZones(){
+        Log.i("Main Activity","Activity Started");
+        Date date = new Date();
+        Log.i( date.toString(),"is Date");
+        String[] topics={"food","sports","Cycling"};
+        ArrayList<LatLng> coords=new ArrayList<LatLng>();
+        coords.add(new LatLng(52.21312,44.123123));
+        coords.add(new LatLng(47.21312,80.123123));
+        coords.add(new LatLng(80.21312,90.123123));
+        Zone z1=new Zone("Gesherweg","5831",date.toString(),topics,coords);
+        Zone z2=new Zone("Gievenbeck","7861",date.toString(),topics,coords);
+        ArrayList<Zone> zoneList=new ArrayList<Zone>();
+        zoneList.add(z1);
+        zoneList.add(z2);
+        zoneList.add(z1);
+//        ZoneManager msgr=new ZoneManager(this);
+//        msgr.updateZonesInDatabase(zoneList);
+//        zoneList=msgr.getAllZonesfromDatabase();
+//        for(int i=0;i<zoneList.size();i++){
+//            z1=zoneList.get(i);
+//            Log.i("Zone id "+z1.getZoneID()," retreived");
+//
+//
+//        }
+
+
+    }
 
 
     // --- Menu ---
