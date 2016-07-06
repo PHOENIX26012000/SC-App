@@ -25,4 +25,4 @@ This documentation guides through the concepts of the application, the developme
 
 ## Limitations
 
-## [Future Work
+## Future Work
