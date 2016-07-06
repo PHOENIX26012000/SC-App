@@ -19,6 +19,15 @@ This documentation guides through the concepts of the application, the developme
 
 ### User
 
+As a user the application can be installed by downloading the .apk file, which is proviced at the main diretory. If your phone prohibits installing applications form unknown sources, you have to go to your phone settings and enable this option.
+This application was mainly developed for the means of the study project, so that it is currently not realeased into the Google Play Store.
+
+Steps for the installation:
+- download the .apk
+- enable the phone setting for installing applications from unknown sources
+- klick the .apk file and select install
+- enable the application permission in order to get the application work as intended
+
 ## Architucture
 
 ## Functionalities
