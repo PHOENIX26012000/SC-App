@@ -1,5 +1,6 @@
 package de.ifgi.sc.smartcitiesapp.main;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -23,13 +25,17 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import java.util.ArrayList;
 
 import de.ifgi.sc.smartcitiesapp.R;
+import de.ifgi.sc.smartcitiesapp.zone.Zone;
+import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyCallback{
 
-    GoogleMap map;
-    ArrayList<EnhancedPolygon> zones;
-    ArrayList<PolygonOptions> polygons;
-    Spinner spn_zoneSelecter;
+    public final static int ZONE_SELECTED_SUCCESSFUL = 15335815;
+
+    private GoogleMap map;
+    private ArrayList<EnhancedPolygon> zones;
+    private Spinner spn_zoneSelecter;
+    private ArrayList<Zone> zonesFromDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,26 +45,21 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
                 .findFragmentById(R.id.map_zoneselect);
         mapFragment.getMapAsync(this);
 
-        // create hardcoded zones:
-        ArrayList<LatLng> polygon1 = new ArrayList<LatLng>();
-        polygon1.add(new LatLng(51.9607, 7.6261));
-        polygon1.add(new LatLng(51.96, 7.617));
-        polygon1.add(new LatLng(51.978,7.622));
-        int[] rgb = {255,0,0};
-        EnhancedPolygon ep1 = new EnhancedPolygon(polygon1, rgb, "ZONE ONE");
-
-        ArrayList<LatLng> polygon2 = new ArrayList<LatLng>();
-        polygon2.add(new LatLng(51.955, 7.623));
-        polygon2.add(new LatLng(51.963, 7.618));
-        polygon2.add(new LatLng(51.965,7.638));
-
-        int[] rgb2 = {0,255,0};
-        EnhancedPolygon ep2 = new EnhancedPolygon(polygon2, rgb2, "ZONE TWO");
+        // access the ZoneManager and get a list of all zones containing current user location:
+        zonesFromDB = new ArrayList<Zone>();
+        zonesFromDB = ZoneManager.getInstance().getCurrentZones(new LatLng(51.9607,7.6261));
 
         zones = new ArrayList<EnhancedPolygon>();
-        polygons = new ArrayList<PolygonOptions>();
-        zones.add(ep1);
-        zones.add(ep2);
+
+        for (Zone z : zonesFromDB){
+            // create enhanced Polygon for zone z with random color:
+            int[] rgb = {((int) (Math.random()*255)),
+                    ((int) (Math.random()*255)),
+                    ((int) (Math.random()*255)),};
+            EnhancedPolygon ep = new EnhancedPolygon(z.getPolygon(), rgb, z.getName());
+            zones.add(ep);
+            Log.d("zons","zone name:"+z.getName());
+        }
 
         // add zone names into spinner:
         spn_zoneSelecter = (Spinner) findViewById(R.id.spn_zoneSelecter);
@@ -82,6 +83,7 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
                 for (int i=0; i<zones.size();i++){
                     if (i != position){
                         zones.get(i).setDefaultColor();
+                        zones.get(i).getPolygonRef().setZIndex(100);
                     } else {
                         Polygon selected = zones.get(position).getPolygonRef();
                         selected.setFillColor(Color.argb(200, 255, 255, 255));
@@ -95,6 +97,19 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
                 // do nothing
             }
         });
+
+
+        Button btn_selectZone = (Button) findViewById(R.id.btn_confirmZoneSelection);
+        btn_selectZone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // get + safe current selected zone
+                int zoneNumber = spn_zoneSelecter.getSelectedItemPosition();
+                Zone selectedZone = zonesFromDB.get(zoneNumber);
+                ZoneManager.getInstance().setCurrentZone(selectedZone);
+                finish();
+            }
+        });
     }
 
     @Override
@@ -102,17 +117,17 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
         map = googleMap;
 
         // add zones onto map + safe the polygon references to the EnhancedPolygon objects:
-        zones.get(0).setPolygon(map.addPolygon(zones.get(0).getPolygon()));
-        zones.get(1).setPolygon(map.addPolygon(zones.get(1).getPolygon()));
-        // make zones clickable:
-        zones.get(0).getPolygonRef().setClickable(true);
-        zones.get(1).getPolygonRef().setClickable(true);
+        for (EnhancedPolygon ep : zones){
+            ep.setPolygon(map.addPolygon(ep.getPolygon()));
+            // make polygon clickable:
+            ep.getPolygonRef().setClickable(true);
+        }
 
-        // make polygons clickable:
+        // tell app what to do when a polygon is clicked:
         map.setOnPolygonClickListener(new GoogleMap.OnPolygonClickListener() {
             @Override
             public void onPolygonClick(Polygon polygon) {
-                for (int i=0; i<2; i++){
+                for (int i=0; i<zones.size(); i++){
                     Polygon selected = zones.get(i).getPolygonRef();
                     if (selected.equals(polygon)) {
                         selected.setFillColor(Color.argb(200, 255, 255, 255));
