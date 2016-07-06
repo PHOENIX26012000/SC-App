@@ -18,7 +18,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
 
     public static Messenger instance; // global singleton instance
     private P2PManager mP2PManager;
-    private UIMessageManager mUIManager;
+
 
     public static void initInstance(Context c){
         if (instance == null){
@@ -70,7 +70,8 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
         }
 
         db.close();
-        mUIManager.enqueueMessagesIntoUIFromP2P(uarray_list);
+        UIMessageManager.getInstance().enqueueMessagesIntoUIFromP2P(uarray_list);
+        mP2PManager.shareMessage(uarray_list);
     }
     public synchronized void updateMessengerFromServer(ArrayList<Message> msgs){
 
@@ -98,7 +99,8 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
         }
 
         db.close();
-        mUIManager.enqueueMessagesIntoUIFromServer(uarray_list);
+        UIMessageManager.getInstance().enqueueMessagesIntoUIFromServer(uarray_list);
+        mP2PManager.shareMessage(uarray_list);
     }
 
     //This function will get user zoneID from ZoneManager Class and return it
