@@ -1,8 +1,10 @@
 package de.ifgi.sc.smartcitiesapp.main;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import de.ifgi.sc.smartcitiesapp.interfaces.MessageUIManager;
+import de.ifgi.sc.smartcitiesapp.interfaces.MessagesObtainedListener;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 
 /**
@@ -10,8 +12,10 @@ import de.ifgi.sc.smartcitiesapp.messaging.Message;
  */
 public class UIMessageManager implements MessageUIManager {
 
-    private ArrayList<Message> activeMessages; // all messages on the device
     private static UIMessageManager instance;  // global singleton instance
+
+    private MessagesObtainedListener mol;
+    private ArrayList<Message> new_obtained_msgs;
 
     private UIMessageManager()
     {
@@ -24,8 +28,12 @@ public class UIMessageManager implements MessageUIManager {
         {
             // Create the instance
             instance = new UIMessageManager();
-            instance.activeMessages = new ArrayList<Message>();
+            instance.new_obtained_msgs = new ArrayList<Message>();
         }
+    }
+
+    public void setMessageObtainedListener(MessagesObtainedListener mol){
+        instance.mol = mol;
     }
 
     public static UIMessageManager getInstance()
@@ -35,29 +43,42 @@ public class UIMessageManager implements MessageUIManager {
     }
 
     /**
-     * To be called by Messenger to add new retrieved Messages into UserInterface
+     * To be called by Messenger to notify the UserInterface about new retrieved Messages from Peer
      * @param msgs
      */
     @Override
-    public synchronized void enqueueMessagesIntoUI(ArrayList<Message> msgs) {
-        this.activeMessages.addAll(msgs);
+    public synchronized void enqueueMessagesIntoUIFromP2P(ArrayList<Message> msgs) {
+        instance.new_obtained_msgs = msgs;
+        instance.mol.onMessagesObtainedFromP2P(msgs);
     }
 
     /**
-     * return all unfiltered messages retrieved
-     * @return
+     * To be called by Messenger to notify the UserInterface about new retrieved Messages from Server
+     * @param msgs
      */
-    public synchronized ArrayList<Message> getActiveMessages(){
-        return this.activeMessages;
-        //
+    @Override
+    public void enqueueMessagesIntoUIFromServer(ArrayList<Message> msgs) {
+        instance.mol.onMessagesObtainedFromServer(msgs);
     }
 
-    public synchronized ArrayList<Message> getFilteredMessages(){
-        ArrayList<Message> filtered = new ArrayList<>();
-        for (Message m : activeMessages){
-            // TODO: add m into filtered, if it fits.
+    public synchronized ArrayList<Message> getNew_obtained_msgs(){
+        return instance.new_obtained_msgs;
+    }
+
+    /**
+     * remove messages from being markes as "new". To be called after msgs are recognized by the user and not
+     * "new" anymore.
+     * @param msgIDs - ArrayList of Message_IDs that are not new anymore.
+     */
+    public synchronized void markMessagesAsOld(ArrayList<String> msgIDs){
+        ArrayList<Message> result = new ArrayList<Message>();
+        ArrayList<Message> current = instance.getNew_obtained_msgs();
+        for (Message msg : current){
+            if (!msgIDs.contains(msg.getMessage_ID())){
+                result.add(msg);
+            }
         }
-        return filtered;
+        instance.new_obtained_msgs = result;
     }
 
 }
