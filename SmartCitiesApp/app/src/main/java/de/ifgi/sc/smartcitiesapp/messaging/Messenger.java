@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import de.ifgi.sc.smartcitiesapp.main.UIMessageManager;
 import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
 
@@ -17,6 +18,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
 
     public static Messenger instance; // global singleton instance
     private P2PManager mP2PManager;
+    private UIMessageManager mUIManager;
 
     public static void initInstance(Context c){
         if (instance == null){
@@ -44,13 +46,39 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
      * @param msgs Raw Array list of Messages received from Server or Peers
      */
     @Override
-    public synchronized void updateMessengerFromConnect(ArrayList<Message> msgs){
+    public synchronized void updateMessengerFromP2P(ArrayList<Message> msgs){
 
         //Checking size of Arraylist
         int size;
         size = msgs.size();
         Message t_msg;
+        ArrayList<Message> uarray_list = new ArrayList<>();
+        DatabaseHelper db = new DatabaseHelper(ourContext);
+        db.open();
+        String userZoneID=currentUserZone();
+        for(int i=0;i<size;i++){
+            Log.i("This is Msg "+i," Number");
+            t_msg= msgs.get(i);
+            //will change to this once implemented by ZoneManager
+            //db.messageAlreadyExist(t_msg) == false && userZoneID!=null && userZoneID.equals(t_msg.getZone_ID())
+            if(db.messageAlreadyExist(t_msg) == false ){
+                createMessageEntry(db,t_msg);
+                uarray_list.add(t_msg);
 
+            }
+
+        }
+
+        db.close();
+        mUIManager.enqueueMessagesIntoUIFromP2P(uarray_list);
+    }
+    public synchronized void updateMessengerFromServer(ArrayList<Message> msgs){
+
+        //Checking size of Arraylist
+        int size;
+        size = msgs.size();
+        Message t_msg;
+        ArrayList<Message> uarray_list = new ArrayList<>();
         DatabaseHelper db = new DatabaseHelper(ourContext);
         db.open();
         String userZoneID=currentUserZone();
@@ -69,8 +97,8 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
 
         }
 
-        Log.i("Messages "," Fetched");
         db.close();
+        mUIManager.enqueueMessagesIntoUIFromServer(uarray_list);
     }
 
     //This function will get user zoneID from ZoneManager Class and return it
