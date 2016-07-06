@@ -13,7 +13,6 @@ import com.google.android.gms.maps.model.LatLng;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
@@ -47,7 +46,7 @@ public class DatabaseHelper {
 
 
     private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-    Calendar c = Calendar.getInstance();
+
 
 
     private DbHelper ourHelper;
@@ -236,7 +235,6 @@ public class DatabaseHelper {
             cv.put(MESSAGE_ID, m_id);
             cv.put(ZONE_ID, z_id);
             cv.put(CREATED_AT, cr_time);
-            cv.put(EXPIRED_AT, ex_time);
             cv.put(LATITUDE, lat);
             cv.put(LONGITUDE, lon);
             cv.put(EXPIRED_AT, ex_time);
@@ -262,17 +260,23 @@ public class DatabaseHelper {
         ArrayList<Message> array_list = new ArrayList<Message>();
 
         Cursor res =  ourDatabase.rawQuery( "select * from TABLE_1", null );
+
         res.moveToFirst();
+
         while(res.isAfterLast() == false){
 
+
             try {
+
                 ex_date= D_format.parse(res.getString(res.getColumnIndex(EXPIRED_AT)));
                 cr_date = D_format.parse(res.getString(res.getColumnIndex(CREATED_AT)));
-
-            }catch (ParseException e) {
-                e.printStackTrace();
             }
 
+            catch (ParseException e) {
+
+
+                e.printStackTrace();
+            }
 
             Message mes = new Message(res.getString(res.getColumnIndex(MESSAGE_ID)),
                                     res.getString(res.getColumnIndex(ZONE_ID)), cr_date,
@@ -281,10 +285,9 @@ public class DatabaseHelper {
                                     ex_date,
                                      res.getString(res.getColumnIndex(TOPIC)),
                                     res.getString(res.getColumnIndex(TITLE)),res.getString(res.getColumnIndex(MESSAGE)));
-
-
             array_list.add(mes);
             res.moveToNext();
+
         }
         return array_list;
 
@@ -325,7 +328,6 @@ public class DatabaseHelper {
 
            ArrayList<LatLng> coords=stringToCoords(res.getString(res.getColumnIndex(COORDINATES)));
             String[] top= (res.getString(res.getColumnIndex(ZONE_TOPICS))).split(",");
-
            Zone zn = new Zone(res.getString(res.getColumnIndex(ZONE_NAME)),
                    res.getString(res.getColumnIndex(ZONE_ID)),
                    res.getString(res.getColumnIndex(EXPIRED_AT)),top,
@@ -349,8 +351,8 @@ public class DatabaseHelper {
         return coords;
     }
 
-    public void deleteMessageWhenExpire(){
-        ourDatabase.execSQL("Delete from " + TABLE_NAME + "where Exp_time = " + c);
+    public void deleteMessageZoneWhenExpire() {
+        ourDatabase.execSQL("Delete from TABLE_1 where Exp_time <= datetime(date('now'))");
+        ourDatabase.execSQL("Delete from TABLE_2 where Exp_time <= datetime(date('now'))");
     }
-
 }

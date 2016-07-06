@@ -149,4 +149,13 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
     }
 
 
+    public void deleteZoneMessage()
+    {
+        DatabaseHelper db = new DatabaseHelper(ourContext);
+        db.open();
+        db.deleteMessageZoneWhenExpire();
+        db.close();
+
+
+    }
 }
