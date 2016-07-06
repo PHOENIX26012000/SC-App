@@ -7,7 +7,7 @@ import java.security.PrivateKey;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Message implements Serializable {
+public class Message {
 
 
     private String message_ID;
@@ -105,4 +105,18 @@ public class Message implements Serializable {
 //        }
     }
 
+    public String toString() {
+        return "client_ID," + this.client_ID +
+                ", message_ID," + this.message_ID +
+                ", zone_ID," + this.zone_ID +
+                ", cr_Dt," + this.cr_Dt +
+                ", ex_Dt," + this.ex_Dt +
+                ", topic," + this.topic +
+                ", title," + this.title +
+                ", message," + this.message +
+                ", latitude," + this.latitude +
+                ", longitude," + this.longitude;
+
+
+    }
 }

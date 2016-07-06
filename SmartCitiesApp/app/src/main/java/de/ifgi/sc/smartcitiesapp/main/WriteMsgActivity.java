@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -28,7 +29,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.UUID;
+
 import de.ifgi.sc.smartcitiesapp.R;
+import de.ifgi.sc.smartcitiesapp.messaging.Message;
+import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
+import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
+import de.ifgi.sc.smartcitiesapp.zone.Zone;
+import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 public class WriteMsgActivity extends AppCompatActivity {
 
@@ -40,6 +50,13 @@ public class WriteMsgActivity extends AppCompatActivity {
     private boolean markerPlacedPreviously = false;
 
     private String selected_topic;
+    private String msg_title = "";
+    private String msg_txt = "";
+    private LatLng msg_pos = null;
+    private Date msg_exp = null;
+    private Date msg_create = null;
+    private String msg_topic = "";
+    private Zone current_selected_zone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,20 +76,29 @@ public class WriteMsgActivity extends AppCompatActivity {
 
         // Add categories to the spinner:
         Spinner spn_category = (Spinner) findViewById(R.id.spn_category);
-        final String[] values = new String[]{"Traffic", "Sports", "Restaurants",
-                "Shopping", "placeholder1", "placeholder2", "placeholder3", "placeholder4",
-                "placeholder5", "placeholder6"};
+
+        // Get the current selected zone:
+        try {
+            current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+        } catch (NoZoneCurrentlySelectedException e){
+            // TODO: if no zone is currently selected
+            e.printStackTrace();
+        }
+
+        // get all topics within that zone:
+        String[] topics = current_selected_zone.getTopics();
+
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this,
-                android.R.layout.simple_spinner_item, values);
+                android.R.layout.simple_spinner_item, topics);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spn_category.setAdapter(adapter);
         // check out position of selected_topic in values:
         int index = 0;
-        for (int i = 0; i < values.length; i++) {
-            if (selected_topic.equals(values[i])) {
+        for (int i = 0; i < topics.length; i++) {
+            if (selected_topic.equals(topics[i])) {
                 index = i;
                 break;
             }
@@ -171,6 +197,95 @@ public class WriteMsgActivity extends AppCompatActivity {
                 }
             }
         });
+        Button btn_submit =  (Button) findViewById(R.id.btn_submitMsg);
+        btn_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isFormFilled()){
+                    Message newMessage = null;
+
+                    String zoneID = current_selected_zone.getZoneID();
+                    String msg_id = UUID.randomUUID().toString();
+                    if (msg_pos!=null){
+                        // TODO: Take the Client ID from somewhere else :)
+                        newMessage = new Message(UUID.randomUUID().toString(),msg_id, zoneID,msg_create,msg_pos.latitude,msg_pos.longitude,msg_exp,msg_topic, msg_title, msg_txt);
+                    } else {
+                        // newMessage = new Message but without lat and lon .. er ..?
+                    }
+
+                    // create new UUID
+                    ArrayList<Message> msgs = new ArrayList<Message>();
+                    msgs.add(newMessage);
+                    Messenger.getInstance().updateMessengerFromConnect(msgs);
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "You must set a title and a text!", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private boolean isFormFilled(){
+        boolean allFilled = true;
+        EditText edt_msgTitle = (EditText) findViewById(R.id.edt_msgTitle);
+        EditText edt_msgText = (EditText) findViewById(R.id.edt_msgText);
+        Spinner spn_selectTopic = (Spinner) findViewById(R.id.spn_category);
+        Spinner spn_selectExpire = (Spinner) findViewById(R.id.spn_expireTime);
+
+        msg_title = edt_msgTitle.getText().toString();
+        if (msg_title.length() < 1)
+            allFilled = false;
+
+        msg_txt = edt_msgText.getText().toString();
+        if (msg_txt.length() < 1)
+            allFilled = false;
+
+        msg_create = new Date(); // now
+        long theFuture  = 0;
+        switch (spn_selectExpire.getSelectedItemPosition()) {
+            case 0: // + 7 days
+                theFuture = System.currentTimeMillis() + (86400 * 7 * 1000);
+                break;
+            case 1:
+                theFuture = System.currentTimeMillis() + (86400 * 5 * 1000);
+                break;
+            case 2:
+                theFuture = System.currentTimeMillis() + (86400 * 3* 1000);
+                break;
+            case 3:
+                theFuture = System.currentTimeMillis() + (86400 * 2 * 1000);
+                break;
+            case 4:
+                theFuture = System.currentTimeMillis() + (86400 * 1 * 1000);
+                break;
+            case 5:
+                theFuture = System.currentTimeMillis() + (18 * 3600 * 1000);
+                break;
+            case 6:
+                theFuture = System.currentTimeMillis() + (12 * 3600 * 1000);
+                break;
+            case 7:
+                theFuture = System.currentTimeMillis() + (6 * 3600 * 1000);
+                break;
+            case 8:
+                theFuture = System.currentTimeMillis() + (3 * 3600 * 1000);
+                break;
+            default:
+                break;
+        }
+        msg_exp = new Date(theFuture);
+
+        // get marked position:
+        if (msgLocMarker==null){
+            msg_pos = null;
+        } else {
+            msg_pos = msgLocMarker.getPosition();
+        }
+
+        // get selected topic:
+        msg_topic = spn_selectTopic.getSelectedItem().toString();
+
+        return allFilled;
     }
 
     @Override

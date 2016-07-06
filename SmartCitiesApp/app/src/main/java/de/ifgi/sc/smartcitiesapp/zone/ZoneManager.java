@@ -18,15 +18,32 @@ import de.ifgi.sc.smartcitiesapp.messaging.DatabaseHelper;
 public class ZoneManager {
     private ArrayList<Zone> allZones;
     private ArrayList<Zone> currentZones;
-    private final Context ourContext;
+    private Context ourContext;
     private PolyUtil polyUtil;
     private Zone zone;
     private ArrayList<LatLng> polygon;
     private Zone currentZone;
 
-    public ZoneManager(Context c){
-        ourContext = c;
-        currentZones = new ArrayList<>();
+    public static ZoneManager instance; // global singleton instance
+
+    public static void initInstance(Context c)
+    {
+        if (instance == null){
+            // Create the instance
+            instance = new ZoneManager();
+            instance.currentZones = new ArrayList<>();
+            instance.ourContext = c;
+        }
+    }
+
+    public ZoneManager(){
+
+    }
+
+    public static ZoneManager getInstance()
+    {
+        // Return the instance
+        return instance;
     }
 
     /**
@@ -34,7 +51,7 @@ public class ZoneManager {
      * @param position LatLng
      * @return ArrayList<Zone>
      */
-    public ArrayList<Zone> getCurrentZones (LatLng position) {
+    public synchronized ArrayList<Zone> getCurrentZones (LatLng position) {
         currentZones.clear();
         allZones = getAllZonesfromDatabase();
         for(int i=0; i< allZones.size();i++){
@@ -54,7 +71,7 @@ public class ZoneManager {
      * Zone with prematching zoneID will simply be ignored
      * @param zones
      */
-    public void updateZonesInDatabase(ArrayList<Zone> zones){
+    public synchronized void updateZonesInDatabase(ArrayList<Zone> zones){
         //Checking size of Arraylist
         int size;
         size= zones.size();
@@ -80,7 +97,7 @@ public class ZoneManager {
     /**
      * This method will return all zones stored in Database
      */
-    public ArrayList<Zone> getAllZonesfromDatabase(){
+    public synchronized ArrayList<Zone> getAllZonesfromDatabase(){
         DatabaseHelper db = new DatabaseHelper(ourContext);
         db.open();
         ArrayList<Zone> zones= db.getAllZones_DB();
@@ -93,7 +110,7 @@ public class ZoneManager {
      * return the ZoneID from the Zone in which the User is currently
      * @return String ZoneID
      */
-    public String getCurrentZoneID(){
+    public synchronized String getCurrentZoneID(){
         return currentZone.getZoneID();
     }
 
@@ -102,9 +119,14 @@ public class ZoneManager {
      * setting current Zone
      * @param zone
      */
-    public void setCurrentZone(Zone zone){
+    public synchronized void setCurrentZone(Zone zone){
         this.currentZone = zone;
     }
 
+    public synchronized Zone getCurrentZone() throws NoZoneCurrentlySelectedException{
+        if (currentZone!=null)
+            return currentZone;
+        throw new NoZoneCurrentlySelectedException();
+    }
 
 }

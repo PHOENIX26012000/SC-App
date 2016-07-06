@@ -36,8 +36,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".main.MsgActivity"></activity>
-        <activity android:name=".main.WriteMsgActivity"></activity>
+        <activity android:name=".main.MsgActivity" />
+        <activity android:name=".main.WriteMsgActivity" />
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -53,6 +53,8 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDw7Pv8XpkB-XqeWt1wLpR2hZ4TDNiIcaw" />
+
+        <activity android:name=".main.SelectZoneActivity"></activity>
     </application>
 
 </manifest>
