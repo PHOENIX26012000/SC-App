@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:text="@+id/title"
+            android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
         <TextView
@@ -27,6 +28,16 @@
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/msg_new"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="new"
+        android:textStyle="bold"
+        android:textColor="@color/colorAccent"
+        android:visibility="gone"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"/>
 
     <TextView
         android:id="@+id/msg_text"

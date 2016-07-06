@@ -9,6 +9,20 @@
         android:layout_height="match_parent"
         android:orientation="vertical" >
 
+        <Button
+            android:id="@+id/btn_selectZone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select Zone">
+
+        </Button>
+        <Button
+            android:id="@+id/btn_test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="test recieve new msgs Listener"/>
+
+
         <TabWidget
             android:id="@android:id/tabs"
             android:layout_width="fill_parent"

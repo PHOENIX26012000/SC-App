@@ -1,30 +1,37 @@
 package de.ifgi.sc.smartcitiesapp.main;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.SupportMapFragment;
+import java.util.ArrayList;
 
 import de.ifgi.sc.smartcitiesapp.R;
-import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
+import de.ifgi.sc.smartcitiesapp.messaging.Message;
+import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
+import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
+import de.ifgi.sc.smartcitiesapp.zone.Zone;
+import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
-public class TopicTabFragment extends ListFragment {
+public class TopicTabFragment extends Fragment {
 
     private View v;
     private Button btn_writeMsg;
+    private Zone current_selected_zone;
+    private ArrayList<Message> msgs;
+    private ArrayList<Message> msgs_in_current_zone;
+    private LinearLayout ll_topics;
+    private ScrollView slv_topics;
+    private ArrayList<TopicView> shown_topics;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,15 +41,91 @@ public class TopicTabFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        String[] values = new String[] { "Traffic", "Sports", "Restaurants",
-                "Shopping", "placeholder1", "placeholder2", "placeholder3", "placeholder4",
-                "placeholder5", "placeholder6" };
-        String[] msgs = new String[] { "Traffic Jam in the city center", "students beachvolleyball tournament at the castle",
-                "recyclable \"to-go\"-coffee cups at Franks Copy Shop", "Missed Black friday? Clothes are 100% off at my place",
-                "bla..","bla..","bla..","bla..","bla..","bla.."
-        };
-        MySimpleArrayAdapter adapter = new MySimpleArrayAdapter(getActivity(), values, msgs);
-        setListAdapter(adapter);
+
+        // Get the current selected zone:
+        try {
+            current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+        } catch (NoZoneCurrentlySelectedException e) {
+            e.printStackTrace();
+            Log.d("AppZone", "No Zone selected error!");
+        }
+
+        // get all msgs for this current selected zone:
+        msgs = Messenger.getInstance().getAllMessages();
+        msgs_in_current_zone = new ArrayList<Message>();
+        ArrayList<Message> newObtained = UIMessageManager.getInstance().getNew_obtained_msgs();
+
+        ArrayList<String> newObtainedIDs = new ArrayList<String>();
+        if (newObtained != null) {
+            for (Message m : newObtained)
+                newObtainedIDs.add(m.getMessage_ID());
+        }
+        ArrayList<String> newObtainedIDsInThisTopics = new ArrayList<String>();
+
+        // for each message m from the Messenger:
+        for (Message m : msgs) {
+            // if m is inside current selected zone
+            if (m.getZone_ID().equals(current_selected_zone.getZoneID()))
+                msgs_in_current_zone.add(m);
+        }
+        Log.d("HS_msgs", msgs_in_current_zone.size() + "");
+
+        // get all topics within that zone:
+        String[] topics = current_selected_zone.getTopics();
+        Boolean[] topic_hasNewEntry = new Boolean[topics.length + 1];
+        Boolean[] topic_hasAMsg = new Boolean[topics.length + 1];
+        String[] topic_msgs = new String[topics.length + 1];
+
+        // get 1st msg from each topics:
+        String[] msgs = new String[topics.length + 1];
+        shown_topics = new ArrayList<TopicView>();
+        // for each topic i in the current selected zone:
+        for (int i = 0; i < topics.length; i++) {
+            // init markers for topic i:
+            topic_hasNewEntry[i] = false;
+            topic_hasAMsg[i] = false;
+            topic_msgs[i] = "";
+        }
+        // for each message m from the Messenger:
+        for (Message m : msgs_in_current_zone) {
+            // get topic from m:
+            String m_topic = m.getTopic();
+            for (int i = 0; i < topics.length; i++) {
+                if (m_topic.equals(topics[i])) {
+                    topic_hasAMsg[i] = true;
+                    if (newObtainedIDs.contains(m.getMessage_ID())) {
+                        topic_hasNewEntry[i] = true;
+                        topic_msgs[i] = m.getTitle() + ":" + m.getMsg();
+                    }
+                    if (!topic_hasNewEntry[i])
+                        topic_msgs[i] = m.getTitle() + ":" + m.getMsg();
+                }
+            }
+        }
+
+        // create TopicViews for each topic:
+        for (int i = 0; i < topics.length; i++) {
+            TopicView tv;
+            if (topic_hasNewEntry[i]) {
+                // highlight it:
+                tv = new TopicView(getContext(), topics[i], topic_msgs[i], true);
+            } else {
+                // don't highlight it:
+                tv = new TopicView(getContext(), topics[i], topic_msgs[i], false);
+            }
+            // add a onClickListener for the TopicView:
+            tv.setClickable(true);
+
+            shown_topics.add(tv);
+        }
+
+        // add TopicViews to ScrollView into LinearLayout:
+        ll_topics.removeAllViews();
+
+        // add all messages onto the scrollview:
+        for (TopicView tv : shown_topics) {
+            ll_topics.addView(tv);
+        }
     }
 
     @Override
@@ -55,10 +138,94 @@ public class TopicTabFragment extends ListFragment {
         }
         try {
             v = inflater.inflate(R.layout.fragment_tab, container, false);
+            ll_topics = (LinearLayout) v.findViewById(R.id.ll_topics);
+            slv_topics = (ScrollView) v.findViewById(R.id.slv_topics);
             btn_writeMsg = (Button) v.findViewById(R.id.btn_writeMsg);
         } catch (InflateException e) {
         /* btn_writeMsg is already there, just return view as it is */
+            // Get the current selected zone:
+            // Get the current selected zone:
+            try {
+                current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+            } catch (NoZoneCurrentlySelectedException nzcse) {
+                nzcse.printStackTrace();
+                Log.e("AppZone", "No Zone selected error!");
+            }
+
+            // get all msgs for this current selected zone:
+            msgs = Messenger.getInstance().getAllMessages();
+            msgs_in_current_zone = new ArrayList<Message>();
+            ArrayList<Message> newObtained = UIMessageManager.getInstance().getNew_obtained_msgs();
+
+            ArrayList<String> newObtainedIDs = new ArrayList<String>();
+            if (newObtained != null) {
+                for (Message m : newObtained)
+                    newObtainedIDs.add(m.getMessage_ID());
+            }
+            ArrayList<String> newObtainedIDsInThisTopics = new ArrayList<String>();
+
+            // for each message m from the Messenger:
+            for (Message m : msgs) {
+                // if m is inside current selected zone
+                if (m.getZone_ID().equals(current_selected_zone.getZoneID()))
+                    msgs_in_current_zone.add(m);
+            }
+            Log.d("HS_msgs", msgs_in_current_zone.size() + "");
+
+            // get all topics within that zone:
+            String[] topics = current_selected_zone.getTopics();
+            Boolean[] topic_hasNewEntry = new Boolean[topics.length + 1];
+            Boolean[] topic_hasAMsg = new Boolean[topics.length + 1];
+            String[] topic_msgs = new String[topics.length + 1];
+
+            // get 1st msg from each topics:
+            String[] msgs = new String[topics.length + 1];
+            shown_topics = new ArrayList<TopicView>();
+            // for each topic i in the current selected zone:
+            for (int i = 0; i < topics.length; i++) {
+                // init markers for topic i:
+                topic_hasNewEntry[i] = false;
+                topic_hasAMsg[i] = false;
+                topic_msgs[i] = "";
+            }
+            // for each message m from the Messenger:
+            for (Message m : msgs_in_current_zone) {
+                // get topic from m:
+                String m_topic = m.getTopic();
+                for (int i = 0; i < topics.length; i++) {
+                    if (m_topic.equals(topics[i])) {
+                        topic_hasAMsg[i] = true;
+                        if (newObtainedIDs.contains(m.getMessage_ID())) {
+                            topic_hasNewEntry[i] = true;
+                            topic_msgs[i] = m.getTitle() + ":" + m.getMsg();
+                        }
+                        if (!topic_hasNewEntry[i])
+                            topic_msgs[i] = m.getTitle() + ":" + m.getMsg();
+                    }
+                }
+            }
+
+            // create TopicViews for each topic:
+            for (int i = 0; i < topics.length; i++) {
+                TopicView tv;
+                if (topic_hasNewEntry[i]) {
+                    // highlight it:
+                    tv = new TopicView(getContext(), topics[i], topic_msgs[i], true);
+                } else {
+                    // don't highlight it:
+                    tv = new TopicView(getContext(), topics[i], topic_msgs[i], false);
+                }
+                shown_topics.add(tv);
+            }
+            // add TopicViews to ScrollView into LinearLayout:
+            ll_topics.removeAllViews();
+
+            // add all messages onto the scrollview:
+            for (TopicView tv : shown_topics) {
+                ll_topics.addView(tv);
+            }
         }
+
 
         btn_writeMsg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,12 +241,99 @@ public class TopicTabFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        String item = (String) getListAdapter().getItem(position);
-        Toast.makeText(getActivity(), item + " selected", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(getActivity(), MsgActivity.class);
-        intent.putExtra("TOPIC", item);
-        startActivity(intent);
+    public void onResume() {
+        super.onResume();
+        // Get the current selected zone:
+        // Get the current selected zone:
+        try {
+            current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+        } catch (NoZoneCurrentlySelectedException e) {
+            e.printStackTrace();
+            Log.d("AppZone", "No Zone selected error!");
+        }
+
+        // get all msgs for this current selected zone:
+        msgs = Messenger.getInstance().getAllMessages();
+        msgs_in_current_zone = new ArrayList<Message>();
+        ArrayList<Message> newObtained = UIMessageManager.getInstance().getNew_obtained_msgs();
+
+        ArrayList<String> newObtainedIDs = new ArrayList<String>();
+        if (newObtained != null) {
+            for (Message m : newObtained)
+                newObtainedIDs.add(m.getMessage_ID());
+        }
+        ArrayList<String> newObtainedIDsInThisTopics = new ArrayList<String>();
+
+        // for each message m from the Messenger:
+        for (Message m : msgs) {
+            // if m is inside current selected zone
+            if (m.getZone_ID().equals(current_selected_zone.getZoneID()))
+                msgs_in_current_zone.add(m);
+        }
+        Log.d("HS_msgs", msgs_in_current_zone.size() + "");
+
+        // get all topics within that zone:
+        String[] topics = current_selected_zone.getTopics();
+        Boolean[] topic_hasNewEntry = new Boolean[topics.length + 1];
+        Boolean[] topic_hasAMsg = new Boolean[topics.length + 1];
+        String[] topic_msgs = new String[topics.length + 1];
+
+        // get 1st msg from each topics:
+        String[] msgs = new String[topics.length + 1];
+        shown_topics = new ArrayList<TopicView>();
+        // for each topic i in the current selected zone:
+        for (int i = 0; i < topics.length; i++) {
+            // init markers for topic i:
+            topic_hasNewEntry[i] = false;
+            topic_hasAMsg[i] = false;
+            topic_msgs[i] = "";
+        }
+        // for each message m from the Messenger:
+        for (Message m : msgs_in_current_zone) {
+            // get topic from m:
+            String m_topic = m.getTopic();
+            for (int i = 0; i < topics.length; i++) {
+                if (m_topic.equals(topics[i])) {
+                    topic_hasAMsg[i] = true;
+                    if (newObtainedIDs.contains(m.getMessage_ID())) {
+                        topic_hasNewEntry[i] = true;
+                        topic_msgs[i] = m.getTitle() + ":" + m.getMsg();
+                    }
+                    if (!topic_hasNewEntry[i])
+                        topic_msgs[i] = m.getTitle() + ":" + m.getMsg();
+                }
+            }
+        }
+
+        // create TopicViews for each topic:
+        for (int i = 0; i < topics.length; i++) {
+            TopicView tv;
+            if (topic_hasNewEntry[i]) {
+                // highlight it:
+                tv = new TopicView(getContext(), topics[i], topic_msgs[i], true);
+            } else {
+                // don't highlight it:
+                tv = new TopicView(getContext(), topics[i], topic_msgs[i], false);
+            }
+            shown_topics.add(tv);
+        }
+        // add TopicViews to ScrollView into LinearLayout:
+        ll_topics.removeAllViews();
+
+        // add all messages onto the scrollview:
+        for (TopicView tv : shown_topics) {
+            ll_topics.addView(tv);
+        }
     }
+
+    /**
+     @Override public void onListItemClick(ListView l, View v, int position, long id) {
+     String item = (String) getListAdapter().getItem(position);
+     Toast.makeText(getActivity(), item + " selected", Toast.LENGTH_SHORT).show();
+     Intent intent = new Intent(getActivity(), MsgActivity.class);
+     intent.putExtra("TOPIC", item);
+     startActivity(intent);
+     }
+     */
 
 }
