@@ -106,8 +106,7 @@ public class Message {
     }
 
     public String toString() {
-        return "client_ID," + this.client_ID +
-                ", message_ID," + this.message_ID +
+        return "message_ID," + this.message_ID +
                 ", zone_ID," + this.zone_ID +
                 ", cr_Dt," + this.cr_Dt +
                 ", ex_Dt," + this.ex_Dt +

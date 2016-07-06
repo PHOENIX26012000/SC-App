@@ -208,7 +208,7 @@ public class WriteMsgActivity extends AppCompatActivity {
                     String msg_id = UUID.randomUUID().toString();
                     if (msg_pos!=null){
                         // TODO: Take the Client ID from somewhere else :)
-                        newMessage = new Message(UUID.randomUUID().toString(),msg_id, zoneID,msg_create,msg_pos.latitude,msg_pos.longitude,msg_exp,msg_topic, msg_title, msg_txt);
+                        newMessage = new Message(msg_id, zoneID,msg_create,msg_pos.latitude,msg_pos.longitude,msg_exp,msg_topic, msg_title, msg_txt);
                     } else {
                         // newMessage = new Message but without lat and lon .. er ..?
                     }

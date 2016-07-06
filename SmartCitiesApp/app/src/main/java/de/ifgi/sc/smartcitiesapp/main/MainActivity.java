@@ -122,16 +122,18 @@ public class MainActivity extends AppCompatActivity {
         Date creationDate = new Date(); // now
         expDateMillis = creationDate.getTime()+1000*3600*18; // 18 hours
         expDate = new Date(expDateMillis);
+        /*
         Message msg1 = new Message(
                 clientID, UUID.randomUUID().toString(),
                 zonesFromDB.get(0).getZoneID(), creationDate,
                 51.9707, 7.6281, expDate, "Traffic", "Traffic Jam in the city center",
                 "There is a traffic jam in the city center"
         );
+        */
 
         // send msg1 to the Messenger:
         ArrayList<Message> msgs = new ArrayList<Message>();
-        msgs.add(msg1);
+//        msgs.add(msg1);
         // once done, dont repeat the next line at several app starts!
         // Messenger.getInstance().updateMessengerFromConnect(msgs);
 
@@ -275,15 +277,15 @@ public class MainActivity extends AppCompatActivity {
         zoneList.add(z1);
         zoneList.add(z2);
         zoneList.add(z1);
-        ZoneManager msgr=new ZoneManager(this);
-        msgr.updateZonesInDatabase(zoneList);
-        zoneList=msgr.getAllZonesfromDatabase();
-        for(int i=0;i<zoneList.size();i++){
-            z1=zoneList.get(i);
-            Log.i("Zone id "+z1.getZoneID()," retreived");
-
-
-        }
+//        ZoneManager msgr=new ZoneManager(this);
+//        msgr.updateZonesInDatabase(zoneList);
+//        zoneList=msgr.getAllZonesfromDatabase();
+//        for(int i=0;i<zoneList.size();i++){
+//            z1=zoneList.get(i);
+//            Log.i("Zone id "+z1.getZoneID()," retreived");
+//
+//
+//        }
 
 
     }
