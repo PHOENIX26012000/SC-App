@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,21 +20,14 @@ import com.google.android.gms.nearby.messages.SubscribeCallback;
 import com.google.android.gms.nearby.messages.SubscribeOptions;
 
 import java.io.IOException;
-import java.io.InvalidClassException;
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.ifgi.sc.smartcitiesapp.interfaces.Connection;
-import de.ifgi.sc.smartcitiesapp.interfaces.Messenger;
 import de.ifgi.sc.smartcitiesapp.main.MainActivity;
 
 
@@ -124,7 +116,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
                 Log.d(MainActivity.TAG + " P2P", "Found message: " + messageIn);
 
                 // forward message to messenger
-                de.ifgi.sc.smartcitiesapp.messaging.Messenger.getInstance().updateMessengerFromConnect(mReceivedMessages);
+                de.ifgi.sc.smartcitiesapp.messaging.Messenger.getInstance().updateMessengerFromP2P(mReceivedMessages);
             }
 
             @Override
