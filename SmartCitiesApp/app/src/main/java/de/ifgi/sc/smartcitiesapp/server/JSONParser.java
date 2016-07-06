@@ -155,19 +155,23 @@ public class JSONParser {
                 title = (String) jsonMsg.get("Title");
                 msg = (String) jsonMsg.get("Message");
                 jsonLoc = jsonMsg.getJSONObject("Location");
-                jsonCoords = jsonLoc.getJSONArray("Coordinate");
-                string = (String) jsonCoords.get(0);
-                splittetCoords = string.split(",");
-                latitude = Double.parseDouble(splittetCoords[0]);
-                longitude = Double.parseDouble(splittetCoords[1]);
-
+                if(jsonLoc.isNull("Coordinate")){
+                    latitude = null;
+                    longitude = null;
+                }
+                else{
+                    jsonCoords = jsonLoc.getJSONArray("Coordinate");
+                    string = (String) jsonCoords.get(0);
+                    splittetCoords = string.split(",");
+                    latitude = Double.parseDouble(splittetCoords[0]);
+                    longitude = Double.parseDouble(splittetCoords[1]);
+                }
                 message = new Message(clientID,messageID,zoneID,creationDate,latitude,longitude,expiredDate,topic,title,msg);
                 this.msglist.add(message);
 
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.w("JsonToMessage", "no such JSONObject");
         }
 
         return this.msglist;

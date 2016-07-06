@@ -23,10 +23,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -42,6 +44,7 @@ import de.ifgi.sc.smartcitiesapp.R;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
+import de.ifgi.sc.smartcitiesapp.server.JSONParser;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
@@ -150,6 +153,40 @@ public class MainActivity extends AppCompatActivity {
             current_selected_zone = zonesFromDB.get(0);
             ZoneManager.getInstance().setCurrentZone(current_selected_zone);
         }
+
+
+        JSONParser parser = new JSONParser();
+        JSONObject obj = new JSONObject();
+        obj = parser.parseMessagetoJSON(msgs);
+        Log.i("Parser","ParserMsgToJSON: "+ obj);
+
+        JSONObject obj2 = new JSONObject();
+        JSONArray array = new JSONArray();
+        try {
+
+            JSONObject jsonmsg = new JSONObject();
+            jsonmsg.put("Client-id","123");
+            jsonmsg.put("Message-id","123");
+            jsonmsg.put("Zone-id","123");
+            jsonmsg.put("Created-at","2016-07-06T14:05:57.872+0200");
+            jsonmsg.put("Expired-at","2016-07-06T14:05:57.872+0200");
+            jsonmsg.put("Title","test");
+            jsonmsg.put("Topic","123");
+            jsonmsg.put("Message","123");
+            JSONObject location = new JSONObject();
+            jsonmsg.put("Location",location);
+            array.put(0,jsonmsg);
+            obj2.put("Messages", array);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        ArrayList<Message> listmsg = new ArrayList<Message>();
+        listmsg = parser.parseJSONtoMessage(obj2);
+        Log.i("Parser","JSONtoMessage: "+ listmsg);
+
+
 
         // Start Messenger
         Messenger mMessenger = new Messenger(getApplicationContext(), mP2PManager);
