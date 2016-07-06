@@ -88,7 +88,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
         int size;
         size= msgs.size();
         Message t_msg;
-
+        ArrayList<Message> parray_list = new ArrayList<>();
         DatabaseHelper db = new DatabaseHelper(ourContext);
         db.open();
 
@@ -97,12 +97,14 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
             t_msg= msgs.get(i);
             if(db.messageAlreadyExist(t_msg) == false){
                     createMessageEntry(db,t_msg);
+                    parray_list.add(t_msg);
             }
 
         }
 
         Log.i("Messages "," Fetched");
         db.close();
+        mP2PManager.shareMessage(parray_list);
 
     }
 
@@ -182,7 +184,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
     {
         DatabaseHelper db = new DatabaseHelper(ourContext);
         db.open();
-        db.deleteMessageZoneWhenExpire();
+        db.deleteExpiredMnZ();
         db.close();
 
 
