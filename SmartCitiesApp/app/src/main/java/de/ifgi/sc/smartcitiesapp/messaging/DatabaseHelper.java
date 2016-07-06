@@ -351,7 +351,7 @@ public class DatabaseHelper {
         return coords;
     }
 
-    public void deleteMessageZoneWhenExpire() {
+    public void deleteExpiredMnZ() {
         ourDatabase.execSQL("Delete from TABLE_1 where Exp_time <= datetime(date('now'))");
         ourDatabase.execSQL("Delete from TABLE_2 where Exp_time <= datetime(date('now'))");
     }
