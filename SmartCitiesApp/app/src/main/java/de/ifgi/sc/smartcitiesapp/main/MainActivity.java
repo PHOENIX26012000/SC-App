@@ -37,6 +37,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -86,14 +88,16 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
      */
     public P2PManager mP2PManager;
 
+    public Messenger mMessenger;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Create the application context and its global state variables.
+		// Create the application context and its global state variables.
         app = (App)getApplication();
-
+        
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
 
@@ -154,15 +158,11 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
             Log.d(TAG,"zone from db: "+z.getName());
         }
 
-        // generate the Client_ID:
-        clientID = UUID.randomUUID().toString();
-
         // create an example msg:
         Date creationDate = new Date(); // now
         expDateMillis = creationDate.getTime()+1000*3600*18; // 18 hours
         expDate = new Date(expDateMillis);
-        Message msg1 = new Message(
-                clientID, UUID.randomUUID().toString(),
+        Message msg1 = new Message(UUID.randomUUID().toString(),
                 zonesFromDB.get(0).getZoneID(), creationDate,
                 51.9707, 7.6281, expDate, "Traffic", "Traffic Jam in the city center",
                 "There is a traffic jam in the city center"
@@ -196,16 +196,9 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
             ZoneManager.getInstance().setCurrentZone(current_selected_zone);
         }
 
-        // Start Messenger
-        Messenger mMessenger = new Messenger(getApplicationContext(), mP2PManager);
-        mMessenger.initialStartup(); // do server connection ...
-
         // TODO: use setter instead:
-        // Messenger.getInstance().setP2PManager(mP2PManager);
-        // Messenger.getInstance().initialStartup();
-
-        // TODO: use a setMessagesObtainedListener:
-        // Messenger.getInstance().setMessagesObtainesListener(this);
+        Messenger.getInstance().setP2PManager(mP2PManager);
+        Messenger.getInstance().initialStartup();
 
         try {
             // enable Location service on phone if its not enabled already:
@@ -268,13 +261,13 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                 // create a testing msg:
                 ArrayList<Zone> zones = ZoneManager.getInstance().getAllZonesfromDatabase();
                 Log.d("onClick","#zones: "+zones.size());
-                Message msg = new Message(UUID.randomUUID().toString(),
+                Message msg = new Message(
                         UUID.randomUUID().toString(),
                         zones.get(0).getZoneID(), new Date(),
                         51.666, 7.622, new Date(new Date().getTime() + 1000 * 360),
                         "Sports", "Tennis", "Lorem ipssum dolor amet... Created at "+new Date()
                 );
-                Message msg2 = new Message(UUID.randomUUID().toString(),
+                Message msg2 = new Message(
                         UUID.randomUUID().toString(),
                         zones.get(0).getZoneID(), new Date(),
                         51.646, 7.632, new Date(new Date().getTime() + 1000 * 360),
@@ -321,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
     @Override
     protected void onStop() {
         Log.i(TAG + " Main", "OnStop");
+        mP2PManager.setDisconnected();
         super.onStop();
     }
 
