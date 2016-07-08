@@ -43,13 +43,7 @@ import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -170,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                 51.9707, 7.6281, expDate, "Traffic", "Traffic Jam in the city center",
                 "There is a traffic jam in the city center"
         );
-
         // send msg1 to the Messenger:
         ArrayList<Message> msgs = new ArrayList<Message>();
         msgs.add(msg1);
