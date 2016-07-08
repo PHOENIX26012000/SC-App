@@ -32,7 +32,7 @@ import de.ifgi.sc.smartcitiesapp.interfaces.Connection;
 import de.ifgi.sc.smartcitiesapp.main.MainActivity;
 
 /**
- * Creates by Heinrich
+ * Created by Heinrich.
  * The P2PManager handles the connection between different peers in the network.
  */
 public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -57,7 +57,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
     /**
      * Constructor: Initializes the P2PManager and starts the service.
      *
-     * @param activity
+     * @param activity the activity
      */
     public P2PManager(MainActivity activity) {
         mActivity = activity;
@@ -112,6 +112,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
     /**
      * Parses the incomming Messages for the peers to a Message object
+     *
      * @param str: Message string to be parsed into a message
      * @return Returns the Message object
      */
@@ -122,7 +123,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         try {
             m = new de.ifgi.sc.smartcitiesapp.messaging.Message(list.get(1), list.get(3),
                     format.parse(list.get(5)), Double.parseDouble(list.get(15)), Double.parseDouble(list.get(17)), format.parse(list.get(7)), list.get(9),
-                    list.get(11),list.get(13));
+                    list.get(11), list.get(13));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -153,13 +154,12 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
      */
     @Override
     public void shareMessage(ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> messages) {
-        //TODO
         for (de.ifgi.sc.smartcitiesapp.messaging.Message message : messages) {
             // try publish a message if GoogleAPIClient is connected
             if (isConnected) {
                 int duration = calculateDuration(message);
                 mPubMessages.add(message);
-                if(duration < 0) {
+                if (duration < 0) {
                     publish(message, duration);
                 }
             } else {
@@ -170,17 +170,8 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
 
     /**
-     * Check if the message isn't expired yet
-     * @return
-     */
-    private boolean isActive(de.ifgi.sc.smartcitiesapp.messaging.Message m) {
-        //TODO
-        return true;
-    }
-
-
-    /**
      * Calculate remaining time until expiration of message in seconds.
+     *
      * @param m
      * @return
      */
@@ -194,7 +185,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        int seconds = (int) (expire.getTime()-now.getTime())/1000;
+        int seconds = (int) (expire.getTime() - now.getTime()) / 1000;
         Log.i(MainActivity.TAG + " P2P", "Message time in seconds: " + seconds);
         return seconds;
     }
@@ -210,6 +201,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
     /**
      * Is called when the device is connected to the nearby service.
+     *
      * @param bundle
      */
     @Override
@@ -224,12 +216,9 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
         // share all Messages that are in the publication array
         for (de.ifgi.sc.smartcitiesapp.messaging.Message mPubMessage : mPubMessages) {
-            if (isActive(mPubMessage)) {
-                int duration = calculateDuration(mPubMessage);
-                if (duration > 0) {
-                    publish(mPubMessage, duration);
-                }
-
+            int duration = calculateDuration(mPubMessage);
+            if (duration > 0) {
+                publish(mPubMessage, duration);
             } else {
                 unpublish(mPubMessage);
             }
@@ -247,6 +236,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
     /**
      * Just logs when the connection is suspended.
+     *
      * @param cause
      */
     @Override
@@ -258,6 +248,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
     /**
      * Just logs when the connection fails.
+     *
      * @param result
      */
     @Override
@@ -269,7 +260,8 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
     /**
      * Publish Messages for a specified duration.
-     * @param message Message to share
+     *
+     * @param message  Message to share
      * @param duration Time in seconds until message expires
      */
     private void publish(final de.ifgi.sc.smartcitiesapp.messaging.Message message, int duration) {
@@ -333,7 +325,8 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
     /**
      * Unpublishes a single message
-     * @param message
+     *
+     * @param message the message
      */
     public void unpublish(de.ifgi.sc.smartcitiesapp.messaging.Message message) {
         Log.i(MainActivity.TAG + " P2P", "Unpublishing message m.");
