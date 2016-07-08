@@ -26,6 +26,7 @@ After this step, there are two ways of installing the application, whereas both 
   1. go to your [Google Developer Console](https://console.developers.google.com/) and generate an API_KEY.
   - activate the services **Google Maps Android API** and **Nearby Messages API** for this API_KEY
   - go to your `AndroidManifest.xml` and insert your API_KEY as follows:
+  
   ```
   <meta-data
         android:name="com.google.android.nearby.messages.API_KEY"
