@@ -104,18 +104,18 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         mMessageListener = new MessageListener() {
             @Override
             public void onFound(Message message) {
-                Log.i(MainActivity.TAG, "Message found " + message);
+                Log.i(MainActivity.TAG + " P2P", "Message found " + message);
                 // When receives a message
                 String messageIn;
                 try {
                     messageIn = (String) Serializer.deserialize(message.getContent());
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.i(MainActivity.TAG, "Could not read message" + e);
+                    Log.i(MainActivity.TAG + " P2P", "Could not read message" + e);
                     return;
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
-                    Log.i(MainActivity.TAG, "Could not find message class");
+                    Log.i(MainActivity.TAG + " P2P", "Could not find message class");
                     return;
                 }
 
