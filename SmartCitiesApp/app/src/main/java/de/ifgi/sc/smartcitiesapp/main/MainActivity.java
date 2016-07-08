@@ -58,6 +58,7 @@ import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
 import de.ifgi.sc.smartcitiesapp.server.JSONParser;
+import de.ifgi.sc.smartcitiesapp.server.ServerConnection;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
@@ -97,6 +98,13 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
+
+        //test serverr connecion get msgs
+
+        ServerConnection ser = new ServerConnection();
+        ser.getMessages();
+        Log.i("Connection Successful","GetMSGS");
+
 
         // in case of the notification about new retrieved msgs was clicked:
         if (savedInstanceState == null) {

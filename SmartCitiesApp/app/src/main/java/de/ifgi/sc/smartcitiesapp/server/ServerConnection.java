@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import de.ifgi.sc.smartcitiesapp.interfaces.Connection;
+import de.ifgi.sc.smartcitiesapp.interfaces.Messenger;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
 import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
@@ -79,7 +80,7 @@ public class ServerConnection implements Connection{
             //DataOutputStream wr= null;
             try
             {
-                URL url = new URL("http://giv-project6.uni-muenster.de:8080/api/addmessages");
+                URL url = new URL(urls[0]);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000 /* milliseconds */);
                 conn.setConnectTimeout(15000 /* milliseconds */);
@@ -88,7 +89,7 @@ public class ServerConnection implements Connection{
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
                 conn.connect();
-                this.messages= messages;
+                //this.messages= messages;
                 jsonObject=jsonParser.parseMessagetoJSON(messages);
 
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
@@ -129,31 +130,37 @@ public class ServerConnection implements Connection{
             return response+responseString;
 
         }
-/*
+
         protected void onPostExecute(String result){
         // data submitted successfully?
         if (result.contains("201")) {
+        Log.d("Successful submission",result);
 
         }
         // maybe add other codes as well such as 201, or all between >=200 <400
-*/
+
+    }
+
     }
 
     public class GetMsgTask extends AsyncTask<String,Integer, String> {
         JSONParser jsonParser = new JSONParser();
         ArrayList<Message> messages = new ArrayList<Message>();
+
+        Messenger msger;
         //JSONObject jsonObject = new JSONObject();
 
         String responseString = "";
         int response;
         InputStream is = null;
+        private boolean errorOccured = false;
 
         @Override
 
 
         protected String doInBackground(String... urls) {
             try {
-                URL url = new URL("http://giv-project6.uni-muenster.de:8080/api/messages/");
+                URL url = new URL(urls[0]);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000);
                 conn.setConnectTimeout(15000);
@@ -164,15 +171,16 @@ public class ServerConnection implements Connection{
                 is = conn.getInputStream();
 
                 Reader reader = new InputStreamReader(is, "UTF-8");
-                char[] buffer = new char[100];
+                char[] buffer = new char[8000];
                 reader.read(buffer);
                 String contentAsString = new String(buffer);
 
                 responseString = contentAsString;
 
-                JSONObject jsonObject = new JSONObject(responseString);
 
-                messages = jsonParser.parseJSONtoMessage(jsonObject);
+                //JSONObject jsonObject = new JSONObject(responseString);
+
+                //messages = jsonParser.parseJSONtoMessage(jsonObject);
 
                 conn.disconnect();
 
@@ -191,12 +199,22 @@ public class ServerConnection implements Connection{
 
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            if (result.contains("200")) {
-                Log.d("Connection:","Connected");
+            //if (result.contains("201")) {
+                //Log.d("ServerResponse:",result);
+            try{
+                JSONObject msjobj= new JSONObject(result);
+                messages= jsonParser.parseJSONtoMessage(msjobj);
+                msger.updateMessengerFromConnect(messages);
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-        }
+            }
+
     }
+
 
     public class GetZoneTask extends AsyncTask <String, Integer, String> {
 
