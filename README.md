@@ -15,13 +15,19 @@ This documentation guides through the concepts of the application, the developme
 
 ## Getting Started
 
+The developers of the project came with different programming backgrounds and knowledge, so the initial phase of the project was to some degree used to get familiar with the tools and technologies.
+
 ### Github
 
-![functionality](img/git branching.png)
+The decision was made to use a [Github](https://github.com) Repository as version control and code sharing platform. The following graphic was used to explain the concept of git to the developers that had not been working with it before.
+
+![functionality](img/git.png)
 
 ### Git Flow
 
-![functionality](img/git.png)
+Git Flow is a powerfull branching concept for git, which is easy to understand and to learn, and has proofed itself during the project to be indispensabel. [This Graph](https://github.com/heinrichloewen/SC-App/network) visualizes how the concept was implemented according to the following simplified graphic.
+
+![functionality](img/git branching.png)
 
 ## Installation
 
