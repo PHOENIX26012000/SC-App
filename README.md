@@ -15,7 +15,7 @@ This documentation guides through the concepts of the application, the developme
 
 ## Installation
 
-This application was mainly developed for the means of the study project, so that it is currently not released into the Google Play Store. There are to ways of installing the application: A developer may clone this repository and deploy the application via Android Studio, whereas a normal user may install the application via a pre-build *.apk* file.  
+This application was mainly developed for the means of the study project, so that it is currently not released into the Google Play Store. There are to ways of installing the application: A developer may clone this repository and deploy the application via Android Studio, whereas a normal user may install the application via a pre-build `.apk` file.  
 
 ### Developer
 
@@ -23,9 +23,9 @@ The application was developed with [Android Studio](https://developer.android.co
 After this step, there are two ways of installing the application, whereas both require a preliminary step.
 
 **Preliminary Step**: The application uses external google services that require an API_KEY.
-  1. go to your [Google Developer Console](https://console.developers.google.com/) and generate an API_KEY.
-  - activate the services **Google Maps Android API** and **Nearby Messages API** for this API_KEY
-  - go to your `AndroidManifest.xml` and insert your API_KEY as follows:
+  1. Go to your [Google Developer Console](https://console.developers.google.com/) and generate an API_KEY.
+  2. Activate the services **Google Maps Android API** and **Nearby Messages API** for this API_KEY.
+  3. Go to your `AndroidManifest.xml` and insert your API_KEY as follows:
   
   ```
   <meta-data
@@ -38,17 +38,17 @@ After this step, there are two ways of installing the application, whereas both 
 
 **Option 1**: Connect your Smartphone to your PC and run the application onto your phone.
 
-**Option 2**: Select `Build` > `Build APK`. Navigate to the *apk* directory on your file system, select the *app-debug.apk* file and transfer it to your Smartphone. Follow the steps in the next section to install the application.
+**Option 2**: Select `Build` > `Build APK`. Navigate to the *apk* directory on your file system, select the `app-debug.apk` file and transfer it to your Smartphone. Follow the steps in the next section to install the application.
 
 ### User
 
-As a user the application can be installed by downloading the *.apk* file, which is provided at the main directory. If your phone prohibits installing applications form unknown sources, you have to go to your phone settings and enable this option.
+As a user the application can be installed by downloading the `.apk` file, which is provided at the main directory. If your phone prohibits installing applications form unknown sources, you have to go to your phone settings and enable this option.
 
 Steps for the installation:
-1. download the .apk
-- enable the phone setting for installing applications from unknown sources
-- click the *.apk* file and select install
-- enable the application permission in order to get the application work as intended
+  1. Download the `.apk` file.
+  2. Enable the phone setting for installing applications from unknown sources.
+  3. Click the `.apk` file and select install.
+  4. Enable the application permission in order to get the application work as intended.
 
 ## Architecture
 
