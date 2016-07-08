@@ -100,9 +100,8 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         mP2PManager = new P2PManager(this);
 
         //test serverr connecion get msgs
-
         ServerConnection ser = new ServerConnection();
-        ser.getMessages();
+        ser.getMessages("1");
         Log.i("Connection Successful","GetMSGS");
 
 

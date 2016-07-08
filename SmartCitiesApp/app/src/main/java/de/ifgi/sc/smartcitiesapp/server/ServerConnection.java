@@ -52,9 +52,8 @@ public class ServerConnection implements Connection{
     /**
      *  requests the server for Messages and shares them with the Messanger
      */
-    public void getMessages() {
-        new GetMsgTask().execute("http://giv-project6.uni-muenster.de:8080/api/messages/");
-        //todo request to server for Messages as JSONArray
+    public void getMessages(String zoneID) {
+        new GetMsgTask().execute("http://giv-project6.uni-muenster.de:8080/api/messages?zone="+zoneID);
     }
 
 
@@ -147,9 +146,6 @@ public class ServerConnection implements Connection{
         JSONParser jsonParser = new JSONParser();
         ArrayList<Message> messages = new ArrayList<Message>();
 
-        Messenger msger;
-        //JSONObject jsonObject = new JSONObject();
-
         String responseString = "";
         int response;
         InputStream is = null;
@@ -176,12 +172,7 @@ public class ServerConnection implements Connection{
                 String contentAsString = new String(buffer);
 
                 responseString = contentAsString;
-
-
-                //JSONObject jsonObject = new JSONObject(responseString);
-
-                //messages = jsonParser.parseJSONtoMessage(jsonObject);
-
+                Log.i("Server","response"+ responseString);
                 conn.disconnect();
 
             } catch (Exception e) {
@@ -194,22 +185,12 @@ public class ServerConnection implements Connection{
                     }
                 }
             }
-            return response + responseString;
+            return responseString;
         }
 
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            //if (result.contains("201")) {
-                //Log.d("ServerResponse:",result);
-            try{
-                JSONObject msjobj= new JSONObject(result);
-                messages= jsonParser.parseJSONtoMessage(msjobj);
-                msger.updateMessengerFromConnect(messages);
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            Log.i("Server",result);
 
             }
 
