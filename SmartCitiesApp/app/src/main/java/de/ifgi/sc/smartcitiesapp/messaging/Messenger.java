@@ -63,8 +63,8 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
             t_msg= msgs.get(i);
             //will change to this once implemented by ZoneManager
             //db.messageAlreadyExist(t_msg) == false && userZoneID!=null && userZoneID.equals(t_msg.getZone_ID())
-            if(db.messageAlreadyExist(t_msg) == false ){
-                Log.d(MainActivity.TAG + " Messenger", "Message not existing in db yet. " + t_msg);
+            if(!db.messageAlreadyExist(t_msg)){
+                Log.i(" Messenger", "Message not existing in db yet. " + t_msg.getMessage_ID());
                 createMessageEntry(db,t_msg);
                 uarray_list.add(t_msg);
 
@@ -73,8 +73,8 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
         }
 
         db.close();
-        UIMessageManager.getInstance().enqueueMessagesIntoUIFromP2P(uarray_list);
-        mP2PManager.shareMessage(uarray_list);
+//        UIMessageManager.getInstance().enqueueMessagesIntoUIFromP2P(uarray_list);
+//        mP2PManager.shareMessage(uarray_list);
     }
     public synchronized void updateMessengerFromServer(ArrayList<Message> msgs){
 
@@ -91,7 +91,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
             t_msg= msgs.get(i);
             //will change to this once implemented by ZoneManager
             //db.messageAlreadyExist(t_msg) == false && userZoneID!=null && userZoneID.equals(t_msg.getZone_ID())
-            if(db.messageAlreadyExist(t_msg) == false ){
+            if(!db.messageAlreadyExist(t_msg) && !t_msg.messageExpired() ){
                 createMessageEntry(db,t_msg);
 
                 // share Messages with P2PManager, if still active and new
@@ -128,7 +128,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
         for(int i=0;i<size;i++){
             Log.i("This is Msg "+i," Number");
             t_msg= msgs.get(i);
-            if(db.messageAlreadyExist(t_msg) == false){
+            if(!db.messageAlreadyExist(t_msg) && !t_msg.messageExpired()){
                     createMessageEntry(db,t_msg);
                     parray_list.add(t_msg);
             }

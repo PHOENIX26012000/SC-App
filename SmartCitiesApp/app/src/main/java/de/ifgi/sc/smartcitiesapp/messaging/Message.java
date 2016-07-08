@@ -2,8 +2,8 @@ package de.ifgi.sc.smartcitiesapp.messaging;
 
 
 import android.util.Log;
-import java.io.Serializable;
-import java.security.PrivateKey;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -117,5 +117,27 @@ public class Message {
                 ", longitude," + this.longitude;
 
 
+    }
+    public boolean messageExpired(){
+        boolean match = false;
+        Date expired = null;
+        Date current = new Date();
+        try {
+            expired= D_format.parse(getExpired_At());
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+        if (current.after(expired))
+        {
+            match = true;
+        }
+
+        else
+        {
+            match = false;
+        }
+        return match;
     }
 }
