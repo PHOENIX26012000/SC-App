@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import de.ifgi.sc.smartcitiesapp.main.MainActivity;
 import de.ifgi.sc.smartcitiesapp.main.UIMessageManager;
 import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
@@ -48,6 +49,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
     @Override
     public synchronized void updateMessengerFromP2P(ArrayList<Message> msgs){
 
+        Log.d(MainActivity.TAG + " Messenger", "updateMessageFromP2P: " + msgs);
         //Checking size of Arraylist
         int size;
         size = msgs.size();
@@ -57,11 +59,12 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
         db.open();
         String userZoneID=currentUserZone();
         for(int i=0;i<size;i++){
-            Log.i("This is Msg "+i," Number");
+            Log.i(MainActivity.TAG + " Messenger", "This is Msg "+ i + " Number");
             t_msg= msgs.get(i);
             //will change to this once implemented by ZoneManager
             //db.messageAlreadyExist(t_msg) == false && userZoneID!=null && userZoneID.equals(t_msg.getZone_ID())
             if(db.messageAlreadyExist(t_msg) == false ){
+                Log.d(MainActivity.TAG + " Messenger", "Message not existing in db yet. " + t_msg);
                 createMessageEntry(db,t_msg);
                 uarray_list.add(t_msg);
 

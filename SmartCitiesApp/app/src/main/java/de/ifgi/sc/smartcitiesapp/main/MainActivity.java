@@ -13,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -100,6 +101,13 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
+        /*
+        // Testing
+        ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mPubMessagesTest = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> ();
+        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id", "z_id", new Date(), 51.0, 7.0, new Date(), "top", "tit", "msg"));
+        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id1", "z_id1", new Date(), 52.0, 8.0, new Date(), "top1", "tit1", "msg1"));
+        mP2PManager.shareMessage(mPubMessagesTest);
+        */
 
         // in case of the notification about new retrieved msgs was clicked:
         if (savedInstanceState == null) {
@@ -173,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         msgs.add(msg1);
         // if there are no msgs stored in the DB yet, add the 1 example msg to the first example zone.
         if (Messenger.getInstance().getAllMessages().size()==0)
-            Messenger.getInstance().updateMessengerFromConnect(msgs);
+            Messenger.getInstance().updateMessengerFromP2P(msgs);
 
         // test if the saved msgs are loaded from the Messenger methods:
         ArrayList<Message> msgsFromMessenger = new ArrayList<Message>();
@@ -276,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                 ArrayList<Message> msgs = new ArrayList<Message>();
                 msgs.add(msg);
                 msgs.add(msg2);
-                Messenger.getInstance().updateMessengerFromConnect(msgs);
+                Messenger.getInstance().updateMessengerFromP2P(msgs);
                 // update UI:
                 UIMessageManager.getInstance().enqueueMessagesIntoUIFromP2P(msgs);
             }

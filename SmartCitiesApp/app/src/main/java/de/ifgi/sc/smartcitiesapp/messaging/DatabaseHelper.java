@@ -314,11 +314,12 @@ public class DatabaseHelper {
         Cursor res =  ourDatabase.rawQuery( "select * from TABLE_1", null );
         res.moveToFirst();
 
-        while(!res.isAfterLast() & match != true){
-
-            if(msg.getMessage_ID().equals(res.getString(res.getColumnIndex(MESSAGE_ID))))
+        while(!res.isAfterLast()){
+            String testres = res.getString(res.getColumnIndex(MESSAGE_ID));
+            if(msg.getMessage_ID().equals(testres))
             {
                 match = true;
+                break;
             }
 
             else
