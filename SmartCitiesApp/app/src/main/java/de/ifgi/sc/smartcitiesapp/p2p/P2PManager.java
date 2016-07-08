@@ -121,7 +121,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
                 mReceivedMessages.clear();
                 mReceivedMessages.add(toMessage(messageIn));
-                Log.d(MainActivity.TAG + " P2P", "Found message: " + messageIn);
+                //Log.d(MainActivity.TAG + " P2P", "Found message: " + messageIn);
 
                 // forward message to messenger
                 de.ifgi.sc.smartcitiesapp.messaging.Messenger.getInstance().updateMessengerFromConnect(mReceivedMessages);
@@ -130,8 +130,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
             @Override
             public void onLost(Message message) {
                 // When other device stops publishing
-                String messageAsString = new String(message.getContent());
-                Log.d(MainActivity.TAG + " P2P", "Lost sight of message: " + messageAsString);
+                Log.d(MainActivity.TAG + " P2P", "Lost sight of message: " + message);
             }
         };
 
@@ -229,12 +228,10 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         Log.i(MainActivity.TAG + " P2P", "P2PManager onConnected");
         this.isConnected = true;
 
-        if (!subscribed) {
-            subscribe();
-        }
-
-        // Start publishing all active messages in the list
-        //TODO correct error here
+        //if (!subscribed) {
+        subscribe();
+        init();
+        //}
 
         for (de.ifgi.sc.smartcitiesapp.messaging.Message mPubMessage : mPubMessages) {
             if (isActive(mPubMessage)) {
