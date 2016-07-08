@@ -37,12 +37,15 @@ import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 public class ServerConnection implements Connection{
 
+    private JSONObject obj = new JSONObject();
+
     @Override
     /**
      *  gets a set of Messages in form of an ArrayList and pushs it to the Server
      */
     public void shareMessage(ArrayList<Message> messages) {
-
+        JSONParser parser = new JSONParser();
+        this.obj = parser.parseMessagetoJSON(messages);
         new PostMsgTask().execute("http://giv-project6.uni-muenster.de:8080/api/addmessages");
 
     }
@@ -67,9 +70,7 @@ public class ServerConnection implements Connection{
 
 
     public class PostMsgTask extends AsyncTask<String,Integer, String>{
-        JSONParser jsonParser = new JSONParser();
-        ArrayList<Message> messages = new ArrayList<Message>();
-        JSONObject jsonObject = new JSONObject();
+
         String responseString= "";
         int response;
         InputStream is = null;
@@ -88,12 +89,10 @@ public class ServerConnection implements Connection{
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
                 conn.connect();
-                //this.messages= messages;
-                jsonObject=jsonParser.parseMessagetoJSON(messages);
 
                 OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
 
-                out.write(jsonObject.toString());
+                out.write( obj.toString());
                 out.close();
 
 
