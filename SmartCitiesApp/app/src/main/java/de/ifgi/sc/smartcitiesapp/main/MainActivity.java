@@ -100,6 +100,10 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
+        ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mPubMessagesTest = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> ();
+        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id2", "z_id", new Date(), 51.0, 7.0, new Date(new Date().getTime()+600000), "top", "tit", "msg"));
+        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id3", "z_id1", new Date(), 52.0, 8.0, new Date(new Date().getTime()+600000), "top1", "tit1", "msg1"));
+        mP2PManager.shareMessage(mPubMessagesTest);
 
         // in case of the notification about new retrieved msgs was clicked:
         if (savedInstanceState == null) {
