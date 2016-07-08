@@ -13,6 +13,16 @@ The developers of the project are:
 
 This documentation guides through the concepts of the application, the development process as well as the installation and usage of the application.
 
+## Getting Started
+
+### Github
+
+![functionality](img/git branching.png)
+
+### Git Flow
+
+![functionality](img/git.png)
+
 ## Installation
 
 This application was mainly developed for the means of the study project, so that it is currently not released into the Google Play Store. There are to ways of installing the application: A developer may clone this repository and deploy the application via Android Studio, whereas a normal user may install the application via a pre-build `.apk` file.  
@@ -26,7 +36,7 @@ After this step, there are two ways of installing the application, whereas both 
   1. Go to your [Google Developer Console](https://console.developers.google.com/) and generate an API_KEY.
   2. Activate the services **Google Maps Android API** and **Nearby Messages API** for this API_KEY.
   3. Go to your `AndroidManifest.xml` and insert your API_KEY as follows:
-  
+
   ```
   <meta-data
         android:name="com.google.android.nearby.messages.API_KEY"
@@ -52,7 +62,11 @@ Steps for the installation:
 
 ## Architecture
 
+![functionality](img/architecture_model.png)
+
 ## Functionalities
+
+![functionality](img/functionality.png)
 
 ## Limitations
 
