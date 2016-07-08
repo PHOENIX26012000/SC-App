@@ -211,11 +211,22 @@ public class JSONParser {
                 JSONArray jsonCoords = geom.getJSONArray("Coordinates");
                 ArrayList<LatLng> polygon = new ArrayList<LatLng>();
                 for(int k = 0; k < jsonCoords.length(); k++){
-                    String string = (String)jsonCoords.get(k);
-                    String[] splittetCoords = string.split(",");
-                    Double latitude = Double.parseDouble(splittetCoords[0]);
-                    Double longitude = Double.parseDouble(splittetCoords[1]);
-                    polygon.add(new LatLng(latitude,longitude));
+                    JSONArray coords2 = new JSONArray();
+                    coords2 = jsonCoords.getJSONArray(k);
+                    Log.i("Parser","Lengthcoords2: "+ coords2.length());
+                    for(int l=0; l<coords2.length(); l++){
+                        Log.i("Parser", "resultcooords2: "+coords2.get(l));
+                        String string = coords2.get(l).toString();
+                        Log.i("Parser", "string" + string);
+                        string = string.substring(string.indexOf("[")+1, string.lastIndexOf("]") - 1);
+                        Log.i("Parser", "string2: " + string);
+                        String[] splittetCoords = string.split(",");
+                        Double latitude = Double.parseDouble(splittetCoords[0]);
+                        Double longitude = Double.parseDouble(splittetCoords[1]);
+                        polygon.add(new LatLng(latitude,longitude));
+
+                    }
+
                 }
                 JSONArray jsonTopics = jsonZone.getJSONArray("Topics");
                 zoneTopics = new String[jsonTopics.length()];
