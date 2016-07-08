@@ -302,7 +302,8 @@ public class WriteMsgActivity extends AppCompatActivity {
                     // create new UUID
                     ArrayList<Message> msgs = new ArrayList<Message>();
                     msgs.add(newMessage);
-                    Messenger.getInstance().updateMessengerFromConnect(msgs);
+                    Messenger.getInstance().updateMessengerFromP2P(msgs);
+                    Messenger.getInstance().updateMessengerFromServer(msgs);
                     finish();
                 } else {
                     Toast.makeText(getApplicationContext(), "You must set a title and a text!", Toast.LENGTH_LONG).show();
