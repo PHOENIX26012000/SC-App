@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         mP2PManager.shareMessage(mPubMessagesTest);
         */
 
+
         // in case of the notification about new retrieved msgs was clicked:
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -113,7 +115,9 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         pts.add(new LatLng(51.970, 7.644));
         pts.add(new LatLng(51.950, 7.641));
         pts.add(new LatLng(51.950, 7.535));
-        Zone zone1 = new Zone("Münster",UUID.randomUUID().toString(),D_format.format(expDate), topics,pts);
+        String msZoneId= UUID.randomUUID().toString();
+        Zone zone1 = new Zone("Münster",msZoneId,D_format.format(expDate), topics,pts);
+        Log.d(" this is Zone id ", " " + zone1.getZoneID());
 
         // create another example zone:
         expDateMillis = new Date().getTime()+1000*3600*3; // 3 hours
@@ -141,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         for (Zone z : zonesFromDB){
             Log.d(TAG,"zone from db: "+z.getName());
         }
-
+//        tempForMessage();
         // create an example msg:
         Date creationDate = new Date(); // now
         expDateMillis = creationDate.getTime()+1000*3600*18; // 18 hours
@@ -236,6 +240,8 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
 
         // add the MessagesObtainedListener to the UIMessageManager:
         UIMessageManager.getInstance().setMessageObtainedListener(this);
+
+        tempForMessage();
 
         // Listener-Test-Button:
         Button btn_test = (Button) findViewById(R.id.btn_test);
@@ -572,6 +578,29 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                     mTabHost.newTabSpec("tab2").setIndicator("PLACES", null),
                     MapTabFragment.class, null);
         }
+
+    }
+
+    private void tempForMessage(){
+        Log.i("Main Activity","Activity Started");
+        Date date = new Date();
+        Log.i( date.toString(),"is Date");
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, +1);
+        Calendar cal2 = Calendar.getInstance();
+        cal2.add(Calendar.DATE, +1);
+
+        Message m =new Message("3xzfvsdf9","68104b10-bd24-4771-9bd0-6372700c6775",date,36.989823,89.002323,cal.getTime(),"Traffic","saad 1","sxcvd");
+        Message m2 =new Message("3svsul9jbc6","68104b10-bd24-4771-9bd0-6372700c6775",date,34.45454,74.34324,cal2.getTime(),"Traffic","saad 2","sxcvd");
+        ArrayList<Message> msgList= new ArrayList<Message>();
+        msgList.add(m);
+        msgList.add(m2);
+        Log.i("Array list ", "Created");
+
+        Messenger.getInstance().updateMessengerFromP2P(msgList);
+
+//        msgr.getAllMessages();
 
     }
 }
