@@ -111,6 +111,7 @@ public class DatabaseHelper {
                     TOPIC + " TEXT NOT NULL, " + MESSAGE + " TEXT NOT NULL);";
             Log.i("Msg table Created ", query);
             db.execSQL(query);
+            Log.i("Msgs Table created ", "no exception");
         }
         private void createZoneTable(SQLiteDatabase db) {
             String query="CREATE TABLE " + ZONE_TABLE_NAME + "(" + ZONE_NAME +
@@ -160,10 +161,10 @@ public class DatabaseHelper {
             ourHelper = new DbHelper(ourContext);
 
             ourDatabase = ourHelper.getWritableDatabase();
-            Log.i("Database created ", "no exception");
+
 
         } catch (Exception e) {
-            Log.i("Database not created ", "exception raised");
+            Log.i("Get writable database ", "exception raised");
 
         }
         return this;
@@ -314,12 +315,12 @@ public class DatabaseHelper {
         Cursor res =  ourDatabase.rawQuery( "select * from TABLE_1", null );
         res.moveToFirst();
 
-        while(!res.isAfterLast()){
+        while(!res.isAfterLast() & match != true){
             String testres = res.getString(res.getColumnIndex(MESSAGE_ID));
             if(msg.getMessage_ID().equals(testres))
             {
                 match = true;
-                break;
+
             }
 
             else
