@@ -34,11 +34,14 @@ public class Message {
     private Double latitude;
     private Double longitude;
 
+    //If message to be shared with server
+    private boolean shareWithServer;
+
 
 
     private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    public Message(String m_id, String z_id, Date crDt, Double lat,Double lon, Date exDt, String top, String tit, String msg){
+    public Message(String m_id, String z_id, Date crDt, Double lat,Double lon, Date exDt, String top, String tit, String msg,boolean share){
 
         message_ID=m_id;
         zone_ID=z_id;
@@ -49,11 +52,12 @@ public class Message {
         topic=top;
         title=tit;
         message=msg;
+        shareWithServer=share;
 
     }
 
     //This constructor will be called when user does not specify coordinates of location
-    public Message(String m_id, String z_id, Date crDt, Date exDt, String top, String tit, String msg){
+    public Message(String m_id, String z_id, Date crDt, Date exDt, String top, String tit, String msg, boolean share){
 
         message_ID=m_id;
         zone_ID=z_id;
@@ -64,6 +68,7 @@ public class Message {
         topic=top;
         title=tit;
         message=msg;
+        shareWithServer=share;
 
     }
 
@@ -82,6 +87,7 @@ public class Message {
     public void setCategory(String top){topic=top;}
     public void setTitle(String tit){   title=tit;}
     public void setMsg(String   m){message=m;}
+    public void setShareWithServer(boolean share){shareWithServer= share;}
 
 
     public String getMessage_ID(){return message_ID;};
@@ -93,6 +99,7 @@ public class Message {
     public String getTopic(){return topic;};
     public String getTitle(){return title;};
     public String getMsg(){return message;};
+    public boolean getShareWithServer(){return shareWithServer;}
 
     //This method takes Date as input and convert it in specific format
     // D_format= "yyyy-MM-dd'T'HH:mm:ss.SSSZ"

@@ -31,6 +31,7 @@ public class DatabaseHelper {
     private static final String  TOPIC = "Topic";
     private static final String  TITLE= "Title";
     private static final String  MESSAGE= "Msg_Body";
+    private static final String  RESHARE="Reshare";
 
     private static final String DATABASE_NAME = "PeersData";
     private static final String TABLE_NAME = "TABLE_1";
@@ -108,7 +109,7 @@ public class DatabaseHelper {
             String query="CREATE TABLE " + TABLE_NAME + "(" + MESSAGE_ID + " TEXT NOT NULL, " +
                     ZONE_ID + " TEXT NOT NULL, " + CREATED_AT + " DATETIME, "+LATITUDE + " DOUBLE, " + LONGITUDE + " DOUBLE, " +
                     EXPIRED_AT + " DATETIME, " + TITLE + " TEXT NOT NULL, " +
-                    TOPIC + " TEXT NOT NULL, " + MESSAGE + " TEXT NOT NULL);";
+                    TOPIC + " TEXT NOT NULL, " +MESSAGE + " TEXT NOT NULL, "+ RESHARE + " INTEGER NOT NULL);";
             Log.i("Msg table Created ", query);
             db.execSQL(query);
             Log.i("Msgs Table created ", "no exception");
@@ -229,7 +230,7 @@ public class DatabaseHelper {
     }
 
 
-    public void createEntry(String m_id, String z_id, String cr_time, Double lat,Double lon, String  ex_time, String top, String title, String msg) {
+    public void createEntry(String m_id, String z_id, String cr_time, Double lat,Double lon, String  ex_time, String top, String title, String msg,boolean reshare) {
         try {
             ContentValues cv = new ContentValues();
 
@@ -242,6 +243,12 @@ public class DatabaseHelper {
             cv.put(TOPIC, top);
             cv.put(TITLE, title);
             cv.put(MESSAGE, msg);
+            if(reshare==true){
+                cv.put(RESHARE,1);
+            }else{
+                cv.put(RESHARE,0);
+            }
+
             ourDatabase.insert(TABLE_NAME, null, cv);
 
         } catch (Exception e) {
@@ -283,20 +290,31 @@ public class DatabaseHelper {
             if(res.getString(res.getColumnIndex(LATITUDE))!=null) {
                 Double lat = Double.parseDouble(res.getString(res.getColumnIndex(LATITUDE)));
                 Double lon = Double.parseDouble(res.getString(res.getColumnIndex(LONGITUDE)));
+                boolean reshare=true;
+                if(res.getInt(res.getColumnIndex(RESHARE))==0){
+                    reshare=false;
+                }
                 mes = new Message(res.getString(res.getColumnIndex(MESSAGE_ID)),
                         res.getString(res.getColumnIndex(ZONE_ID)), cr_date,
                         lat,
                         lon,
                         ex_date,
                         res.getString(res.getColumnIndex(TOPIC)),
-                        res.getString(res.getColumnIndex(TITLE)), res.getString(res.getColumnIndex(MESSAGE)));
+                        res.getString(res.getColumnIndex(TITLE)), res.getString(res.getColumnIndex(MESSAGE)),
+                        reshare);
+
             }else{
+                boolean reshare=true;
+                if(res.getInt(res.getColumnIndex(RESHARE))==0){
+                    reshare=false;
+                }
                  mes = new Message(res.getString(res.getColumnIndex(MESSAGE_ID)),
                         res.getString(res.getColumnIndex(ZONE_ID)), cr_date,
 
                         ex_date,
                         res.getString(res.getColumnIndex(TOPIC)),
-                        res.getString(res.getColumnIndex(TITLE)),res.getString(res.getColumnIndex(MESSAGE)));
+                        res.getString(res.getColumnIndex(TITLE)),res.getString(res.getColumnIndex(MESSAGE)),
+                         reshare);
             }
 
 

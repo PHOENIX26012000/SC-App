@@ -153,7 +153,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
     private void createMessageEntry(DatabaseHelper db,Message t_msg){
         db.createEntry(t_msg.getMessage_ID(),t_msg.getZone_ID(), t_msg.getCreated_At(),t_msg.getLatitude(),
                 t_msg.getLongitude(), t_msg.getExpired_At(),t_msg.getTopic(),
-                t_msg.getTitle(),t_msg.getMsg());
+                t_msg.getTitle(),t_msg.getMsg(),t_msg.getShareWithServer());
     }
 
     public synchronized void setP2PManager(P2PManager p2pmanager){
