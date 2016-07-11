@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         Message msg1 = new Message(UUID.randomUUID().toString(),
                 zonesFromDB.get(0).getZoneID(), creationDate,
                 51.9707, 7.6281, expDate, "Traffic", "Traffic Jam in the city center",
-                "There is a traffic jam in the city center"
+                "There is a traffic jam in the city center", true
         );
 
         // send msg1 to the Messenger:
@@ -255,13 +255,13 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                         UUID.randomUUID().toString(),
                         zones.get(0).getZoneID(), new Date(),
                         51.666, 7.622, new Date(new Date().getTime() + 1000 * 360),
-                        "Sports", "Tennis", "Lorem ipssum dolor amet... Created at "+new Date()
+                        "Sports", "Tennis", "Lorem ipssum dolor amet... Created at "+new Date(), true
                 );
                 Message msg2 = new Message(
                         UUID.randomUUID().toString(),
                         zones.get(0).getZoneID(), new Date(),
                         51.646, 7.632, new Date(new Date().getTime() + 1000 * 360),
-                        "Restaurants", "Barcafe XY", "Lorem ipssum... Created at "+new Date()
+                        "Restaurants", "Barcafe XY", "Lorem ipssum... Created at "+new Date(), true
                 );
                 ArrayList<Message> msgs = new ArrayList<Message>();
                 msgs.add(msg);
@@ -591,8 +591,8 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         Calendar cal2 = Calendar.getInstance();
         cal2.add(Calendar.DATE, +1);
 
-        Message m =new Message("3xzfvsdf9","68104b10-bd24-4771-9bd0-6372700c6775",date,36.989823,89.002323,cal.getTime(),"Traffic","saad 1","sxcvd");
-        Message m2 =new Message("3svsul9jbc6","68104b10-bd24-4771-9bd0-6372700c6775",date,34.45454,74.34324,cal2.getTime(),"Traffic","saad 2","sxcvd");
+        Message m =new Message("3xzfvsdf9","68104b10-bd24-4771-9bd0-6372700c6775",date,36.989823,89.002323,cal.getTime(),"Traffic","saad 1","sxcvd", true);
+        Message m2 =new Message("3svsul9jbc6","68104b10-bd24-4771-9bd0-6372700c6775",date,34.45454,74.34324,cal2.getTime(),"Traffic","saad 2","sxcvd", true);
         ArrayList<Message> msgList= new ArrayList<Message>();
         msgList.add(m);
         msgList.add(m2);

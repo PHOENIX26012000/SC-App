@@ -121,7 +121,8 @@ public class Message {
                 ", title," + this.title +
                 ", message," + this.message +
                 ", latitude," + this.latitude +
-                ", longitude," + this.longitude;
+                ", longitude," + this.longitude +
+                ", shareWithServer," + this.shareWithServer;
 
 
     }
