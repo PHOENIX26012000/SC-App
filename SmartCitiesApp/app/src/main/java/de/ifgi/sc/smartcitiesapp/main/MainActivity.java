@@ -81,8 +81,8 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         /*
         // Testing
         ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mPubMessagesTest = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> ();
-        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id", "z_id", new Date(), 51.0, 7.0, new Date(), "top", "tit", "msg"));
-        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id1", "z_id1", new Date(), 52.0, 8.0, new Date(), "top1", "tit1", "msg1"));
+        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id2", "z_id", new Date(), 51.0, 7.0, new Date(new Date().getTime()+600000), "top", "tit", "msg"));
+        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id3", "z_id1", new Date(), 52.0, 8.0, new Date(new Date().getTime()+600000), "top1", "tit1", "msg1"));
         mP2PManager.shareMessage(mPubMessagesTest);
         */
 
@@ -115,9 +115,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         pts.add(new LatLng(51.970, 7.644));
         pts.add(new LatLng(51.950, 7.641));
         pts.add(new LatLng(51.950, 7.535));
-        String msZoneId= UUID.randomUUID().toString();
-        Zone zone1 = new Zone("Münster",msZoneId,D_format.format(expDate), topics,pts);
-        Log.d(" this is Zone id ", " " + zone1.getZoneID());
+        Zone zone1 = new Zone("Münster",UUID.randomUUID().toString(),D_format.format(expDate), topics,pts);
 
         // create another example zone:
         expDateMillis = new Date().getTime()+1000*3600*3; // 3 hours
@@ -145,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         for (Zone z : zonesFromDB){
             Log.d(TAG,"zone from db: "+z.getName());
         }
-//        tempForMessage();
+
         // create an example msg:
         Date creationDate = new Date(); // now
         expDateMillis = creationDate.getTime()+1000*3600*18; // 18 hours
@@ -241,8 +239,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         // add the MessagesObtainedListener to the UIMessageManager:
         UIMessageManager.getInstance().setMessageObtainedListener(this);
 
-        tempForMessage();
-
         // Listener-Test-Button:
         Button btn_test = (Button) findViewById(R.id.btn_test);
         btn_test.setOnClickListener(new View.OnClickListener() {
@@ -325,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
 
     // --- Menu ---
 
-       @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
@@ -578,29 +574,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                     mTabHost.newTabSpec("tab2").setIndicator("PLACES", null),
                     MapTabFragment.class, null);
         }
-
-    }
-
-    private void tempForMessage(){
-        Log.i("Main Activity","Activity Started");
-        Date date = new Date();
-        Log.i( date.toString(),"is Date");
-
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, +1);
-        Calendar cal2 = Calendar.getInstance();
-        cal2.add(Calendar.DATE, +1);
-
-        Message m =new Message("3xzfvsdf9","68104b10-bd24-4771-9bd0-6372700c6775",date,36.989823,89.002323,cal.getTime(),"Traffic","saad 1","sxcvd", true);
-        Message m2 =new Message("3svsul9jbc6","68104b10-bd24-4771-9bd0-6372700c6775",date,34.45454,74.34324,cal2.getTime(),"Traffic","saad 2","sxcvd", true);
-        ArrayList<Message> msgList= new ArrayList<Message>();
-        msgList.add(m);
-        msgList.add(m2);
-        Log.i("Array list ", "Created");
-
-        Messenger.getInstance().updateMessengerFromP2P(msgList);
-
-//        msgr.getAllMessages();
 
     }
 }
