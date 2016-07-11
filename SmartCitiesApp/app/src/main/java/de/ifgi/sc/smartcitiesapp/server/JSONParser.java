@@ -77,7 +77,6 @@ public class JSONParser {
         this.jsonLoc.remove("Coordinate");
 
         // get Messages from msglist and write them into the jsonArray
-        //for(int i = 0; i < msglist.size(); i++){
         for (Message m : msglist){
 
             message = m;
@@ -89,9 +88,7 @@ public class JSONParser {
             exDt = message.getExpired_At();
             msg = message.getMsg();
             longitude = message.getLongitude();
-            Log.i("Parser","Longitude "+longitude);
             latitude = message.getLatitude();
-            Log.i("Parser","MessageInLoop: "+ message);
 
             try {
                 JSONObject obj = new JSONObject();
@@ -104,19 +101,18 @@ public class JSONParser {
                 obj.put("Message", msg);
 
 
-                JSONObject Loc = new JSONObject();
-                if(latitude != null & longitude != null){
+                JSONObject Loc = null;
+                if(latitude != null && longitude != null){
+                    Loc = new JSONObject();
                     JSONArray Coords = new JSONArray();
-                    Coords.put(latitude+","+longitude);
+                    Coords.put(latitude);
+                    Coords.put(longitude);
+                    Loc.put("Type","Point");
                     Loc.put("Coordinate",Coords);
-                    latitude = null;
-                    longitude = null;
                 }
 
                 obj.put("Location",Loc);
-                Log.i("Parser","JSONMsg: "+obj);
                 this.jsonArray.put(obj);
-                Log.i("Parser","JSONghjzfzzjcfzj "+jsonArray);
 
             } catch (JSONException e) {
                 e.printStackTrace();

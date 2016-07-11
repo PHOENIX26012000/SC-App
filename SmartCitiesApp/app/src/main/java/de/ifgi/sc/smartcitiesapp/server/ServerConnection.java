@@ -19,7 +19,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-<<<<<<< 
 import java.io.UnsupportedEncodingException;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
@@ -150,10 +149,10 @@ public class ServerConnection implements Connection{
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             if (result.contains("201")) {
-                Log.i("Successful submission", result);
+                Log.i("Server","Successful"+result);
             }
             else if (result.contains("404")) {
-                Log.i("FailureBaby", result);
+                Log.i("Server","Failure"+result);
             }
             // maybe add other codes as well such as 201, or all between >=200 <400
         }

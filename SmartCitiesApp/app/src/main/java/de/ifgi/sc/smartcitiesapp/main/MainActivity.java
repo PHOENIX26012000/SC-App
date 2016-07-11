@@ -117,6 +117,8 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
 
         //Log.i("Server Connection", "Success Share Messages");
 
+
+
         // in case of the notification about new retrieved msgs was clicked:
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
