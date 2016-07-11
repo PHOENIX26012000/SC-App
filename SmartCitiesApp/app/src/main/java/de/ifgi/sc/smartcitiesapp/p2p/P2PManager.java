@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,8 +20,6 @@ import com.google.android.gms.nearby.messages.SubscribeCallback;
 import com.google.android.gms.nearby.messages.SubscribeOptions;
 
 import java.io.IOException;
-import java.io.InvalidClassException;
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,15 +27,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.ifgi.sc.smartcitiesapp.interfaces.Connection;
-import de.ifgi.sc.smartcitiesapp.interfaces.Messenger;
 import de.ifgi.sc.smartcitiesapp.main.MainActivity;
 
-
+/**
+ * Created by Heinrich.
+ * The P2PManager handles the connection between different peers in the network.
+ */
 public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private MainActivity mActivity;
@@ -48,45 +44,20 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
     private Boolean isConnected = false;
 
     /**
-     * The {@link Message} object used to broadcast information about the device to nearby devices.
+     * The {@link Message} objects used to broadcast information about the device to nearby devices.
      */
     private ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mPubMessages;
 
+    /**
+     * The {@link Message} objects that temporarily stores the received messages.
+     */
     private ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mReceivedMessages;
 
-    /**
-     * Sets the publishing time in seconds
-     */
-    private static final int PUB_TTL_IN_SECONDS = 5;
 
     /**
-     * Sets the time in seconds for a published message to live.
-     */
-    private static final Strategy PUB_STRATEGY = new Strategy.Builder()
-            .setTtlSeconds(PUB_TTL_IN_SECONDS).build();
-
-    /**
-     * Sets the subscription time in seconds
-     */
-    private static final int SUB_TTL_IN_SECONDS = 5;
-
-    /**
-     * Sets the strategy for a published message, in this case time in seconds to live.
-     */
-    private static final Strategy SUB_STRATEGY = new Strategy.Builder()
-            .setTtlSeconds(SUB_TTL_IN_SECONDS).build();
-
-    /**
-     * Sets the Message filter to apply to the subscriptions
-     */
-    private MessageFilter MESSAGE_FILTER = new MessageFilter.Builder()
-            .includeNamespacedType("namespace", "type").build();
-
-
-    /**
-     * Constructor
+     * Constructor: Initializes the P2PManager and starts the service.
      *
-     * @param activity
+     * @param activity the activity
      */
     public P2PManager(MainActivity activity) {
         mActivity = activity;
@@ -104,34 +75,33 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         mMessageListener = new MessageListener() {
             @Override
             public void onFound(Message message) {
-                Log.i(MainActivity.TAG, "Message found " + message);
+                Log.i(MainActivity.TAG + " P2P", "Message found " + message);
                 // When receives a message
                 String messageIn;
                 try {
                     messageIn = (String) Serializer.deserialize(message.getContent());
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.i(MainActivity.TAG, "Could not read message" + e);
+                    Log.i(MainActivity.TAG + " P2P", "Could not read message" + e);
                     return;
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
-                    Log.i(MainActivity.TAG, "Could not find message class");
+                    Log.i(MainActivity.TAG + " P2P", "Could not find message class");
                     return;
                 }
 
                 mReceivedMessages.clear();
                 mReceivedMessages.add(toMessage(messageIn));
-                Log.d(MainActivity.TAG + " P2P", "Found message: " + messageIn);
+                //Log.d(MainActivity.TAG + " P2P", "Found message: " + messageIn);
 
                 // forward message to messenger
-                de.ifgi.sc.smartcitiesapp.messaging.Messenger.getInstance().updateMessengerFromConnect(mReceivedMessages);
+                de.ifgi.sc.smartcitiesapp.messaging.Messenger.getInstance().updateMessengerFromP2P(mReceivedMessages);
             }
 
             @Override
             public void onLost(Message message) {
                 // When other device stops publishing
-                String messageAsString = new String(message.getContent());
-                Log.d(MainActivity.TAG + " P2P", "Lost sight of message: " + messageAsString);
+                Log.d(MainActivity.TAG + " P2P", "Lost sight of message: " + message);
             }
         };
 
@@ -140,6 +110,12 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         buildGoogleApiClient();
     }
 
+    /**
+     * Parses the incomming Messages for the peers to a Message object
+     *
+     * @param str: Message string to be parsed into a message
+     * @return Returns the Message object
+     */
     private de.ifgi.sc.smartcitiesapp.messaging.Message toMessage(String str) {
         List<String> list = Arrays.asList(str.split(","));
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -147,7 +123,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         try {
             m = new de.ifgi.sc.smartcitiesapp.messaging.Message(list.get(1), list.get(3),
                     format.parse(list.get(5)), Double.parseDouble(list.get(15)), Double.parseDouble(list.get(17)), format.parse(list.get(7)), list.get(9),
-                    list.get(11),list.get(13));
+                    list.get(11),list.get(13), Boolean.parseBoolean(list.get(15)));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -157,7 +133,7 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
 
     /**
-     * Google API Client Builder
+     * Google API Client Builder handles the P2P connetion
      */
     private void buildGoogleApiClient() {
         if (mGoogleApiClient != null) {
@@ -178,13 +154,14 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
      */
     @Override
     public void shareMessage(ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> messages) {
-        //TODO
         for (de.ifgi.sc.smartcitiesapp.messaging.Message message : messages) {
             // try publish a message if GoogleAPIClient is connected
             if (isConnected) {
                 int duration = calculateDuration(message);
                 mPubMessages.add(message);
-                publish(message, duration);
+                if (duration < 0) {
+                    publish(message, duration);
+                }
             } else {
                 mPubMessages.add(message);
             }
@@ -193,23 +170,24 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
 
     /**
-     * Check if the message isn't expired yet
-     * @return
-     */
-    private boolean isActive(de.ifgi.sc.smartcitiesapp.messaging.Message m) {
-        //TODO
-        return true;
-    }
-
-
-    /**
      * Calculate remaining time until expiration of message in seconds.
+     *
      * @param m
      * @return
      */
     private int calculateDuration(de.ifgi.sc.smartcitiesapp.messaging.Message m) {
         //TODO
-        return 10;
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        Date now = new Date();
+        Date expire = null;
+        try {
+            expire = format.parse(m.getExpired_At());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        int seconds = (int) (expire.getTime() - now.getTime()) / 1000;
+        Log.i(MainActivity.TAG + " P2P", "Message time in seconds: " + seconds);
+        return seconds;
     }
 
 
@@ -222,6 +200,8 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
 
     /**
+     * Is called when the device is connected to the nearby service.
+     *
      * @param bundle
      */
     @Override
@@ -229,27 +209,25 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         Log.i(MainActivity.TAG + " P2P", "P2PManager onConnected");
         this.isConnected = true;
 
-        if (!subscribed) {
-            subscribe();
-        }
+        //if (!subscribed) {
+        subscribe();
+        init();
+        //}
 
-        // Start publishing all active messages in the list
-        //TODO correct error here
-
+        // share all Messages that are in the publication array
         for (de.ifgi.sc.smartcitiesapp.messaging.Message mPubMessage : mPubMessages) {
-            if (isActive(mPubMessage)) {
-                //int duration = calculateDuration(mPubMessage);
-                publish(mPubMessage, 5);
-
+            int duration = calculateDuration(mPubMessage);
+            if (duration > 0) {
+                publish(mPubMessage, duration);
             } else {
                 unpublish(mPubMessage);
             }
         }
-
-
-        //publish(new de.ifgi.sc.smartcitiesapp.messaging.Message("c_id", "m_id", "z_id", new Date(), 51, 7, new Date(2016,6,21), "top", "tit", "msg"), 5);
     }
 
+    /**
+     * Sets the service running boolean to false when the application stops.
+     */
     public void setDisconnected() {
         Log.i(MainActivity.TAG + " P2P", "P2PManager setDisconnected");
         this.isConnected = false;
@@ -257,6 +235,8 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
 
     /**
+     * Just logs when the connection is suspended.
+     *
      * @param cause
      */
     @Override
@@ -266,6 +246,11 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
     }
 
 
+    /**
+     * Just logs when the connection fails.
+     *
+     * @param result
+     */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult result) {
         Log.i(MainActivity.TAG + " P2P", "P2PManager onConnectionFailed");
@@ -274,8 +259,9 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
 
 
     /**
-     * Publish and Subscribe Methods
-     * @param message Message to share
+     * Publish Messages for a specified duration.
+     *
+     * @param message  Message to share
      * @param duration Time in seconds until message expires
      */
     private void publish(final de.ifgi.sc.smartcitiesapp.messaging.Message message, int duration) {
@@ -317,6 +303,9 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
                 });
     }
 
+    /**
+     * Unpublishes all messages when the application is closed.
+     */
     public void unpublish() {
         Log.i(MainActivity.TAG + " P2P", "Unpublishing.");
         if (mPubMessages.size() > 0) {
@@ -334,6 +323,11 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         }
     }
 
+    /**
+     * Unpublishes a single message
+     *
+     * @param message the message
+     */
     public void unpublish(de.ifgi.sc.smartcitiesapp.messaging.Message message) {
         Log.i(MainActivity.TAG + " P2P", "Unpublishing message m.");
         if (mPubMessages.contains(message)) {
@@ -352,11 +346,14 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         }
     }
 
+    /**
+     * Subscribes the app to incomming messages
+     */
     private void subscribe() {
         Log.i(MainActivity.TAG + " P2P", "Subscribing");
         SubscribeOptions options = new SubscribeOptions.Builder()
                 //.setStrategy(SUB_STRATEGY)
-                .setStrategy(Strategy.BLE_ONLY)
+                //.setStrategy(Strategy.BLE_ONLY)
                 //.setFilter(MESSAGE_FILTER)  //defines topics to subscribe to
                 .setCallback(new SubscribeCallback() {
                     @Override
@@ -380,6 +377,9 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
                 });
     }
 
+    /**
+     * Unsubscribes the app for incomming messages.
+     */
     public void unsubscribe() {
         Log.i(MainActivity.TAG + " P2P", "Unsubscribing.");
         Nearby.Messages.unsubscribe(mGoogleApiClient, mMessageListener);

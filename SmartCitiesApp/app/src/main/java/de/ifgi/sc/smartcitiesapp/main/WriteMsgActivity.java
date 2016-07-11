@@ -290,9 +290,9 @@ public class WriteMsgActivity extends AppCompatActivity {
                     String zoneID = current_selected_zone.getZoneID();
                     String msg_id = UUID.randomUUID().toString();
                     if (msg_pos!=null){
-                        newMessage = new Message(msg_id, zoneID,msg_create,msg_pos.latitude,msg_pos.longitude,msg_exp,msg_topic, msg_title, msg_txt);
+                        newMessage = new Message(msg_id, zoneID,msg_create,msg_pos.latitude,msg_pos.longitude,msg_exp,msg_topic, msg_title, msg_txt, true);
                     } else {
-                        newMessage = new Message(msg_id, zoneID,msg_create,msg_exp,msg_topic, msg_title, msg_txt);
+                        newMessage = new Message(msg_id, zoneID,msg_create,msg_exp,msg_topic, msg_title, msg_txt, true);
                     }
 
                     // create new UUID
