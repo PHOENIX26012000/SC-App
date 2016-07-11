@@ -106,7 +106,7 @@ public class ServerConnection implements Connection{
                 conn.setConnectTimeout(15000 /* milliseconds */);
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);
-                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
                 // Create JSONObject:
                 String jsonString = obj.toString();
@@ -161,7 +161,6 @@ public class ServerConnection implements Connection{
             else if (result.contains("404")) {
                 Log.i("Server","Failure"+result);
             }
-            // maybe add other codes as well such as 201, or all between >=200 <400
         }
 
     }
