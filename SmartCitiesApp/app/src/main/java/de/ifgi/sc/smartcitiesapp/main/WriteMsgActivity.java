@@ -294,7 +294,7 @@ public class WriteMsgActivity extends AppCompatActivity {
                     String msg_id = UUID.randomUUID().toString();
                     if (msg_pos!=null){
                         // TODO: Take the Client ID from somewhere else :)
-                        newMessage = new Message(msg_id, zoneID,msg_create,msg_pos.latitude,msg_pos.longitude,msg_exp,msg_topic, msg_title, msg_txt);
+                        newMessage = new Message(msg_id, zoneID,msg_create,msg_pos.latitude,msg_pos.longitude,msg_exp,msg_topic, msg_title, msg_txt, true);
                     } else {
                         // newMessage = new Message but without lat and lon .. er ..?
                     }
@@ -302,8 +302,9 @@ public class WriteMsgActivity extends AppCompatActivity {
                     // create new UUID
                     ArrayList<Message> msgs = new ArrayList<Message>();
                     msgs.add(newMessage);
-                    Messenger.getInstance().updateMessengerFromP2P(msgs);
-                    Messenger.getInstance().updateMessengerFromServer(msgs);
+                    //Messenger.getInstance().updateMessengerFromP2P(msgs);
+                    //Messenger.getInstance().updateMessengerFromServer(msgs);
+                    Messenger.getInstance().updateMessengerFromUI(msgs);
                     finish();
                 } else {
                     Toast.makeText(getApplicationContext(), "You must set a title and a text!", Toast.LENGTH_LONG).show();
