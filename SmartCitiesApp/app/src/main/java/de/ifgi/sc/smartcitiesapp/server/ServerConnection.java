@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import de.ifgi.sc.smartcitiesapp.interfaces.Connection;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
+import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 
 public class ServerConnection implements Connection {
@@ -12,7 +13,6 @@ public class ServerConnection implements Connection {
      * Constructor
      */
     public ServerConnection() {
-
     }
 
     @Override

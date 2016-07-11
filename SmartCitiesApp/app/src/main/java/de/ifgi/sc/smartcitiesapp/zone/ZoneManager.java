@@ -1,6 +1,5 @@
 package de.ifgi.sc.smartcitiesapp.zone;
 
-
 import android.content.Context;
 import android.util.Log;
 

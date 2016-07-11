@@ -3,8 +3,6 @@ package de.ifgi.sc.smartcitiesapp.main;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
@@ -20,23 +18,21 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.PolygonOptions;
 
-import java.security.Security;
 import java.util.ArrayList;
 
 import de.ifgi.sc.smartcitiesapp.R;
+import de.ifgi.sc.smartcitiesapp.interfaces.LocationChangedListener;
+import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
 import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
-public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyCallback{
+public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyCallback, LocationChangedListener{
 
     public final static int ZONE_SELECTED_SUCCESSFUL = 15335815;
 
@@ -46,6 +42,7 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
     private ArrayList<Zone> zonesFromDB;
     private LatLng userLocation;
     private LocationManager lm;
+    private Zone current_selected_zone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,43 +54,29 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
 
         // access the current user location:
         try {
-            lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-            Location loc = lm
-                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-            userLocation = new LatLng(
-                    loc.getLatitude(),
-                    loc.getLongitude()
-            );
-
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-
-                }
-            });
-        } catch ( SecurityException e){
-            Log.e("selectZone","SecurityException: "+e);
+            userLocation = MyLocationManager.getInstance().getUserLocation();
+        } catch (NoLocationKnownException e){
+            Log.e("SelectZone", "No Location known. Finishing Activity...");
+            finish();
         }
 
         // access the ZoneManager and get a list of all zones containing current user location:
         zonesFromDB = new ArrayList<Zone>();
         zonesFromDB = ZoneManager.getInstance().getCurrentZones(userLocation);
+        // if the user is still in int he current selected zone, preselect it as default:
+        try {
+            current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+        } catch (NoZoneCurrentlySelectedException e) {
+            // what do, if no zone is currently selected?
+            // select the first zone of the zonemanager
+            current_selected_zone = zonesFromDB.get(0);
+            ZoneManager.getInstance().setCurrentZone(current_selected_zone);
+        }
+        int index_selected = 0;
+        for (int i=0; i<zonesFromDB.size();i++){
+            if (current_selected_zone.getZoneID().equals(zonesFromDB.get(i).getZoneID()))
+                index_selected = i;
+        }
 
         zones = new ArrayList<EnhancedPolygon>();
 
@@ -121,7 +104,7 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spn_zoneSelecter.setAdapter(adapter);
-        spn_zoneSelecter.setSelection(0);
+        spn_zoneSelecter.setSelection(index_selected);
 
         spn_zoneSelecter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -144,7 +127,6 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
             }
         });
 
-
         Button btn_selectZone = (Button) findViewById(R.id.btn_confirmZoneSelection);
         btn_selectZone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,17 +143,6 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-
-        // deprecated, but still working and updating the users location.
-        map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(Location location) {
-                userLocation = new LatLng(
-                        location.getLatitude(),
-                        location.getLongitude()
-                );
-            }
-        });
 
         // add zones onto map + safe the polygon references to the EnhancedPolygon objects:
         for (EnhancedPolygon ep : zones){
@@ -205,7 +176,15 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
                 builder.include(pt);
             }
         }
-        LatLngBounds bounds = builder.build();
+        LatLngBounds bounds = new LatLngBounds(new LatLng(0,0), new LatLng(0,0));
+        try {
+            bounds = builder.build();
+        } catch (IllegalStateException ise){
+            // if here, then no zone contains the user location... er..
+            // okay... let's give some feedback to the user, and finish the useless zoneselection Activity:
+            Toast.makeText(getApplicationContext(),"You are currently in no zone. Default zone is selected til you enter an existing one", Toast.LENGTH_LONG ).show();
+            finish();
+        }
         int padding = 0;
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 
@@ -215,20 +194,14 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
 
             // enable location service on phone if its not enabled already:
             lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-            boolean gps_enabled = false;
             boolean network_enabled = false;
-
-            try {
-                gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            } catch (Exception ex) {
-            }
 
             try {
                 network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             } catch (Exception ex) {
             }
 
-            if (!gps_enabled && !network_enabled) {
+            if (!network_enabled) {
                 Toast.makeText(this,"Please enable location service",Toast.LENGTH_LONG).show();
                 // activate Location Service
                 Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -241,5 +214,20 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
         } finally {
 
         }
+    }
+
+    @Override
+    public void onLocationChanged(LatLng newLocation) {
+        userLocation = new LatLng(
+                newLocation.latitude,
+                newLocation.longitude
+        );
+    }
+
+    @Override
+    public void onBackPressed() {
+        // do not close the Activity. The user _must_ select a zone!
+        // do nothing.
+        Toast.makeText(getApplicationContext(), "You have to select a zone!", Toast.LENGTH_LONG).show();
     }
 }
