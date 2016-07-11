@@ -2,17 +2,14 @@ package de.ifgi.sc.smartcitiesapp.messaging;
 
 
 import android.util.Log;
-import java.io.Serializable;
-import java.security.PrivateKey;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Message implements Serializable {
+public class Message {
 
-    // Unique client ID that changes per session
-    private String client_ID;
 
-    // Unique message ID
     private String message_ID;
 
     // Unique zone ID
@@ -34,13 +31,18 @@ public class Message implements Serializable {
     private String message;
 
     // Related coordinates
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
+
+    //If message to be shared with server
+    private boolean shareWithServer;
+
+
 
     private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    public Message(String c_id, String m_id, String z_id, Date crDt, double lat,double lon, Date exDt, String top, String tit, String msg){
-        client_ID=c_id;
+    public Message(String m_id, String z_id, Date crDt, Double lat,Double lon, Date exDt, String top, String tit, String msg,boolean share){
+
         message_ID=m_id;
         zone_ID=z_id;
         cr_Dt = changeDateFormat(crDt);
@@ -50,12 +52,26 @@ public class Message implements Serializable {
         topic=top;
         title=tit;
         message=msg;
-        Log.i("Msg "+c_id, " Created ");
+        shareWithServer=share;
+
     }
 
-    public void setClient_ID(String id){
-        client_ID=id;
+    //This constructor will be called when user does not specify coordinates of location
+    public Message(String m_id, String z_id, Date crDt, Date exDt, String top, String tit, String msg, boolean share){
+
+        message_ID=m_id;
+        zone_ID=z_id;
+        cr_Dt = changeDateFormat(crDt);
+        latitude= null;
+        longitude=null;
+        ex_Dt=changeDateFormat(exDt);
+        topic=top;
+        title=tit;
+        message=msg;
+        shareWithServer=share;
+
     }
+
     public void setMessage_ID(String id){
         message_ID=id;
     }
@@ -63,25 +79,27 @@ public class Message implements Serializable {
         zone_ID=id;
     }
     public void setCreated_At(Date dt){cr_Dt=changeDateFormat(dt);}
-    public void setLatitude(double lat)  { latitude=lat; };
-    public void setLongitude(double lon) {longitude=lon; };
+    public void setLatitude(Double lat)  { latitude=lat; };
+    public void setLongitude(Double lon) {longitude=lon; };
     public void setExpired_At(Date dt){
         ex_Dt=changeDateFormat(dt);
     }
     public void setCategory(String top){topic=top;}
     public void setTitle(String tit){   title=tit;}
     public void setMsg(String   m){message=m;}
+    public void setShareWithServer(boolean share){shareWithServer= share;}
 
-    public String getClient_ID(){return client_ID;};
+
     public String getMessage_ID(){return message_ID;};
     public String getZone_ID(){return zone_ID;};
     public String getCreated_At(){return cr_Dt;};
-    public double getLatitude(){return latitude;};
-    public double getLongitude(){return longitude;};
+    public Double getLatitude(){return latitude;};
+    public Double getLongitude(){return longitude;};
     public String getExpired_At(){return ex_Dt;};
     public String getTopic(){return topic;};
     public String getTitle(){return title;};
     public String getMsg(){return message;};
+    public boolean getShareWithServer(){return shareWithServer;}
 
     //This method takes Date as input and convert it in specific format
     // D_format= "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -94,4 +112,40 @@ public class Message implements Serializable {
 //        }
     }
 
+    public String toString() {
+        return "message_ID," + this.message_ID +
+                ", zone_ID," + this.zone_ID +
+                ", cr_Dt," + this.cr_Dt +
+                ", ex_Dt," + this.ex_Dt +
+                ", topic," + this.topic +
+                ", title," + this.title +
+                ", message," + this.message +
+                ", latitude," + this.latitude +
+                ", longitude," + this.longitude +
+                ", shareWithServer," + this.shareWithServer;
+
+
+    }
+    public boolean messageExpired(){
+        boolean match = false;
+        Date expired = null;
+        Date current = new Date();
+        try {
+            expired= D_format.parse(getExpired_At());
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+        if (current.after(expired))
+        {
+            match = true;
+        }
+
+        else
+        {
+            match = false;
+        }
+        return match;
+    }
 }

@@ -38,9 +38,9 @@ public class EnhancedPolygon {
     public PolygonOptions getPolygon(){
         return new PolygonOptions()
                 .zIndex(100)
-                .fillColor(android.graphics.Color.argb(55,this.colorRed, this.colorGreen, this.colorBlue))
+                .fillColor(android.graphics.Color.argb(100,this.colorRed, this.colorGreen, this.colorBlue))
                 .strokeWidth(1)
-                .strokeColor(android.graphics.Color.argb(55,this.colorRed, this.colorGreen, this.colorBlue))
+                .strokeColor(android.graphics.Color.argb(100,this.colorRed, this.colorGreen, this.colorBlue))
                 .addAll(this.points);
     }
 
@@ -53,7 +53,7 @@ public class EnhancedPolygon {
     }
 
     public void setDefaultColor(){
-        this.polygon.setFillColor(Color.argb(55, this.colorRed, this.colorGreen, this.colorBlue));
+        this.polygon.setFillColor(Color.argb(100, this.colorRed, this.colorGreen, this.colorBlue));
     }
 
     public ArrayList<LatLng> getPoints(){

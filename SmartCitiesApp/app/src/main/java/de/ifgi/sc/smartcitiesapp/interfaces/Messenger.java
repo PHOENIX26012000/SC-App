@@ -13,9 +13,9 @@ public interface Messenger {
      * To be called by Messenger to add new retrieved Messages into UserInterface
      * @param msgs
      */
-    public void updateMessengerFromConnect(ArrayList<Message> msgs);
+    public void updateMessengerFromP2P(ArrayList<Message> msgs);
 
-
+    public void updateMessengerFromServer(ArrayList<Message> msgs);
     /**
      * To be called by UI Class to update Messages in Messenger
      * @param msgs

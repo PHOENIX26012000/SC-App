@@ -13,7 +13,6 @@ import com.google.android.gms.maps.model.LatLng;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
@@ -22,7 +21,7 @@ import de.ifgi.sc.smartcitiesapp.zone.Zone;
  * Created by SAAD on 5/18/2016.
  */
 public class DatabaseHelper {
-    private static final String  CLIENT_ID= "C_id";
+
     private static final String  MESSAGE_ID= "M_id";
     private static final String  ZONE_ID= "Z_id";
     private static final String  CREATED_AT= "Cr_time";
@@ -32,6 +31,7 @@ public class DatabaseHelper {
     private static final String  TOPIC = "Topic";
     private static final String  TITLE= "Title";
     private static final String  MESSAGE= "Msg_Body";
+    private static final String  RESHARE="Reshare";
 
     private static final String DATABASE_NAME = "PeersData";
     private static final String TABLE_NAME = "TABLE_1";
@@ -47,7 +47,7 @@ public class DatabaseHelper {
 
 
     private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-    Calendar c = Calendar.getInstance();
+
 
 
     private DbHelper ourHelper;
@@ -106,13 +106,13 @@ public class DatabaseHelper {
         }
 
         private void createMessagesTable(SQLiteDatabase db) {
-            String query="CREATE TABLE " + TABLE_NAME + "(" + CLIENT_ID +
-                    " TEXT NOT NULL, " + MESSAGE_ID + " TEXT NOT NULL, " +
+            String query="CREATE TABLE " + TABLE_NAME + "(" + MESSAGE_ID + " TEXT NOT NULL, " +
                     ZONE_ID + " TEXT NOT NULL, " + CREATED_AT + " DATETIME, "+LATITUDE + " DOUBLE, " + LONGITUDE + " DOUBLE, " +
                     EXPIRED_AT + " DATETIME, " + TITLE + " TEXT NOT NULL, " +
-                    TOPIC + " TEXT NOT NULL, " + MESSAGE + " TEXT NOT NULL);";
+                    TOPIC + " TEXT NOT NULL, " +MESSAGE + " TEXT NOT NULL, "+ RESHARE + " INTEGER NOT NULL);";
             Log.i("Msg table Created ", query);
             db.execSQL(query);
+            Log.i("Msgs Table created ", "no exception");
         }
         private void createZoneTable(SQLiteDatabase db) {
             String query="CREATE TABLE " + ZONE_TABLE_NAME + "(" + ZONE_NAME +
@@ -162,10 +162,10 @@ public class DatabaseHelper {
             ourHelper = new DbHelper(ourContext);
 
             ourDatabase = ourHelper.getWritableDatabase();
-            Log.i("Database created ", "no exception");
+
 
         } catch (Exception e) {
-            Log.i("Database not created ", "exception raised");
+            Log.i("Get writable database ", "exception raised");
 
         }
         return this;
@@ -230,20 +230,25 @@ public class DatabaseHelper {
     }
 
 
-    public void createEntry(String c_id, String m_id, String z_id, String cr_time, double lat,double lon, String  ex_time, String top, String title, String msg) {
+    public void createEntry(String m_id, String z_id, String cr_time, Double lat,Double lon, String  ex_time, String top, String title, String msg,boolean reshare) {
         try {
             ContentValues cv = new ContentValues();
-            cv.put(CLIENT_ID, c_id);
+
             cv.put(MESSAGE_ID, m_id);
             cv.put(ZONE_ID, z_id);
             cv.put(CREATED_AT, cr_time);
-            cv.put(EXPIRED_AT, ex_time);
             cv.put(LATITUDE, lat);
             cv.put(LONGITUDE, lon);
             cv.put(EXPIRED_AT, ex_time);
             cv.put(TOPIC, top);
             cv.put(TITLE, title);
             cv.put(MESSAGE, msg);
+            if(reshare==true){
+                cv.put(RESHARE,1);
+            }else{
+                cv.put(RESHARE,0);
+            }
+
             ourDatabase.insert(TABLE_NAME, null, cv);
 
         } catch (Exception e) {
@@ -260,32 +265,62 @@ public class DatabaseHelper {
     {
         Date ex_date = null;
         Date cr_date = null;
+        Message mes;
         ArrayList<Message> array_list = new ArrayList<Message>();
 
         Cursor res =  ourDatabase.rawQuery( "select * from TABLE_1", null );
+
         res.moveToFirst();
+
         while(res.isAfterLast() == false){
 
+
             try {
+
                 ex_date= D_format.parse(res.getString(res.getColumnIndex(EXPIRED_AT)));
                 cr_date = D_format.parse(res.getString(res.getColumnIndex(CREATED_AT)));
 
             }catch (ParseException e) {
+
+
                 e.printStackTrace();
             }
+            Log.i("Lat and long",res.getString(res.getColumnIndex(LATITUDE))+" "+ res.getString(res.getColumnIndex(LONGITUDE)));
+            //Checking for null value in database otherwise will raise exception while parsing for Double
+            if(res.getString(res.getColumnIndex(LATITUDE))!=null) {
+                Double lat = Double.parseDouble(res.getString(res.getColumnIndex(LATITUDE)));
+                Double lon = Double.parseDouble(res.getString(res.getColumnIndex(LONGITUDE)));
+                boolean reshare=true;
+                if(res.getInt(res.getColumnIndex(RESHARE))==0){
+                    reshare=false;
+                }
+                mes = new Message(res.getString(res.getColumnIndex(MESSAGE_ID)),
+                        res.getString(res.getColumnIndex(ZONE_ID)), cr_date,
+                        lat,
+                        lon,
+                        ex_date,
+                        res.getString(res.getColumnIndex(TOPIC)),
+                        res.getString(res.getColumnIndex(TITLE)), res.getString(res.getColumnIndex(MESSAGE)),
+                        reshare);
 
+            }else{
+                boolean reshare=true;
+                if(res.getInt(res.getColumnIndex(RESHARE))==0){
+                    reshare=false;
+                }
+                 mes = new Message(res.getString(res.getColumnIndex(MESSAGE_ID)),
+                        res.getString(res.getColumnIndex(ZONE_ID)), cr_date,
 
-            Message mes = new Message(res.getString(res.getColumnIndex(CLIENT_ID)),res.getString(res.getColumnIndex(MESSAGE_ID)),
-                                    res.getString(res.getColumnIndex(ZONE_ID)), cr_date,
-                                    Double.parseDouble(res.getString(res.getColumnIndex(LATITUDE))),
-                                    Double.parseDouble(res.getString(res.getColumnIndex(LONGITUDE))),
-                                    ex_date,
-                                     res.getString(res.getColumnIndex(TOPIC)),
-                                    res.getString(res.getColumnIndex(TITLE)),res.getString(res.getColumnIndex(MESSAGE)));
+                        ex_date,
+                        res.getString(res.getColumnIndex(TOPIC)),
+                        res.getString(res.getColumnIndex(TITLE)),res.getString(res.getColumnIndex(MESSAGE)),
+                         reshare);
+            }
 
 
             array_list.add(mes);
             res.moveToNext();
+
         }
         return array_list;
 
@@ -299,10 +334,11 @@ public class DatabaseHelper {
         res.moveToFirst();
 
         while(!res.isAfterLast() & match != true){
-
-            if(msg.getMessage_ID().equals(res.getString(res.getColumnIndex(MESSAGE_ID))))
+            String testres = res.getString(res.getColumnIndex(MESSAGE_ID));
+            if(msg.getMessage_ID().equals(testres))
             {
                 match = true;
+
             }
 
             else
@@ -326,7 +362,6 @@ public class DatabaseHelper {
 
            ArrayList<LatLng> coords=stringToCoords(res.getString(res.getColumnIndex(COORDINATES)));
             String[] top= (res.getString(res.getColumnIndex(ZONE_TOPICS))).split(",");
-
            Zone zn = new Zone(res.getString(res.getColumnIndex(ZONE_NAME)),
                    res.getString(res.getColumnIndex(ZONE_ID)),
                    res.getString(res.getColumnIndex(EXPIRED_AT)),top,
@@ -350,8 +385,8 @@ public class DatabaseHelper {
         return coords;
     }
 
-    public void deleteMessageWhenExpire(){
-        ourDatabase.execSQL("Delete from " + TABLE_NAME + "where Exp_time = " + c);
+    public void deleteExpiredMnZ() {
+        ourDatabase.execSQL("Delete from TABLE_1 where Exp_time <= datetime(date('now'))");
+        ourDatabase.execSQL("Delete from TABLE_2 where Exp_time <= datetime(date('now'))");
     }
-
 }
