@@ -48,7 +48,7 @@ public class UIMessageManager implements MessageUIManager {
      */
     @Override
     public synchronized void enqueueMessagesIntoUIFromP2P(ArrayList<Message> msgs) {
-        instance.new_obtained_msgs = msgs;
+        instance.new_obtained_msgs.addAll(msgs);
         instance.mol.onMessagesObtainedFromP2P(msgs);
     }
 

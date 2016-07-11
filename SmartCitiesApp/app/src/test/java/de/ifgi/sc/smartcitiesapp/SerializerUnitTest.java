@@ -18,7 +18,7 @@ public class SerializerUnitTest {
 
     @Test
     public void transformation_isCorrect() throws Exception {
-        Message inMessage = new de.ifgi.sc.smartcitiesapp.messaging.Message("c_id", "m_id", "z_id", new Date(), 51, 7, new Date(2016,6,21), "top", "tit", "msg");
+        Message inMessage = new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id", "z_id", new Date(), 51.0, 7.0, new Date(new Date().getTime()+10000), "top", "tit", "msg");
         String in = inMessage.toString();
         Log.i("Unit in", in );
         byte[] seriMessage = Serializer.serialize(in);
