@@ -344,6 +344,11 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
 
 
     @Override
+    /**
+     * @param item
+     * @return
+     */
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
@@ -351,6 +356,13 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                 // Open the settings activity
                 Intent intentSettings = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivity(intentSettings);
+                return true;
+            case R.id.menu_item_about:
+                return true;
+            case R.id.menu_item_search:
+                // Open the search activity
+                Intent intentSearch = new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(intentSearch);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
