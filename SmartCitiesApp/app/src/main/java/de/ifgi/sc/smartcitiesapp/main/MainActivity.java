@@ -1,62 +1,40 @@
 package de.ifgi.sc.smartcitiesapp.main;
 
 import android.Manifest;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.ScaleAnimation;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.nearby.Nearby;
-
 import de.ifgi.sc.smartcitiesapp.R;
-import de.ifgi.sc.smartcitiesapp.interfaces.MessageUIManager;
 import de.ifgi.sc.smartcitiesapp.interfaces.MessagesObtainedListener;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
@@ -100,10 +78,14 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
+        /*
+        // Testing
         ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mPubMessagesTest = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> ();
         mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id2", "z_id", new Date(), 51.0, 7.0, new Date(new Date().getTime()+600000), "top", "tit", "msg"));
         mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id3", "z_id1", new Date(), 52.0, 8.0, new Date(new Date().getTime()+600000), "top1", "tit1", "msg1"));
         mP2PManager.shareMessage(mPubMessagesTest);
+        */
+
 
         // in case of the notification about new retrieved msgs was clicked:
         if (savedInstanceState == null) {
@@ -169,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         Message msg1 = new Message(UUID.randomUUID().toString(),
                 zonesFromDB.get(0).getZoneID(), creationDate,
                 51.9707, 7.6281, expDate, "Traffic", "Traffic Jam in the city center",
-                "There is a traffic jam in the city center"
+                "There is a traffic jam in the city center", true
         );
 
         // send msg1 to the Messenger:
@@ -177,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         msgs.add(msg1);
         // if there are no msgs stored in the DB yet, add the 1 example msg to the first example zone.
         if (Messenger.getInstance().getAllMessages().size()==0)
-            Messenger.getInstance().updateMessengerFromConnect(msgs);
+            Messenger.getInstance().updateMessengerFromP2P(msgs);
 
         // test if the saved msgs are loaded from the Messenger methods:
         ArrayList<Message> msgsFromMessenger = new ArrayList<Message>();
@@ -269,18 +251,18 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                         UUID.randomUUID().toString(),
                         zones.get(0).getZoneID(), new Date(),
                         51.666, 7.622, new Date(new Date().getTime() + 1000 * 360),
-                        "Sports", "Tennis", "Lorem ipssum dolor amet... Created at "+new Date()
+                        "Sports", "Tennis", "Lorem ipssum dolor amet... Created at "+new Date(), true
                 );
                 Message msg2 = new Message(
                         UUID.randomUUID().toString(),
                         zones.get(0).getZoneID(), new Date(),
                         51.646, 7.632, new Date(new Date().getTime() + 1000 * 360),
-                        "Restaurants", "Barcafe XY", "Lorem ipssum... Created at "+new Date()
+                        "Restaurants", "Barcafe XY", "Lorem ipssum... Created at "+new Date(), true
                 );
                 ArrayList<Message> msgs = new ArrayList<Message>();
                 msgs.add(msg);
                 msgs.add(msg2);
-                Messenger.getInstance().updateMessengerFromConnect(msgs);
+                Messenger.getInstance().updateMessengerFromP2P(msgs);
                 // update UI:
                 UIMessageManager.getInstance().enqueueMessagesIntoUIFromP2P(msgs);
             }
