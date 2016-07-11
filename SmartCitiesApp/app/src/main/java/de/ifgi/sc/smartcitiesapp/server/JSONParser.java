@@ -164,7 +164,7 @@ public class JSONParser {
                     latitude = Double.parseDouble(splittetCoords[0]);
                     longitude = Double.parseDouble(splittetCoords[1]);
                 }
-                message = new Message(messageID,zoneID,creationDate,latitude,longitude,expiredDate,topic,title,msg);
+                message = new Message(messageID,zoneID,creationDate,latitude,longitude,expiredDate,topic,title,msg,true);
                 this.msglist.add(message);
 
             }

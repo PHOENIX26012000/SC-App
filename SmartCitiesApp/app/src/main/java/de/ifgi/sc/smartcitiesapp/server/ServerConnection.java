@@ -34,10 +34,9 @@ import java.util.logging.Logger;
 import de.ifgi.sc.smartcitiesapp.interfaces.Connection;
 import de.ifgi.sc.smartcitiesapp.interfaces.Messenger;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
-<<<<<<< HEAD
+
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
-=======
->>>>>>> origin/feature/feature/UserInterface
+
 import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 
@@ -45,21 +44,22 @@ public class ServerConnection implements Connection{
 
     private JSONObject obj = new JSONObject();
 
+
+
+    public ServerConnection() {
+
+    }
+
     @Override
     /**
      *  gets a set of Messages in form of an ArrayList and pushs it to the Server
      */
-<<<<<<< HEAD
     public void shareMessage(ArrayList<Message> messages) {
         JSONParser parser = new JSONParser();
         this.obj = parser.parseMessagetoJSON(messages);
-        Log.i("JSONCHECK",obj+"");
+        Log.i("Server","JSON"+ obj);
 
         new PostMsgTask().execute("http://giv-project6.uni-muenster.de:8080/api/addmessages");
-
-=======
-    public ServerConnection() {
->>>>>>> origin/feature/feature/UserInterface
     }
 
 
@@ -110,7 +110,7 @@ public class ServerConnection implements Connection{
 
                 // Create JSONObject:
                 String jsonString = obj.toString();
-                Log.i("JSON Object",jsonString+"");
+                Log.i("Server","JSONObject"+jsonString);
 
                 conn.setRequestProperty("Content-length", jsonString.getBytes().length + "");
                 conn.setDoInput(true);

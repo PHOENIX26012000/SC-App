@@ -87,18 +87,11 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         //test server connection get msgs
 
         ServerConnection ser = new ServerConnection();
-        //ser.getMessages("2");
-        //Log.i("Connection Successful","GetMSGS");
-
-        //test SERVER CONNECTION SHARE MSGS
-
         //test serverr connecion get msgs
         //ServerConnection ser = new ServerConnection();
         //ser.getMessages("3a0e68e128b7e8ef3c23347cba12d4a5");
         //Log.i("Connection Successful","GetMSGS");
 
-
-        //Log.i("Server Connection", "Success Share Messages");
 
 
 
@@ -189,15 +182,13 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         Calendar cal2 = Calendar.getInstance();
         cal2.add(Calendar.DATE, +1);
 
-        Message msaad =new Message("3xzfvsdf9","68104b10-bd24-4771-9bd0-6372700c6775",date,36.989823,89.002323,cal.getTime(),"Traffic","saad 1","sxcvd");
-        Message mshiz =new Message("3svsul9jbc6","68104b10-bd24-4771-9bd0-6372700c6775",date,34.45454,74.34324,cal2.getTime(),"Traffic","saad 2","sxcvd");
+        Message msaad =new Message("3xzfvsdf9","68104b10-bd24-4771-9bd0-6372700c6775",date,36.989823,89.002323,cal.getTime(),"Traffic","saad 1","sxcvd",true);
+        Message mshiz =new Message("3svsul9jbc6","68104b10-bd24-4771-9bd0-6372700c6775",date,34.45454,74.34324,cal2.getTime(),"Traffic","saad 2","sxcvd",true);
         ArrayList<Message> msgList= new ArrayList<Message>();
         msgList.add(msaad);
         msgList.add(mshiz);
 
         ser.shareMessage(msgList);
-        Log.i("ServerConnection","Success");
-
 
 
         // create an example msg:
