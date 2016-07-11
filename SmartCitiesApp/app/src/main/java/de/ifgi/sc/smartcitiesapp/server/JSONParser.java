@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TimeZone;
 
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
@@ -180,10 +181,12 @@ public class JSONParser {
 
     public Date parseStringToDate(String string){
 
+        String substring = string.substring(0,(string.length()-1));
+        String dtstring = new String(substring+"+0000");
         SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
         try {
-            return D_format.parse(string);
+            return D_format.parse(dtstring);
         } catch (ParseException e) {
             e.printStackTrace();
         }

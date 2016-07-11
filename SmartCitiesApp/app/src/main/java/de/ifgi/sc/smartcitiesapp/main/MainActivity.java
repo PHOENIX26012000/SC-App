@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
 
+
         //test server connection get msgs
 
         ServerConnection ser = new ServerConnection();
@@ -107,6 +108,12 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         //Log.i("Connection Successful","GetMSGS");
 
         //test SERVER CONNECTION SHARE MSGS
+
+        //test serverr connecion get msgs
+        //ServerConnection ser = new ServerConnection();
+        //ser.getMessages("3a0e68e128b7e8ef3c23347cba12d4a5");
+        //Log.i("Connection Successful","GetMSGS");
+
 
         //Log.i("Server Connection", "Success Share Messages");
 

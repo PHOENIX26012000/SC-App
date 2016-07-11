@@ -1,6 +1,5 @@
 package de.ifgi.sc.smartcitiesapp.server;
 
-//import org.json.JSONArray;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.StrictMode;
@@ -12,6 +11,7 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 //import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,7 +19,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+<<<<<<< 
 import java.io.UnsupportedEncodingException;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -57,7 +59,7 @@ public class ServerConnection implements Connection{
 
 
     /**
-     *  requests the server for Messages and shares them with the Messanger
+     *  requests the server for Messages and shares them with the Messenger
      */
     public void getMessages(String zoneID) {
         new GetMsgTask().execute("http://giv-project6.uni-muenster.de:8080/api/messages?zone="+zoneID);
@@ -159,7 +161,8 @@ public class ServerConnection implements Connection{
     }
 
     public class GetMsgTask extends AsyncTask<String,Integer, String> {
-        JSONParser jsonParser = new JSONParser();
+
+        JSONParser parser = new JSONParser();
         ArrayList<Message> messages = new ArrayList<Message>();
 
         String responseString = "";
@@ -182,13 +185,18 @@ public class ServerConnection implements Connection{
                 response = conn.getResponseCode();
                 is = conn.getInputStream();
 
-                Reader reader = new InputStreamReader(is, "UTF-8");
-                char[] buffer = new char[8000];
-                reader.read(buffer);
-                String contentAsString = new String(buffer);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                StringBuilder sb = new StringBuilder();
+
+                String line = null;
+                while ((line = reader.readLine()) != null){
+                    sb.append(line);
+                }
+
+                String contentAsString = sb.toString();
 
                 responseString = contentAsString;
-                Log.i("Server","response"+ responseString);
+                Log.i("Server","blubb1");
                 conn.disconnect();
 
             } catch (Exception e) {
@@ -206,9 +214,20 @@ public class ServerConnection implements Connection{
 
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Log.i("Server",result);
+            Log.i("Server","Blubb2");
+            if(result.charAt(0)== '{'){
+                try {
+                    JSONObject obj = new JSONObject(result);
+                    messages = parser.parseJSONtoMessage(obj);
+                    Log.i("Server","GetMessages, display Message: "+ messages);
+                    //todo give messages to messenger
 
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
+
+        }
 
     }
 
@@ -263,6 +282,8 @@ public class ServerConnection implements Connection{
             super.onPostExecute(result);
             Log.i("ServerResponse", result);
             if(result.charAt(0) == '{'){
+                //todo if abfrage für wenn leer
+
                 try {
                     JSONObject obj = new JSONObject(result);
                     zones = parser.parseJSONtoZone(obj);
