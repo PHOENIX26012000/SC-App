@@ -16,8 +16,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 //import java.io.OutputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -46,6 +48,8 @@ public class ServerConnection implements Connection{
     public void shareMessage(ArrayList<Message> messages) {
         JSONParser parser = new JSONParser();
         this.obj = parser.parseMessagetoJSON(messages);
+        Log.i("JSONCHECK",obj+"");
+
         new PostMsgTask().execute("http://giv-project6.uni-muenster.de:8080/api/addmessages");
 
     }
@@ -75,6 +79,14 @@ public class ServerConnection implements Connection{
         int response;
         InputStream is = null;
 
+        public String readIt(InputStream stream, int len) throws IOException {
+            Reader reader = null;
+            reader = new InputStreamReader(stream, "UTF-8");
+            char[] buffer = new char[len];
+            reader.read(buffer);
+            return new String(buffer);
+        }
+
         @Override
         protected String doInBackground(String... urls) {
             //DataOutputStream wr= null;
@@ -88,56 +100,61 @@ public class ServerConnection implements Connection{
                 conn.setDoOutput(true);
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
+                // Create JSONObject:
+                String jsonString = obj.toString();
+                Log.i("JSON Object",jsonString+"");
+
+                conn.setRequestProperty("Content-length", jsonString.getBytes().length + "");
+                conn.setDoInput(true);
+                conn.setUseCaches(false);
+                conn.setAllowUserInteraction(false);
+
+                OutputStream os = conn.getOutputStream();
+                os.write(jsonString.getBytes("UTF-8"));
+                Log.i("ServerConnection","Writing Message");
+                os.close();
+
                 conn.connect();
 
-                OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-
-                out.write( obj.toString());
-                out.close();
-
-
-                int response = conn.getResponseCode();
-                if (response >= 200 && response <=399){
+                response = conn.getResponseCode();
+                Log.d("Server Response","The response is:"+response);
+                if (response == 201){
                     is = conn.getInputStream();
-                } else {
+                } else if (response == 404) {
                     is = conn.getErrorStream();
                 }
 
                 // Convert the InputStream into a string
-                //String contentAsString = readIt(is, 200);
-                //responseString = contentAsString;
+                String contentAsString = readIt(is, 2000);
+                responseString = contentAsString;
+                Log.i("ServerConnection","Successful sending");
                 conn.disconnect();
 
-                //} catch (Exception e) {
-                // responseString = "error occured: "+e + "|||  " + responseString;
+                } catch (Exception e) {
+                 responseString = "error occured: "+e + "|||  " + responseString;
             }
 
-            catch (MalformedURLException e) {
-                e.printStackTrace();
-            }   catch (ProtocolException e) {
-                e.printStackTrace();
-            }   catch (IOException e) {
-                e.printStackTrace();
-            }
             finally {
                 if (is != null){
                     try { is.close();} catch (Exception e) {}
                 }
             }
 
-            return response+responseString;
+            return responseString+response;
+
 
         }
 
-        protected void onPostExecute(String result){
-        // data submitted successfully?
-        if (result.contains("201")) {
-        Log.d("Successful submission",result);
-
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (result.contains("201")) {
+                Log.i("Successful submission", result);
+            }
+            else if (result.contains("404")) {
+                Log.i("FailureBaby", result);
+            }
+            // maybe add other codes as well such as 201, or all between >=200 <400
         }
-        // maybe add other codes as well such as 201, or all between >=200 <400
-
-    }
 
     }
 

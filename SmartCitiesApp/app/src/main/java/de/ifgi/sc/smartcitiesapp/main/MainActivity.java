@@ -42,6 +42,7 @@ import java.lang.reflect.Array;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import java.util.UUID;
@@ -99,11 +100,15 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
 
-        //test serverr connecion get msgs
-        ServerConnection ser = new ServerConnection();
-        ser.getMessages("1");
-        Log.i("Connection Successful","GetMSGS");
+        //test server connection get msgs
 
+        ServerConnection ser = new ServerConnection();
+        //ser.getMessages("2");
+        //Log.i("Connection Successful","GetMSGS");
+
+        //test SERVER CONNECTION SHARE MSGS
+
+        //Log.i("Server Connection", "Success Share Messages");
 
         // in case of the notification about new retrieved msgs was clicked:
         if (savedInstanceState == null) {
@@ -161,6 +166,26 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         for (Zone z : zonesFromDB){
             Log.d(TAG,"zone from db: "+z.getName());
         }
+
+        //test share message
+        Date date = new Date();
+        Log.i( date.toString(),"is Date");
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, +1);
+        Calendar cal2 = Calendar.getInstance();
+        cal2.add(Calendar.DATE, +1);
+
+        Message msaad =new Message("3xzfvsdf9","68104b10-bd24-4771-9bd0-6372700c6775",date,36.989823,89.002323,cal.getTime(),"Traffic","saad 1","sxcvd");
+        Message mshiz =new Message("3svsul9jbc6","68104b10-bd24-4771-9bd0-6372700c6775",date,34.45454,74.34324,cal2.getTime(),"Traffic","saad 2","sxcvd");
+        ArrayList<Message> msgList= new ArrayList<Message>();
+        msgList.add(msaad);
+        msgList.add(mshiz);
+
+        ser.shareMessage(msgList);
+        Log.i("ServerConnection","Success");
+
+
 
         // create an example msg:
         Date creationDate = new Date(); // now
