@@ -56,7 +56,7 @@
             android:value="AIzaSyDw7Pv8XpkB-XqeWt1wLpR2hZ4TDNiIcaw" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCyLw5XaCKMTlRvv2aeXe6lZgg2anhBi1E" />
+            android:value="AIzaSyDw7Pv8XpkB-XqeWt1wLpR2hZ4TDNiIcaw" />
 
         <activity
             android:name=".main.SelectZoneActivity"
