@@ -56,8 +56,14 @@ public class ServerConnection implements Connection{
      *  gets a set of Messages in form of an ArrayList and pushs it to the Server
      */
     public void shareMessage(ArrayList<Message> messages) {
+        ArrayList<Message> listmsg = new ArrayList<>();
+        for (Message m: messages){
+            if(m.getShareWithServer() &&  m.getZone_ID() != "UMPA-UMPA-UMPA-TÖTÖRÖ"){
+                listmsg.add(m);
+            }
+        }
         JSONParser parser = new JSONParser();
-        this.obj = parser.parseMessagetoJSON(messages);
+        this.obj = parser.parseMessagetoJSON(listmsg);
         Log.i("Server","JSON"+ obj);
 
         new PostMsgTask().execute("http://giv-project6.uni-muenster.de:8080/api/addmessages");
