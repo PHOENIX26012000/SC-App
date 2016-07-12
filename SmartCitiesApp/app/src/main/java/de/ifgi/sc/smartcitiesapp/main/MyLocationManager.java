@@ -15,6 +15,8 @@ import de.ifgi.sc.smartcitiesapp.interfaces.LocationChangedListener;
  */
 public class MyLocationManager {
 
+    public final int MINIMUM_UPDATE_DISTANCE = 5; // 5 meters.
+
     private static MyLocationManager instance;
 
     private LatLng userLocation;
@@ -22,6 +24,7 @@ public class MyLocationManager {
     private LocationChangedListener lcl;
     private LocationManager mLocationManager;
     private LocationListener mLocationListener;
+    private Location oldLocation;
 
     private MyLocationManager() {
         // constructor hidden because this is a singleton
@@ -38,19 +41,21 @@ public class MyLocationManager {
         }
     }
 
-    public synchronized void setLocationChangedListener(LocationChangedListener lcl) throws SecurityException {
+    public synchronized void setLocationChangedListener(LocationChangedListener lcl, int provider) throws SecurityException {
         instance.lcl = lcl;
         instance.mLocationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                instance.userLocation = new LatLng(
-                        location.getLatitude(),
-                        location.getLongitude()
-                );
-                instance.lcl.onLocationChanged(
-                        new LatLng(location.getLatitude(),
-                                location.getLongitude())
-                );
+
+                    instance.userLocation = new LatLng(
+                            location.getLatitude(),
+                            location.getLongitude()
+                    );
+                    instance.lcl.onLocationChanged(
+                            new LatLng(location.getLatitude(),
+                                    location.getLongitude())
+                    );
+
             }
 
             @Override
@@ -68,24 +73,41 @@ public class MyLocationManager {
 
             }
         };
-        instance.mLocationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                15000,          // update every 15s
-                0,
-                instance.mLocationListener
-        );
+
+        if (provider == MainActivity.MY_PERMISSION_ACCESS_COARSE_LOCATION) {
+            instance.mLocationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    15000,          // update every 15s
+                    0,
+                    instance.mLocationListener
+            );
+        }
+        if (provider == MainActivity.MY_PERMISSION_ACCESS_FINE_LOCATION) {
+            instance.mLocationManager.requestLocationUpdates(
+                    LocationManager.PASSIVE_PROVIDER,
+                    15000,          // update every 15s
+                    0,
+                    instance.mLocationListener
+            );
+            instance.mLocationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    15000,          // update every 15s
+                    5,              // every 5 meters.
+                    instance.mLocationListener
+            );
+        }
 
         // Also, check for the last known location:
         LocationManager lm = (LocationManager) instance.mContext.getSystemService(Context.LOCATION_SERVICE);
+        boolean loc_obtained = false;
 
         try {
-            Location l = lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            Location l = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             instance.userLocation = new LatLng(
                     l.getLatitude(),
                     l.getLongitude()
             );
-            // callback to the LocationChangedListener:
-            instance.lcl.onLocationChanged(instance.userLocation);
+            loc_obtained = true;
         } catch (SecurityException se) {
         }
 
@@ -95,9 +117,25 @@ public class MyLocationManager {
                     l.getLatitude(),
                     l.getLongitude()
             );
+            loc_obtained = true;
+        } catch (SecurityException se) {
+        }
+
+        try {
+            Location l = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            try {
+                instance.userLocation = new LatLng(
+                        l.getLatitude(),
+                        l.getLongitude()
+                );
+                loc_obtained = true;
+            } catch (NullPointerException npe) { }
+        } catch (SecurityException se) {
+        }
+
+        if (loc_obtained) {
             // callback to the LocationChangedListener:
             instance.lcl.onLocationChanged(instance.userLocation);
-        } catch (SecurityException se) {
         }
     }
 

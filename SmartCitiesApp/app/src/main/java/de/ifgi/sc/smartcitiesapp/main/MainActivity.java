@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.PolyUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,7 +47,8 @@ import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 public class MainActivity extends AppCompatActivity implements MessagesObtainedListener, LocationChangedListener {
 
     protected App app;
-    private final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 10042; // just a random unique int resource.
+    public static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 10042; // just a random unique int resource.
+    public static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 10043; // just a random unique int resource.
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -142,14 +144,13 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         zones.add(zone1);
         zones.add(zone2);
         // zones.add(zone3);
-        // If there are no zones in the DB, store the 2 example zone into it.
+        // If there are no zones in the DB, store the 2 example zones into it.
         if (ZoneManager.getInstance().getAllZonesfromDatabase().size() == 0) {
             ZoneManager.getInstance().updateZonesInDatabase(zones);
         }
         // use the default zone meanwhile:
-        current_selected_zone = app.getDefaultZone(new LatLng(52.96,7.6));
+        current_selected_zone = app.getDefaultZone(new LatLng(51.96958,7.5956));
         ZoneManager.getInstance().setCurrentZone(current_selected_zone);
-
 
         // test if the saved zones are loaded from the ZoneManager methods:
         ArrayList<Zone> zonesFromDB = new ArrayList<Zone>();
@@ -182,18 +183,20 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
             Log.d(TAG, "msg from Messenger:" + m.getZone_ID() + "-" + m.getTitle() + ":" + m.getMsg());
         }
 
-        zonesFromDB = ZoneManager.getInstance().getAllZonesfromDatabase();
-        for (Zone z : zonesFromDB) {
-            Log.d(TAG, "zone from db: " + z.getName());
-        }
+        if (userLocation!= null) {
+            zonesFromDB = ZoneManager.getInstance().getCurrentZones(userLocation);
+            for (Zone z : zonesFromDB) {
+                Log.d(TAG, "zone from db: " + z.getName());
+            }
 
-        try {
-            current_selected_zone = ZoneManager.getInstance().getCurrentZone();
-        } catch (NoZoneCurrentlySelectedException e) {
-            // what do, if no zone is currently selected?
-            // select the first zone of the zonemanager
-            current_selected_zone = zonesFromDB.get(0);
-            ZoneManager.getInstance().setCurrentZone(current_selected_zone);
+            try {
+                current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+            } catch (NoZoneCurrentlySelectedException e) {
+                // what do, if no zone is currently selected?
+                // select the first zone of the zonemanager
+                current_selected_zone = zonesFromDB.get(0);
+                ZoneManager.getInstance().setCurrentZone(current_selected_zone);
+            }
         }
 
         Messenger.getInstance().setP2PManager(mP2PManager);
@@ -201,13 +204,24 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
 
         try {
             // enable Location service on phone if its not enabled already:
-            MyLocationManager.getInstance().setLocationChangedListener(this);
+            MyLocationManager.getInstance().setLocationChangedListener(this,MY_PERMISSION_ACCESS_COARSE_LOCATION);
         } catch (SecurityException se) {
             // in case of forbidden permission to access the user location, ask for it:
             // ask for permission ACCESS_COARSE_LCCATION:
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     MY_PERMISSION_ACCESS_COARSE_LOCATION);
+        }
+
+        try {
+            // enable Location service on phone if its not enabled already:
+            MyLocationManager.getInstance().setLocationChangedListener(this,MY_PERMISSION_ACCESS_FINE_LOCATION);
+        } catch (SecurityException se) {
+            // in case of forbidden permission to access the user location, ask for it:
+            // ask for permission ACCESS_FINE_LCCATION:
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSION_ACCESS_FINE_LOCATION);
         }
         //Zone-Select-Button:
         Button btn_selectZone = (Button) findViewById(R.id.btn_selectZone);
@@ -261,7 +275,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                 msgs.add(msg2);
                 Messenger.getInstance().updateMessengerFromP2P(msgs);
                 // update UI:
-                UIMessageManager.getInstance().enqueueMessagesIntoUIFromP2P(msgs);
             }
         });
 
@@ -283,23 +296,30 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         // enable location service on phone if its not enabled already:
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         boolean network_enabled = false;
+        boolean gps_enabled = false;
 
         try {
             network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         } catch (Exception ex) {
         }
-
-        if (!network_enabled) {
-            Toast.makeText(this, "Please enable location service", Toast.LENGTH_LONG).show();
-            // activate Location Service
-            Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            MainActivity.this.startActivity(myIntent);
-        }
         try {
-            MyLocationManager.getInstance().setLocationChangedListener(this);
+            gps_enabled = lm.isProviderEnabled(LocationManager.PASSIVE_PROVIDER);
+        } catch (Exception ex) {
+
+        }
+
+        if (!network_enabled)
+        try {
+            MyLocationManager.getInstance().setLocationChangedListener(this, MY_PERMISSION_ACCESS_COARSE_LOCATION);
         } catch (SecurityException se) {
             se.printStackTrace();
         }
+        if (!gps_enabled)
+            try {
+                MyLocationManager.getInstance().setLocationChangedListener(this, MY_PERMISSION_ACCESS_FINE_LOCATION);
+            } catch (SecurityException se) {
+                se.printStackTrace();
+            }
     }
 
     @Override
@@ -381,7 +401,21 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // location-related task you need to do.
-                    MyLocationManager.getInstance().setLocationChangedListener(this);
+                    MyLocationManager.getInstance().setLocationChangedListener(MainActivity.this,MY_PERMISSION_ACCESS_COARSE_LOCATION);
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(this, "Grant location permission for HappyShare in your phone settings for an enabled location-based service.", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+            case MY_PERMISSION_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    MyLocationManager.getInstance().setLocationChangedListener(MainActivity.this,MY_PERMISSION_ACCESS_FINE_LOCATION);
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -537,49 +571,71 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         }
     }
 
+
+    boolean flag_realZoneSelected = false;
     @Override
     public void onLocationChanged(LatLng newLocation) {
-        Log.d(TAG,"New Location obtained: ("+newLocation.latitude+","+newLocation.longitude+")");
+        Log.w(TAG,"New Location obtained: ("+newLocation.latitude+","+newLocation.longitude+")");
         if (userLocation==null) {
             userLocation = new LatLng(
                     newLocation.latitude,
                     newLocation.longitude
             );
-            // TODO: select a current zone
+            // TODO: select a current zone:
             ArrayList<Zone> zonesContainingUserLocation = ZoneManager.getInstance().getCurrentZones(userLocation);
             if (zonesContainingUserLocation.size()==0){
+                Log.w("DZone", "no prev. loc. new loc. No zone available.");
                 // well, bad luck. The default zone is used til the user entered an existing zone. "Run, Forest, Run!"
                 Toast.makeText(getApplicationContext(), "There are no zones containing your current location. The default zone is used til you entered an existing zone!", Toast.LENGTH_LONG).show();
                 current_selected_zone = app.getDefaultZone(userLocation);
                 ZoneManager.getInstance().setCurrentZone(current_selected_zone);
+                flag_realZoneSelected = false;
             } else {
+                Log.w("DZone", "no prev loc. new loc. >= 1 zone available");
                 // if the default zone is currently selected, then open the selectZoneIntent:
                 if (current_selected_zone.getZoneID().equals(app.DEFAULT_ZONE_ID)) {
+                    Log.w("DZone", "current zone was default.");
                     // open the SelectZoneActivity to let the user select his favourite zone
                     Intent selectZoneintent = new Intent(getApplicationContext(), SelectZoneActivity.class);
                     startActivity(selectZoneintent);
                 }
+                flag_realZoneSelected = true;
             }
         } else {
             userLocation = new LatLng(
                     newLocation.latitude,
                     newLocation.longitude
             );
-            // TODO: check if we left the current selected zone
-            // if yes: select a new one:
             ArrayList<Zone> zonesContainingUserLocation = ZoneManager.getInstance().getCurrentZones(userLocation);
             if (zonesContainingUserLocation.size()==0){
+                Log.w("DZone", "new loc. No zone available.");
                 Toast.makeText(getApplicationContext(), "There are no zones containing your current location. The default zone is used til you entered an existing zone!", Toast.LENGTH_LONG).show();
                 current_selected_zone = app.getDefaultZone(userLocation);
                 ZoneManager.getInstance().setCurrentZone(current_selected_zone);
+                flag_realZoneSelected = false;
             } else {
                 // if the default zone is currently selected, then open the selectZoneIntent:
-                if (current_selected_zone.getZoneID().equals(app.DEFAULT_ZONE_ID)) {
+                if ((!flag_realZoneSelected) && (current_selected_zone.getZoneID().equals(app.DEFAULT_ZONE_ID))) {
                     // open the SelectZoneActivity to let the user select his favourite zone
+                    Log.w("DZone","New zone selection forced. oldzone:"+current_selected_zone.getName()+", location: ("+userLocation.latitude+";"+userLocation.longitude+")");
                     Intent selectZoneintent = new Intent(getApplicationContext(), SelectZoneActivity.class);
                     startActivity(selectZoneintent);
+                    flag_realZoneSelected = true;
                 }
+                if (!current_selected_zone.getZoneID().equals(app.DEFAULT_ZONE_ID)){
+                    // if the default zone is not selected: check if we have left the current selected zone!
+                    if (!PolyUtil.containsLocation(userLocation,current_selected_zone.getPolygon(),false)){
+                        // yes, we left it! Go start the selectZoneActivity and force a new selection.
+                        Log.w("DZone","User left Zone. oldzone:"+current_selected_zone.getName()+", location: ("+userLocation.latitude+";"+userLocation.longitude+")");
+                        Intent selectZoneintent = new Intent(getApplicationContext(), SelectZoneActivity.class);
+                        startActivity(selectZoneintent);
+                        flag_realZoneSelected = true;
+                    }
+                }
+                // otherwise: do not do anything. just stay in the current selected zone
             }
+            // TODO: check if we left the current selected zone
+
         }
     }
 }
