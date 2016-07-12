@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -219,17 +220,25 @@ public class ServerConnection implements Connection{
 
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Log.i("Server","Blubb2");
-            if(result.charAt(0)== '{'){
+            Log.i("Server getMessages", "test: "+result.charAt(0)+" "+result.charAt(result.length()-1));
+            if(result.charAt(0) == '{' && result.charAt(result.length()-1)== '}'){
+                Log.i("Server getMessage","Response: Success");
                 try {
                     JSONObject obj = new JSONObject(result);
-                    messages = parser.parseJSONtoMessage(obj);
-                    Log.i("Server","GetMessages, display Message: "+ messages);
-                    //todo give messages to messenger
+                    if(obj.getJSONArray("Messages").isNull(0)== false) {
+                        messages = parser.parseJSONtoMessage(obj);
+                        //todo give messages to messenger
+                    }
+                    else{
+                        Log.i("Server getMessage", "Response is empty JSONObject: "+result);
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+            else{
+                Log.i("Server getMessage","Response: Failure "+result);
             }
 
         }
@@ -285,18 +294,26 @@ public class ServerConnection implements Connection{
 
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Log.i("ServerResponse", result);
-            if(result.charAt(0) == '{'){
-                //todo if abfrage für wenn leer
-
+            //test if response can be a JSON object
+            Log.i("Server getZones", "test: "+result.charAt(0)+" "+result.charAt(result.length()));
+            if(result.charAt(0) == '{' && result.charAt(result.length())== '}'){
+                Log.i("Server getZones","Response: Success");
                 try {
                     JSONObject obj = new JSONObject(result);
-                    zones = parser.parseJSONtoZone(obj);
-                    ZoneManager.getInstance().updateZonesInDatabase(zones);
-
+                    //test if response is empty
+                    if(obj.getJSONArray("Messages").isNull(0)){
+                        Log.i("Server getZones", "Response is empty JSONObject: "+result);
+                    }
+                    else{
+                        zones = parser.parseJSONtoZone(obj);
+                        ZoneManager.getInstance().updateZonesInDatabase(zones);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+            else{
+                Log.i("Server getZones","Response: Failure "+result);
             }
 
 
