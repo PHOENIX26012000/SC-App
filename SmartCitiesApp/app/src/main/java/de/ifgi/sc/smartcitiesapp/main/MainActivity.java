@@ -174,8 +174,8 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
 
         //test server connection post messages
         ServerConnection ser = new ServerConnection();
-        Message msaad =new Message("3xzfvsdf9","3a0e68e128b7e8ef3c23347cba12d4a5",date,36.989823,89.002323,cal.getTime(),"Traffic","saad 1","sxcvd",true);
-        Message mshiz =new Message("3svsul9jbc6","3a0e68e128b7e8ef3c23347cba12d4a5",date,34.45454,74.34324,cal2.getTime(),"Traffic","saad 2","sxcvd",true);
+        Message msaad =new Message(UUID.randomUUID().toString(),"3a0e68e128b7e8ef3c23347cba12d58a",date,null,null,cal.getTime(),"Traffic","saad 1","sxcvd",true);
+        Message mshiz =new Message(UUID.randomUUID().toString(),"3a0e68e128b7e8ef3c23347cba12d58a",date,null,null,cal2.getTime(),"Traffic","saad 2","sxcvd",true);
         ArrayList<Message> msgList= new ArrayList<Message>();
         msgList.add(msaad);
         msgList.add(mshiz);
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         //ser.shareMessage(msgList);
 
         //test serverr connecion get msgs
-        ser.getMessages("3a0e68e128b7e8ef3c23347cba12d4a5");
+        ser.getMessages("3a0e68e128b7e8ef3c23347cba12d58a");
 
         //test to get Zones
         //ser.getZones();

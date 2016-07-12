@@ -111,7 +111,7 @@ public class ServerConnection implements Connection{
 
                 // Create JSONObject:
                 String jsonString = obj.toString();
-                Log.i("Server","JSONObject"+jsonString);
+                Log.i("Server postMessages","JSONObject"+jsonString);
 
                 conn.setRequestProperty("Content-length", jsonString.getBytes().length + "");
                 conn.setDoInput(true);
@@ -225,8 +225,10 @@ public class ServerConnection implements Connection{
                 Log.i("Server getMessage","Response: Success");
                 try {
                     JSONObject obj = new JSONObject(result);
+                    Log.i("Server getMessages","JSONobj: "+obj);
                     if(obj.getJSONArray("Messages").isNull(0)== false) {
                         messages = parser.parseJSONtoMessage(obj);
+                        Log.i("Server getMessage","Message: "+messages);
                         //todo give messages to messenger
                     }
                     else{
@@ -270,10 +272,15 @@ public class ServerConnection implements Connection{
                 response = conn.getResponseCode();
                 is = conn.getInputStream();
 
-                Reader reader = new InputStreamReader(is, "UTF-8");
-                char[] buffer = new char[8000];
-                reader.read(buffer);
-                String contentAsString = new String(buffer);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                StringBuilder sb = new StringBuilder();
+
+                String line = null;
+                while ((line = reader.readLine()) != null){
+                    sb.append(line);
+                }
+
+                String contentAsString = sb.toString();
 
                 responseString = contentAsString;
                 conn.disconnect();
@@ -295,17 +302,17 @@ public class ServerConnection implements Connection{
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             //test if response can be a JSON object
-            Log.i("Server getZones", "test: "+result.charAt(0)+" "+result.charAt(result.length()));
-            if(result.charAt(0) == '{' && result.charAt(result.length())== '}'){
+            if(result.charAt(0) == '{' && result.charAt(result.length()-1)== '}'){
                 Log.i("Server getZones","Response: Success");
                 try {
                     JSONObject obj = new JSONObject(result);
                     //test if response is empty
-                    if(obj.getJSONArray("Messages").isNull(0)){
+                    if(obj.getJSONArray("Zones").isNull(0)){
                         Log.i("Server getZones", "Response is empty JSONObject: "+result);
                     }
                     else{
                         zones = parser.parseJSONtoZone(obj);
+                        Log.i("Server getZones","ZoneID of the first zone"+ zones.get(0).getZoneID());
                         ZoneManager.getInstance().updateZonesInDatabase(zones);
                     }
                 } catch (JSONException e) {

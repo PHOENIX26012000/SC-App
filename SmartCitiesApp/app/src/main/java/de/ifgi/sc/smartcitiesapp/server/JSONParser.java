@@ -109,9 +109,12 @@ public class JSONParser {
                     Coords.put(longitude);
                     Loc.put("Type","Point");
                     Loc.put("Coordinate",Coords);
+                    obj.put("Location",Loc);
                 }
-
-                obj.put("Location",Loc);
+                else{
+                    obj.put("Location",JSONObject.NULL);
+                }
+                Log.i("Parser","Location into object: Loc: "+ Loc);
                 this.jsonArray.put(obj);
 
             } catch (JSONException e) {
@@ -152,17 +155,16 @@ public class JSONParser {
                 topic = (String) jsonMsg.get("Topic");
                 title = (String) jsonMsg.get("Title");
                 msg = (String) jsonMsg.get("Message");
-                jsonLoc = jsonMsg.getJSONObject("Location");
-                if(jsonLoc.isNull("Coordinate")){
+
+                if(jsonMsg.isNull("Location")){
                     latitude = null;
                     longitude = null;
                 }
                 else{
+                    jsonLoc = jsonMsg.getJSONObject("Location");
                     jsonCoords = jsonLoc.getJSONArray("Coordinate");
-                    string = (String) jsonCoords.get(0);
-                    splittetCoords = string.split(",");
-                    latitude = Double.parseDouble(splittetCoords[0]);
-                    longitude = Double.parseDouble(splittetCoords[1]);
+                    latitude = (Double) jsonCoords.get(0);
+                    longitude = (Double) jsonCoords.get(1);
                 }
                 message = new Message(messageID,zoneID,creationDate,latitude,longitude,expiredDate,topic,title,msg,true);
                 this.msglist.add(message);
@@ -207,26 +209,14 @@ public class JSONParser {
                 String zoneID = (String) jsonZone.get("Zone-id");
                 String exDt = (String) jsonZone.get("Expired-at");
                 JSONObject geom = jsonZone.getJSONObject("Geometry");
+
                 JSONArray jsonCoords = geom.getJSONArray("Coordinates");
                 ArrayList<LatLng> polygon = new ArrayList<LatLng>();
                 for(int k = 0; k < jsonCoords.length(); k++){
-                    JSONArray coords2 = new JSONArray();
-                    coords2 = jsonCoords.getJSONArray(k);
-                    Log.i("Parser","Lengthcoords2: "+ coords2.length());
-                    for(int l=0; l<coords2.length(); l++){
-                        Log.i("Parser", "resultcooords2: "+coords2.get(l));
-                        String string = coords2.get(l).toString();
-                        Log.i("Parser", "string" + string);
-                        string = string.substring(string.indexOf("[")+1, string.lastIndexOf("]") - 1);
-                        Log.i("Parser", "string2: " + string);
-                        String[] splittetCoords = string.split(",");
-                        Double latitude = Double.parseDouble(splittetCoords[0]);
-                        Double longitude = Double.parseDouble(splittetCoords[1]);
-                        polygon.add(new LatLng(latitude,longitude));
-
-                    }
-
+                    JSONArray coords2 = jsonCoords.getJSONArray(k);
+                    polygon.add(new LatLng((Double) coords2.get(0), (Double) coords2.get(1)));
                 }
+                Log.i("Parser JSONtoMsg","Polygon: "+polygon);
                 JSONArray jsonTopics = jsonZone.getJSONArray("Topics");
                 zoneTopics = new String[jsonTopics.length()];
                 for (int m = 0; m< jsonTopics.length(); m++) {
