@@ -109,7 +109,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
         //Sending unique Messages to Peer and UI
         if(parray_list.size()!=0) {
 
-//            mP2PManager.shareMessage(parray_list);
+            mP2PManager.shareMessage(parray_list);
         }
 
     }

@@ -160,7 +160,11 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
                 int duration = calculateDuration(message);
                 mPubMessages.add(message);
                 if (duration < 0) {
-                    publish(message, duration);
+                    if (duration > 86400) {
+                        publish(message, 86400);
+                    } else {
+                        publish(message, duration);
+                }
                 }
             } else {
                 mPubMessages.add(message);
