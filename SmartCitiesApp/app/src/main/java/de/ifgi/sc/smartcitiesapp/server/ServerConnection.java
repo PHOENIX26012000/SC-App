@@ -320,6 +320,11 @@ public class ServerConnection implements Connection{
                         zones = parser.parseJSONtoZone(obj);
                         //Log.i("Server getZones","Zones number: "+ zones.size());
                         ZoneManager.getInstance().updateZonesInDatabase(zones);
+
+                        // get all Messages for all Zones
+                        for (Zone z: zones){
+                            getMessages(z.getZoneID());
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
