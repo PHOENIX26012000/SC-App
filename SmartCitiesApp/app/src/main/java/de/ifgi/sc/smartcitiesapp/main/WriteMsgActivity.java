@@ -76,6 +76,8 @@ public class WriteMsgActivity extends AppCompatActivity {
     private Zone current_selected_zone;
     private EnhancedPolygon current_zone;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -276,7 +278,6 @@ public class WriteMsgActivity extends AppCompatActivity {
                 } else {
                     // checkbox unchecked -> hide map:
                     mapcontainer.setVisibility(View.INVISIBLE);
-
                 }
             }
         });

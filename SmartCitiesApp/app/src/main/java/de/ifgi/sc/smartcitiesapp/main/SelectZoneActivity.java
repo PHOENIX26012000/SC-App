@@ -188,7 +188,11 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
         int padding = 0;
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 
-        map.animateCamera(cu);
+        try {
+            map.animateCamera(cu);
+        } catch (IllegalStateException ise) {
+            finish();
+        }
         try {
             map.setMyLocationEnabled(true);
 

@@ -174,24 +174,9 @@ public class MapTabFragment extends Fragment implements OnMapReadyCallback {
         try {
             mMap.setMyLocationEnabled(true);
 
-            // enable location service on phone if its not enabled already:
-            LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-            boolean network_enabled = false;
-
-            try {
-                network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            } catch (Exception ex) {
-            }
-
-            if (!network_enabled) {
-                Toast.makeText(getActivity(), "Please enable location service", Toast.LENGTH_LONG).show();
-                // activate Location Service
-                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                MapTabFragment.this.startActivity(myIntent);
-            }
         } catch (SecurityException e) {
             Log.d("maptab", "Security Exception: " + e);
-            // request location permission to the user:
+            // location service disabled or location permission denied.
 
         } finally {
 
