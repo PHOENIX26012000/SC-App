@@ -142,7 +142,7 @@ public class ServerConnection implements Connection{
                 // Convert the InputStream into a string
                 String contentAsString = readIt(is, 2000);
                 responseString = contentAsString;
-                Log.i("Check Input Stream",responseString);
+                Log.i("ServerConnection","Successful sending");
                 conn.disconnect();
 
                 } catch (Exception e) {
@@ -156,15 +156,17 @@ public class ServerConnection implements Connection{
             }
 
             return responseString+response;
+
+
         }
 
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             if (result.contains("201")) {
-                Log.i("Successful submission", result);
+                Log.i("Server","Successful"+result);
             }
             else if (result.contains("404")) {
-                Log.i("Failure to Write", result);
+                Log.i("Server","Failure"+result);
             }
         }
 
@@ -195,15 +197,19 @@ public class ServerConnection implements Connection{
                 response = conn.getResponseCode();
                 is = conn.getInputStream();
 
-                Reader reader = new InputStreamReader(is, "UTF-8");
-                char[] buffer = new char[8000];
-                reader.read(buffer);
-                String contentAsString = new String(buffer);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                StringBuilder sb = new StringBuilder();
+
+                String line = null;
+                while ((line = reader.readLine()) != null){
+                    sb.append(line);
+                }
+
+                String contentAsString = sb.toString();
 
                 responseString = contentAsString;
-                Log.i("Server","response"+ responseString);
+                Log.i("Server","blubb1");
                 conn.disconnect();
-
 
             } catch (Exception e) {
                 responseString = "error occured: " + e;
@@ -272,10 +278,15 @@ public class ServerConnection implements Connection{
                 response = conn.getResponseCode();
                 is = conn.getInputStream();
 
-                Reader reader = new InputStreamReader(is, "UTF-8");
-                char[] buffer = new char[8000];
-                reader.read(buffer);
-                String contentAsString = new String(buffer);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                StringBuilder sb = new StringBuilder();
+
+                String line = null;
+                while ((line = reader.readLine()) != null){
+                    sb.append(line);
+                }
+
+                String contentAsString = sb.toString();
 
                 responseString = contentAsString;
                 conn.disconnect();
