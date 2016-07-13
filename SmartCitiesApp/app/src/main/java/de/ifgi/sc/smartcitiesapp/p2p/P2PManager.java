@@ -218,7 +218,11 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         for (de.ifgi.sc.smartcitiesapp.messaging.Message mPubMessage : mPubMessages) {
             int duration = calculateDuration(mPubMessage);
             if (duration > 0) {
-                publish(mPubMessage, duration);
+                if (duration > 86400) {
+                    publish(mPubMessage, 86400);
+                } else {
+                    publish(mPubMessage, duration);
+                }
             } else {
                 unpublish(mPubMessage);
             }
