@@ -78,6 +78,10 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
 
+        // Forward P2PManager to the Messenger
+        Messenger.getInstance().setP2PManager(mP2PManager);
+        Messenger.getInstance().initialStartup();
+
         /*
         // Testing
         ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mPubMessagesTest = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> ();
@@ -216,9 +220,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                 ZoneManager.getInstance().setCurrentZone(current_selected_zone);
             }
         }
-
-        Messenger.getInstance().setP2PManager(mP2PManager);
-        Messenger.getInstance().initialStartup();
 
         try {
             // enable Location service on phone if its not enabled already:
