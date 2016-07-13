@@ -7,7 +7,6 @@ import com.google.android.gms.maps.model.LatLng;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.UUID;
 
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
@@ -39,6 +38,7 @@ public class App extends Application {
         ZoneManager.initInstance(this);         // Singleton of ZoneManager
         Messenger.initInstance(this);           // Singleton of Messenger
         MyLocationManager.initInstance(this);   // Singleton of MyLocationManager
+
     }
 
     /**
@@ -59,7 +59,7 @@ public class App extends Application {
         ArrayList<LatLng> pts = new ArrayList<LatLng>();
         // take some points around the user's location:
         // take a length of 1000meters:
-        double length = 0.1d;
+        double length = 0.01d;
         LatLng northern = new LatLng(
                 userLocation.latitude+length,
                 userLocation.longitude
@@ -68,8 +68,8 @@ public class App extends Application {
             LatLng nextPoint = new LatLng(0,0.1);
             // rotate the next Point by degree:
             nextPoint = new LatLng(
-                    Math.sin(Math.toRadians(degree))*0.1d+userLocation.latitude,
-                    Math.cos(Math.toRadians(degree))*0.1d+userLocation.longitude
+                    Math.sin(Math.toRadians(degree))*length+userLocation.latitude,
+                    Math.cos(Math.toRadians(degree))*length+userLocation.longitude
             );
             pts.add(nextPoint);
         }
