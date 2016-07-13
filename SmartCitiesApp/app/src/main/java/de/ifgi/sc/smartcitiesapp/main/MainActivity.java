@@ -105,60 +105,12 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
             }
         }
 
-        // create an example zone:
-        long expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 14; // 2 weeks
-        Date expDate = new Date(expDateMillis);
-        String[] topics = new String[3];
-        topics[0] = "Traffic";
-        topics[1] = "Sports";
-        topics[2] = "Restaurants";
-        ArrayList<LatLng> pts = new ArrayList<LatLng>();
-        pts.add(new LatLng(51.971, 7.530));
-        pts.add(new LatLng(51.976, 7.613));
-        pts.add(new LatLng(51.970, 7.644));
-        pts.add(new LatLng(51.950, 7.641));
-        pts.add(new LatLng(51.950, 7.535));
-        Zone zone1 = new Zone("Münster", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
+        ServerConnection ser = new ServerConnection();
+        ser.getZones();
 
-        // create another example zone:
-        expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 3; // 3 days
-        expDate = new Date(expDateMillis);
-        topics = new String[2];
-        topics[0] = "Traffic";
-        topics[1] = "Shopping";
-        pts = new ArrayList<LatLng>();
-        pts.add(new LatLng(51.981, 7.565));
-        pts.add(new LatLng(51.979, 7.617));
-        pts.add(new LatLng(51.966, 7.599));
-        pts.add(new LatLng(51.961, 7.564));
-        Zone zone2 = new Zone("SodaSopa MS", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
-
-        // create another example zone:
-
-        expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 14; // 14 days
-        expDate = new Date(expDateMillis);
-        topics = new String[4];
-        topics[0] = "Clubs/Nightlive";
-        topics[1] = "Events";
-        topics[2] = "Neues auf dem Markt";
-        topics[3] = "Freizeitgestaltung";
-        pts = new ArrayList<LatLng>();
-        pts.add(new LatLng(52.293736, 7.438334));
-        pts.add(new LatLng(52.291743, 7.46296));
-        pts.add(new LatLng(52.28827, 7.4850));
-        pts.add(new LatLng(52.2722, 7.4750));
-        pts.add(new LatLng(52.2637, 7.43557));
-        pts.add(new LatLng(52.2742, 7.41326));
-        Zone zone3 = new Zone("Rheine", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
-
-        // add zone1, zone2 to ZoneManager:
-        ArrayList<Zone> zones = new ArrayList<Zone>();
-        zones.add(zone1);
-        zones.add(zone2);
-        // zones.add(zone3);
         // If there are no zones in the DB, store the 2 example zones into it.
         if (ZoneManager.getInstance().getAllZonesfromDatabase().size() == 0) {
-            ZoneManager.getInstance().updateZonesInDatabase(zones);
+            //ZoneManager.getInstance().updateZonesInDatabase(zones);
         }
         // use the default zone meanwhile:
         if (current_selected_zone==null) {
@@ -174,21 +126,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
             Log.d(TAG, "zone from db: " + z.getName());
         }
 
-        // create an example msg:
-        Date creationDate = new Date(); // now
-        expDateMillis = creationDate.getTime() + 1000 * 3600 * 18; // 18 hours
-        expDate = new Date(expDateMillis);
-        Message msg1 = new Message(UUID.randomUUID().toString(),
-                zonesFromDB.get(0).getZoneID(), creationDate,
-                51.9707, 7.6281, expDate, "Traffic", "Traffic Jam in the city center",
-                "There is a traffic jam in the city center", true
-        );
-        // send msg1 to the Messenger:
-        ArrayList<Message> msgs = new ArrayList<Message>();
-        msgs.add(msg1);
-        // if there are no msgs stored in the DB yet, add the 1 example msg to the first example zone.
-        if (Messenger.getInstance().getAllMessages().size() == 0)
-            Messenger.getInstance().updateMessengerFromP2P(msgs);
 
         // test if the saved msgs are loaded from the Messenger methods:
         ArrayList<Message> msgsFromMessenger = new ArrayList<Message>();
