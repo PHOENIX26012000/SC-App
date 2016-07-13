@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.PolyUtil;
-
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +38,8 @@ import de.ifgi.sc.smartcitiesapp.interfaces.MessagesObtainedListener;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
+import de.ifgi.sc.smartcitiesapp.server.JSONParser;
+import de.ifgi.sc.smartcitiesapp.server.ServerConnection;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
@@ -73,13 +74,12 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
 
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
-        /*
+
         // Testing
         ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mPubMessagesTest = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> ();
-        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id2", "z_id", new Date(), 51.0, 7.0, new Date(new Date().getTime()+600000), "top", "tit", "msg"));
-        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id3", "z_id1", new Date(), 52.0, 8.0, new Date(new Date().getTime()+600000), "top1", "tit1", "msg1"));
+        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id2", "z_id", new Date(), 51.0, 7.0, new Date(new Date().getTime()+600000), "top", "tit", "msg", true));
+        mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id3", "z_id1", new Date(), 52.0, 8.0, new Date(new Date().getTime()+600000), "top1", "tit1", "msg1", true));
         mP2PManager.shareMessage(mPubMessagesTest);
-        */
 
 
         // in case of the notification about new retrieved msgs was clicked:
@@ -183,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                 51.9707, 7.6281, expDate, "Traffic", "Traffic Jam in the city center",
                 "There is a traffic jam in the city center", true
         );
-
         // send msg1 to the Messenger:
         ArrayList<Message> msgs = new ArrayList<Message>();
         msgs.add(msg1);

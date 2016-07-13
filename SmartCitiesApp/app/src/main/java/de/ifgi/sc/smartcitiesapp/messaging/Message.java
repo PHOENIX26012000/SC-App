@@ -106,7 +106,7 @@ public class Message {
     //to store Expired date in this format in database.
     private String changeDateFormat(Date ex_time) {
 
-        Log.i("Date format changed to ",D_format.format(ex_time));
+        //Log.i("Date format changed to ",D_format.format(ex_time));
 
         return D_format.format(ex_time);
 //        }
