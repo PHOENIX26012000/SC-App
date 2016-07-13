@@ -102,22 +102,26 @@ public class MyLocationManager {
         boolean loc_obtained = false;
 
         try {
-            Location l = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            instance.userLocation = new LatLng(
-                    l.getLatitude(),
-                    l.getLongitude()
-            );
-            loc_obtained = true;
+            try {
+                Location l = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                instance.userLocation = new LatLng(
+                        l.getLatitude(),
+                        l.getLongitude()
+                );
+                loc_obtained = true;
+            } catch (NullPointerException npe) {}
         } catch (SecurityException se) {
         }
 
         try {
             Location l = lm.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-            instance.userLocation = new LatLng(
-                    l.getLatitude(),
-                    l.getLongitude()
-            );
-            loc_obtained = true;
+            try {
+                instance.userLocation = new LatLng(
+                        l.getLatitude(),
+                        l.getLongitude()
+                );
+                loc_obtained = true;
+            } catch (NullPointerException npe) {}
         } catch (SecurityException se) {
         }
 
