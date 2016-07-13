@@ -282,6 +282,9 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
     @Override
     protected void onPause() {
         Log.i(TAG + " Main", "OnPause");
+        ServerConnection ser = new ServerConnection();
+        ArrayList<Message> msg = Messenger.getInstance().getAllMessages();
+        ser.shareMessage(msg);
         super.onPause();
     }
 
