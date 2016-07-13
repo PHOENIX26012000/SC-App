@@ -64,7 +64,7 @@ public class ServerConnection implements Connection{
         }
         JSONParser parser = new JSONParser();
         this.obj = parser.parseMessagetoJSON(listmsg);
-        Log.i("Server","JSON"+ obj);
+        //Log.i("Server","JSON"+ obj);
 
         new PostMsgTask().execute("http://giv-project6.uni-muenster.de:8080/api/addmessages");
     }
@@ -82,7 +82,7 @@ public class ServerConnection implements Connection{
     public void getZones() {
 
         new GetZoneTask().execute("http://giv-project6.uni-muenster.de:8080/api/zones");
-        Log.i("ServerConnection","called method getZones()");
+        //Log.i("ServerConnection","called method getZones()");
 
     }
 
@@ -117,7 +117,7 @@ public class ServerConnection implements Connection{
 
                 // Create JSONObject:
                 String jsonString = obj.toString();
-                Log.i("Server postMessages","JSONObject"+jsonString);
+                //Log.i("Server postMessages","JSONObject"+jsonString);
 
                 conn.setRequestProperty("Content-length", jsonString.getBytes().length + "");
                 conn.setDoInput(true);
@@ -126,13 +126,13 @@ public class ServerConnection implements Connection{
 
                 OutputStream os = conn.getOutputStream();
                 os.write(jsonString.getBytes("UTF-8"));
-                Log.i("ServerConnection","Writing Message");
+                //Log.i("ServerConnection","Writing Message");
                 os.close();
 
                 conn.connect();
 
                 response = conn.getResponseCode();
-                Log.d("Server Response","The response is:"+response);
+                //Log.d("Server Response","The response is:"+response);
                 if (response == 201){
                     is = conn.getInputStream();
                 } else if (response == 404) {
@@ -142,7 +142,7 @@ public class ServerConnection implements Connection{
                 // Convert the InputStream into a string
                 String contentAsString = readIt(is, 2000);
                 responseString = contentAsString;
-                Log.i("ServerConnection","Successful sending");
+                //Log.i("ServerConnection","Successful sending");
                 conn.disconnect();
 
                 } catch (Exception e) {
@@ -208,7 +208,6 @@ public class ServerConnection implements Connection{
                 String contentAsString = sb.toString();
 
                 responseString = contentAsString;
-                Log.i("Server","blubb1");
                 conn.disconnect();
 
             } catch (Exception e) {
@@ -231,12 +230,12 @@ public class ServerConnection implements Connection{
                 Log.i("Server getMessage","Response: Success");
                 try {
                     JSONObject obj = new JSONObject(result);
-                    Log.i("Server getMessages","JSONobj: "+obj);
+                    //Log.i("Server getMessages","JSONobj: "+obj);
                     if(obj.getJSONArray("Messages").isNull(0)== false) {
                         messages = parser.parseJSONtoMessage(obj);
-                        Log.i("Server getMessage","Message: "+messages);
-                        Log.i("Server getMessage", "Messageslength: "+messages.size());
-                        //todo give messages to messenger
+                        //Log.i("Server getMessage","Message: "+messages);
+                        //Log.i("Server getMessage", "Messageslength: "+messages.size());
+                        de.ifgi.sc.smartcitiesapp.messaging.Messenger.getInstance().updateMessengerFromServer(messages);
                     }
                     else{
                         Log.i("Server getMessage", "Response is empty JSONObject: "+result);
@@ -267,7 +266,7 @@ public class ServerConnection implements Connection{
         @Override
         protected String doInBackground(String... urls) {
             try {
-                Log.i("ServerConnection","blubb");
+
                 URL url = new URL(urls[0]);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000);
@@ -319,7 +318,7 @@ public class ServerConnection implements Connection{
                     }
                     else{
                         zones = parser.parseJSONtoZone(obj);
-                        Log.i("Server getZones","Zones number: "+ zones.size());
+                        //Log.i("Server getZones","Zones number: "+ zones.size());
                         ZoneManager.getInstance().updateZonesInDatabase(zones);
                     }
                 } catch (JSONException e) {
