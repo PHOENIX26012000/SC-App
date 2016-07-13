@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import java.lang.reflect.Array;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,6 +39,8 @@ import de.ifgi.sc.smartcitiesapp.interfaces.MessagesObtainedListener;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
+import de.ifgi.sc.smartcitiesapp.server.JSONParser;
+import de.ifgi.sc.smartcitiesapp.server.ServerConnection;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
@@ -166,7 +169,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                 51.9707, 7.6281, expDate, "Traffic", "Traffic Jam in the city center",
                 "There is a traffic jam in the city center", true
         );
-
         // send msg1 to the Messenger:
         ArrayList<Message> msgs = new ArrayList<Message>();
         msgs.add(msg1);
