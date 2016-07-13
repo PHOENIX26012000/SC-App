@@ -235,6 +235,7 @@ public class ServerConnection implements Connection{
                     if(obj.getJSONArray("Messages").isNull(0)== false) {
                         messages = parser.parseJSONtoMessage(obj);
                         Log.i("Server getMessage","Message: "+messages);
+                        Log.i("Server getMessage", "Messageslength: "+messages.size());
                         //todo give messages to messenger
                     }
                     else{
@@ -318,7 +319,7 @@ public class ServerConnection implements Connection{
                     }
                     else{
                         zones = parser.parseJSONtoZone(obj);
-                        Log.i("Server getZones","ZoneID of the first zone"+ zones.get(0).getZoneID());
+                        Log.i("Server getZones","Zones number: "+ zones.size());
                         ZoneManager.getInstance().updateZonesInDatabase(zones);
                     }
                 } catch (JSONException e) {
