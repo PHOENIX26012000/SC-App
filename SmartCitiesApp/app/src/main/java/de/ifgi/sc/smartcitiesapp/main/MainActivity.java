@@ -160,16 +160,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
             Log.d(TAG, "zone from db: " + z.getName());
         }
 
-        //test share message
-        Date date = new Date();
-        Log.i( date.toString(),"is Date");
-
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, +1);
-        Calendar cal2 = Calendar.getInstance();
-        cal2.add(Calendar.DATE, +1);
-
-
         // create an example msg:
         Date creationDate = new Date(); // now
         expDateMillis = creationDate.getTime() + 1000 * 3600 * 18; // 18 hours
