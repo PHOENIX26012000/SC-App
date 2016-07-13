@@ -171,24 +171,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         cal2.add(Calendar.DATE, +1);
 
 
-
-        //test server connection post messages
-        ServerConnection ser = new ServerConnection();
-        Message msaad =new Message(UUID.randomUUID().toString(),"3a0e68e128b7e8ef3c23347cba12d58a",date,null,null,cal.getTime(),"Traffic","saad 1","sxcvd",true);
-        Message mshiz =new Message(UUID.randomUUID().toString(),"3a0e68e128b7e8ef3c23347cba12d58a",date,null,null,cal2.getTime(),"Traffic","saad 2","sxcvd",true);
-        ArrayList<Message> msgList= new ArrayList<Message>();
-        msgList.add(msaad);
-        msgList.add(mshiz);
-
-        //ser.shareMessage(msgList);
-
-        //test serverr connecion get msgs
-        ser.getMessages("3a0e68e128b7e8ef3c23347cba12d58a");
-
-        //test to get Zones
-        //ser.getZones();
-
-
         // create an example msg:
         Date creationDate = new Date(); // now
         expDateMillis = creationDate.getTime() + 1000 * 3600 * 18; // 18 hours
