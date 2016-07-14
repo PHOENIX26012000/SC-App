@@ -72,15 +72,18 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         if (app == null)
             app = (App) getApplication();
 
+        // add the MessagesObtainedListener to the UIMessageManager:
+        UIMessageManager.getInstance().setMessageObtainedListener(this);
+
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
+
 
         // Testing
         ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mPubMessagesTest = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> ();
         mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id2", "z_id", new Date(), 51.0, 7.0, new Date(new Date().getTime()+600000), "top", "tit", "msg", true));
         mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id3", "z_id1", new Date(), 52.0, 8.0, new Date(new Date().getTime()+600000), "top1", "tit1", "msg1", true));
         mP2PManager.shareMessage(mPubMessagesTest);
-
 
         // in case of the notification about new retrieved msgs was clicked:
         if (savedInstanceState == null) {
@@ -134,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         Zone zone2 = new Zone("SodaSopa MS", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
 
         // create another example zone:
-
         expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 14; // 14 days
         expDate = new Date(expDateMillis);
         topics = new String[4];
@@ -260,9 +262,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
             }
         });
 
-        // add the MessagesObtainedListener to the UIMessageManager:
-        UIMessageManager.getInstance().setMessageObtainedListener(this);
-
         // Listener-Test-Button:
         Button btn_test = (Button) findViewById(R.id.btn_test);
         btn_test.setOnClickListener(new View.OnClickListener() {
@@ -309,8 +308,8 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
 
     @Override
     protected void onResume() {
-        Log.i(TAG + " Main", "OnResume");
         super.onResume();
+        Log.i(TAG + " Main", "OnResume");
         // enable location service on phone if its not enabled already:
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         boolean network_enabled = false;
@@ -348,8 +347,8 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
 
     @Override
     protected void onStart() {
-        Log.i(TAG + " Main", "OnStart");
         super.onStart();
+        Log.i(TAG + " Main", "OnStart");
     }
 
     @Override
