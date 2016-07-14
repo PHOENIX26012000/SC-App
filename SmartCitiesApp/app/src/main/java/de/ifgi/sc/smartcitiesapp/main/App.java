@@ -58,12 +58,10 @@ public class App extends Application {
         topics[5] = "Others";
         ArrayList<LatLng> pts = new ArrayList<LatLng>();
         // take some points around the user's location:
-        // take a length of 1000meters:
+        // take a length of 0.01 Lat units
+        // (note: mercator projection distortions 1 Lat != 1 Lon!
+        // => result is ellipse, not circle [unless u're @ equator]):
         double length = 0.01d;
-        LatLng northern = new LatLng(
-                userLocation.latitude+length,
-                userLocation.longitude
-                );
         for (int degree = 0; degree < 360; degree=degree+10){
             LatLng nextPoint = new LatLng(0,0.1);
             // rotate the next Point by degree:
