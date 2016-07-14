@@ -78,12 +78,17 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         // Start P2P Messaging
         mP2PManager = new P2PManager(this);
 
+        // Forward P2PManager to the Messenger
+        Messenger.getInstance().setP2PManager(mP2PManager);
+        Messenger.getInstance().initialStartup();
 
+        /*
         // Testing
         ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mPubMessagesTest = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> ();
         mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id2", "z_id", new Date(), 51.0, 7.0, new Date(new Date().getTime()+600000), "top", "tit", "msg", true));
         mPubMessagesTest.add(new de.ifgi.sc.smartcitiesapp.messaging.Message("m_id3", "z_id1", new Date(), 52.0, 8.0, new Date(new Date().getTime()+600000), "top1", "tit1", "msg1", true));
         mP2PManager.shareMessage(mPubMessagesTest);
+        */
 
         // in case of the notification about new retrieved msgs was clicked:
         if (savedInstanceState == null) {
@@ -107,6 +112,9 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                 flag_realZoneSelected = true;
             }
         }
+
+        ServerConnection ser = new ServerConnection();
+        ser.getZones();
 
         // create an example zone:
         long expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 14; // 2 weeks
@@ -214,9 +222,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                 ZoneManager.getInstance().setCurrentZone(current_selected_zone);
             }
         }
-
-        Messenger.getInstance().setP2PManager(mP2PManager);
-        Messenger.getInstance().initialStartup();
 
         try {
             // enable Location service on phone if its not enabled already:
@@ -342,6 +347,9 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
     @Override
     protected void onPause() {
         Log.i(TAG + " Main", "OnPause");
+        ServerConnection ser = new ServerConnection();
+        ArrayList<Message> msg = Messenger.getInstance().getAllMessages();
+        ser.shareMessage(msg);
         super.onPause();
     }
 
