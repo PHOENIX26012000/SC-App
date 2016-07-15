@@ -148,6 +148,7 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
         // Apply the adapter to the spinner
         spn_zoneSelecter.setAdapter(adapter);
         spn_zoneSelecter.setSelection(index_selected);
+        current_focused_zone_index = index_selected;
 
         spn_zoneSelecter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
