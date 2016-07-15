@@ -571,16 +571,23 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         // create an example zone:
         long expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 14; // 2 weeks
         Date expDate = new Date(expDateMillis);
-        String[] topics = new String[3];
+        String[] topics = new String[9];
         topics[0] = "Traffic";
         topics[1] = "Sports";
         topics[2] = "Restaurants";
+        topics[3] = "Blub";
+        topics[4] = "Drink & Food";
+        topics[5] = "Events";
+        topics[6] = "Concerts";
+        topics[7] = "Pokémon Go";
+        topics[8] = "Others";
         ArrayList<LatLng> pts = new ArrayList<LatLng>();
         pts.add(new LatLng(51.969879,7.595277));
         pts.add(new LatLng(51.969742,7.596379));
         pts.add(new LatLng(51.969038,7.596273));
         pts.add(new LatLng(51.969251,7.595171));
-        Zone zone1 = new Zone("IfGI", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
+        String zone1_id = "zone_id_125_62486_29465458";
+        Zone zone1 = new Zone("IfGI", zone1_id, D_format.format(expDate), topics, pts);
 
         // create another example zone:
         expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 3; // 3 days
@@ -594,7 +601,8 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         pts.add(new LatLng(51.967701,7.594269));
         pts.add(new LatLng(51.969315,7.595183));
 
-        Zone zone2 = new Zone("FH Münster", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
+        String zone_id2 = "kjfhg274j-gq725lgq-l16adug246fqf";
+        Zone zone2 = new Zone("FH Münster", zone_id2, D_format.format(expDate), topics, pts);
 
         // create another example zone:
         expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 14; // 14 days
