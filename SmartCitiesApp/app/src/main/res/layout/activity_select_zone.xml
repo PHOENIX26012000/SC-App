@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="0.5"
-            android:text="Click on zone to select it:"
+            android:text="These are currently available zones:"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -42,9 +42,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="0.5"
-            android:text="Select the zone from the list:"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:layout_weight="0.8"
+            android:text="Select the zone via clicking on it in the map, clicking the ZoneButton, or select it from list"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
         <LinearLayout
             android:layout_width="match_parent"

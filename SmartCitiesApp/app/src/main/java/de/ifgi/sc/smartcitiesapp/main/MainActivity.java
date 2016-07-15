@@ -41,6 +41,7 @@ import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
 import de.ifgi.sc.smartcitiesapp.server.JSONParser;
 import de.ifgi.sc.smartcitiesapp.server.ServerConnection;
+import de.ifgi.sc.smartcitiesapp.settings.AboutActivity;
 import de.ifgi.sc.smartcitiesapp.settings.SettingsActivity;
 import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
@@ -232,6 +233,9 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                 startActivity(intentSettings);
                 return true;
             case R.id.menu_item_about:
+                // Open the settings activity
+                Intent intentAbout = new Intent(getApplicationContext(), AboutActivity.class);
+                startActivity(intentAbout);
                 return true;
             case R.id.menu_item_search:
                 // Open the search activity
