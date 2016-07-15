@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -43,6 +44,7 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
     private LatLng userLocation;
     private LocationManager lm;
     private Zone current_selected_zone;
+    private int current_focused_zone_index = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,47 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_zoneselect);
         mapFragment.getMapAsync(this);
+        ImageButton img_nextZone = (ImageButton) findViewById(R.id.btn_moveToNextZone);
+        img_nextZone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // animate Camera to next zone:
+                current_focused_zone_index = (current_focused_zone_index+1) % zones.size();
+                // zoom into polygons:
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                    for (LatLng pt : zones.get(current_focused_zone_index).getPoints()) {
+                        builder.include(pt);
+                    }
+                LatLngBounds bounds = new LatLngBounds(new LatLng(0,0), new LatLng(0,0));
+                try {
+                    bounds = builder.build();
+                } catch (IllegalStateException ise){
+                    // if here, then no zone contains the user location... er..
+                    // okay... let's give some feedback to the user, and finish the useless zoneselection Activity:
+                    Log.e("SelectZone", "Error on next zone: " + ise.getMessage());
+                }
+                int padding = 0;
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+                try {
+                    map.animateCamera(cu);
+                } catch (IllegalStateException ise) {
+                    Log.e("SelectZone", "Error on next zone: " + ise.getMessage());
+                }
+                // select the zone in the UI:
+                for (int i=0; i<zones.size(); i++){
+                    Polygon selected = zones.get(i).getPolygonRef();
+                    if (i == current_focused_zone_index) {
+                        selected.setFillColor(Color.argb(200, 50, 255, 50));
+                        selected.setZIndex(110);
+                        spn_zoneSelecter.setSelection(i);
+                    } else {
+                        zones.get(i).setDefaultColor();
+                        selected.setZIndex(100);
+                    }
+                }
+            }
+        });
 
         // access the current user location:
         try {
@@ -117,6 +160,29 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
                         Polygon selected = zones.get(position).getPolygonRef();
                         selected.setFillColor(Color.argb(200, 50, 255, 50));
                         selected.setZIndex(110);
+                        // animate camera to focus the current selected zone:
+                        // zoom into polygons:
+                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                        for (LatLng pt : zones.get(position).getPoints()) {
+                            builder.include(pt);
+                        }
+                        LatLngBounds bounds = new LatLngBounds(new LatLng(0,0), new LatLng(0,0));
+                        try {
+                            bounds = builder.build();
+                        } catch (IllegalStateException ise){
+                            // if here, then no zone contains the user location... er..
+                            // okay... let's give some feedback to the user, and finish the useless zoneselection Activity:
+                            Log.e("SelectZone", "Error on next zone: " + ise.getMessage());
+                        }
+                        int padding = 0;
+                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+                        try {
+                            map.animateCamera(cu);
+                        } catch (IllegalStateException ise) {
+                            Log.e("SelectZone", "Error on next zone: " + ise.getMessage());
+                        }
+
                     }
                 }
             }

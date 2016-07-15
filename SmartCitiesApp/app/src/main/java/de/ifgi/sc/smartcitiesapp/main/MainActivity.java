@@ -22,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -57,7 +58,10 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
     private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private ArrayList<Message> relevant_msgs;
     private LatLng userLocation;
+    private int number_of_containing_zones;
+    private UpdateUiThread initThread;
 
+    private boolean flag_realZoneSelected;
     /**
      * P2P Manager that handles the main p2p message sharing of the app
      */
@@ -82,6 +86,9 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         Messenger.getInstance().setP2PManager(mP2PManager);
         Messenger.getInstance().initialStartup();
 
+        // uncomment next line and uninstall + run the app again to remove test zones and msgs.
+        initialiseTestZonesAndMessages();
+
         /*
         // Testing
         ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> mPubMessagesTest = new ArrayList<de.ifgi.sc.smartcitiesapp.messaging.Message> ();
@@ -95,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
             Bundle extras = getIntent().getExtras();
             if (extras == null) {
                 // Activity created without notification. do nothing.
+                flag_realZoneSelected = false;
             } else if (extras.getBoolean("NotiClick")) {
                 // Activity created from notification, update the UserInterface with new messages:
 
@@ -116,190 +124,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         ServerConnection ser = new ServerConnection();
         ser.getZones();
 
-        // create an example zone:
-        long expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 14; // 2 weeks
-        Date expDate = new Date(expDateMillis);
-        String[] topics = new String[3];
-        topics[0] = "Traffic";
-        topics[1] = "Sports";
-        topics[2] = "Restaurants";
-        ArrayList<LatLng> pts = new ArrayList<LatLng>();
-        pts.add(new LatLng(51.971, 7.530));
-        pts.add(new LatLng(51.976, 7.613));
-        pts.add(new LatLng(51.970, 7.644));
-        pts.add(new LatLng(51.950, 7.641));
-        pts.add(new LatLng(51.950, 7.535));
-        Zone zone1 = new Zone("Münster", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
-
-        // create another example zone:
-        expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 3; // 3 days
-        expDate = new Date(expDateMillis);
-        topics = new String[2];
-        topics[0] = "Traffic";
-        topics[1] = "Shopping";
-        pts = new ArrayList<LatLng>();
-        pts.add(new LatLng(51.981, 7.565));
-        pts.add(new LatLng(51.979, 7.617));
-        pts.add(new LatLng(51.966, 7.599));
-        pts.add(new LatLng(51.961, 7.564));
-        Zone zone2 = new Zone("SodaSopa MS", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
-
-        // create another example zone:
-        expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 14; // 14 days
-        expDate = new Date(expDateMillis);
-        topics = new String[4];
-        topics[0] = "Clubs/Nightlive";
-        topics[1] = "Events";
-        topics[2] = "Neues auf dem Markt";
-        topics[3] = "Freizeitgestaltung";
-        pts = new ArrayList<LatLng>();
-        pts.add(new LatLng(52.293736, 7.438334));
-        pts.add(new LatLng(52.291743, 7.46296));
-        pts.add(new LatLng(52.28827, 7.4850));
-        pts.add(new LatLng(52.2722, 7.4750));
-        pts.add(new LatLng(52.2637, 7.43557));
-        pts.add(new LatLng(52.2742, 7.41326));
-        Zone zone3 = new Zone("Rheine", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
-
-        // add zone1, zone2 to ZoneManager:
-        ArrayList<Zone> zones = new ArrayList<Zone>();
-        zones.add(zone1);
-        zones.add(zone2);
-        // zones.add(zone3);
-        // If there are no zones in the DB, store the 2 example zones into it.
-        if (ZoneManager.getInstance().getAllZonesfromDatabase().size() == 0) {
-            ZoneManager.getInstance().updateZonesInDatabase(zones);
-        }
-        // use the default zone meanwhile:
-        if (current_selected_zone==null) {
-            // the zone is null per default, so set it to the default zone.
-            current_selected_zone = app.getDefaultZone(new LatLng(51.96958, 7.5956));
-            ZoneManager.getInstance().setCurrentZone(current_selected_zone);
-        }
-
-        // test if the saved zones are loaded from the ZoneManager methods:
-        ArrayList<Zone> zonesFromDB = new ArrayList<Zone>();
-        zonesFromDB = ZoneManager.getInstance().getAllZonesfromDatabase();
-        for (Zone z : zonesFromDB) {
-            Log.d(TAG, "zone from db: " + z.getName());
-        }
-
-        // create an example msg:
-        Date creationDate = new Date(); // now
-        expDateMillis = creationDate.getTime() + 1000 * 3600 * 18; // 18 hours
-        expDate = new Date(expDateMillis);
-        Message msg1 = new Message(UUID.randomUUID().toString(),
-                zonesFromDB.get(0).getZoneID(), creationDate,
-                51.9707, 7.6281, expDate, "Traffic", "Traffic Jam in the city center",
-                "There is a traffic jam in the city center", true
-        );
-        // send msg1 to the Messenger:
-        ArrayList<Message> msgs = new ArrayList<Message>();
-        msgs.add(msg1);
-        // if there are no msgs stored in the DB yet, add the 1 example msg to the first example zone.
-        if (Messenger.getInstance().getAllMessages().size() == 0)
-            Messenger.getInstance().updateMessengerFromP2P(msgs);
-
-        // test if the saved msgs are loaded from the Messenger methods:
-        ArrayList<Message> msgsFromMessenger = new ArrayList<Message>();
-        msgsFromMessenger = Messenger.getInstance().getAllMessages();
-        for (Message m : msgsFromMessenger) {
-            Log.d(TAG, "msg from Messenger:" + m.getZone_ID() + "-" + m.getTitle() + ":" + m.getMsg());
-        }
-
-        if (userLocation != null) {
-            zonesFromDB = ZoneManager.getInstance().getCurrentZones(userLocation);
-            for (Zone z : zonesFromDB) {
-                Log.d(TAG, "zone from db: " + z.getName());
-            }
-
-            try {
-                current_selected_zone = ZoneManager.getInstance().getCurrentZone();
-            } catch (NoZoneCurrentlySelectedException e) {
-                // what do, if no zone is currently selected?
-                // select the first zone of the zonemanager
-                current_selected_zone = zonesFromDB.get(0);
-                ZoneManager.getInstance().setCurrentZone(current_selected_zone);
-            }
-        }
-
-        try {
-            // enable Location service on phone if its not enabled already:
-            MyLocationManager.getInstance().setLocationChangedListener(this, MY_PERMISSION_ACCESS_COARSE_LOCATION);
-        } catch (SecurityException se) {
-            // in case of forbidden permission to access the user location, ask for it:
-            // ask for permission ACCESS_COARSE_LOCATION:
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    MY_PERMISSION_ACCESS_COARSE_LOCATION);
-        }
-
-        try {
-            // enable Location service on phone if its not enabled already:
-            MyLocationManager.getInstance().setLocationChangedListener(this, MY_PERMISSION_ACCESS_FINE_LOCATION);
-        } catch (SecurityException se) {
-            // in case of forbidden permission to access the user location, ask for it:
-            // ask for permission ACCESS_FINE_LCCATION:
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSION_ACCESS_FINE_LOCATION);
-        }
-        askUserToEnableLocationService();
-        //Zone-Select-Button:
-        Button btn_selectZone = (Button) findViewById(R.id.btn_selectZone);
-        btn_selectZone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    userLocation = MyLocationManager.getInstance().getUserLocation();
-                } catch (NoLocationKnownException e) {
-                    // no location known:
-                    // make a user feedback-Toast
-                    Toast.makeText(getApplicationContext(), "The application did not retrieve a location yet.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                Intent intentSettings = new Intent(getApplicationContext(), SelectZoneActivity.class);
-                if (userLocation != null) {
-                    Log.i(TAG, "userlocation=(" + userLocation.latitude + "," + userLocation.longitude + ")");
-                } else
-                    Log.e(TAG, "no userlocation obtained!");
-                startActivityForResult(intentSettings, 1);
-            }
-        });
-
-        // Listener-Test-Button:
-        Button btn_test = (Button) findViewById(R.id.btn_test);
-        btn_test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // create a testing msg:
-                ArrayList<Zone> zones = ZoneManager.getInstance().getAllZonesfromDatabase();
-                Log.d("onClick", "#zones: " + zones.size());
-                Message msg = new Message(
-                        UUID.randomUUID().toString(),
-                        zones.get(0).getZoneID(), new Date(),
-                        51.666, 7.622, new Date(new Date().getTime() + 1000 * 360),
-                        "Sports", "Tennis", "Lorem ipssum dolor amet... Created at " + new Date(), true
-                );
-                Message msg2 = new Message(
-                        UUID.randomUUID().toString(),
-                        zones.get(0).getZoneID(), new Date(),
-                        51.646, 7.632, new Date(new Date().getTime() + 1000 * 360),
-                        "Restaurants", "Barcafe XY", "Lorem ipssum... Created at " + new Date(), true
-                );
-                ArrayList<Message> msgs = new ArrayList<Message>();
-                msgs.add(msg);
-                Messenger.getInstance().updateMessengerFromP2P(msgs);
-                UIMessageManager.getInstance().enqueueMessagesIntoUIFromP2P(msgs);
-                msgs = new ArrayList<Message>();
-
-                msgs.add(msg2);
-                // test the UI update. Trigger the event of received msg from P2P
-                Messenger.getInstance().updateMessengerFromP2P(msgs);
-                UIMessageManager.getInstance().enqueueMessagesIntoUIFromP2P(msgs);
-            }
-        });
-
         FragmentTabHost mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
@@ -309,6 +133,9 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         mTabHost.addTab(
                 mTabHost.newTabSpec("tab2").setIndicator("PLACES", null),
                 MapTabFragment.class, null);
+
+        initThread = new UpdateUiThread();
+        initThread.start();
     }
 
     @Override
@@ -490,7 +317,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
             // Check for real zones!
             MyLocationManager.getInstance().setLocationChangedListener(MainActivity.this, MY_PERMISSION_ACCESS_FINE_LOCATION);
             MyLocationManager.getInstance().setLocationChangedListener(MainActivity.this, MY_PERMISSION_ACCESS_COARSE_LOCATION);
-            flag_realZoneSelected = false;
         }
     }
 
@@ -650,8 +476,19 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         }
     }
 
-
-    boolean flag_realZoneSelected = false;
+    private void updateNumberOfZonesView(){
+        TextView txt_numberZones = (TextView) findViewById(R.id.txt_zoneNumber);
+        Button btn_selectZone = (Button) findViewById(R.id.btn_selectZone);
+        if (number_of_containing_zones>1) {
+            txt_numberZones.setText("You are in " + number_of_containing_zones + " zones.");
+            // enable select zone button.
+            btn_selectZone.setEnabled(true);
+        } else {
+            txt_numberZones.setText("You are in " + number_of_containing_zones + " zone.");
+            // disable select zone button.
+            btn_selectZone.setEnabled(false);
+        }
+    }
 
     @Override
     public void onLocationChanged(LatLng newLocation) {
@@ -661,9 +498,12 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                     newLocation.latitude,
                     newLocation.longitude
             );
-            // TODO: select a current zone:
             ArrayList<Zone> zonesContainingUserLocation = ZoneManager.getInstance().getCurrentZones(userLocation);
-            if (zonesContainingUserLocation.size() == 0) {
+            if (zonesContainingUserLocation.size() != number_of_containing_zones) {
+                number_of_containing_zones = zonesContainingUserLocation.size();
+                updateNumberOfZonesView();
+            }
+            if (number_of_containing_zones == 0) {
                 Log.w("DZone", "no prev. loc. new loc. No zone available.");
                 // well, bad luck. The default zone is used til the user entered an existing zone. "Run, Forest, Run!"
                 Toast.makeText(getApplicationContext(), "There are no zones containing your current location. The default zone is used til you entered an existing zone!", Toast.LENGTH_LONG).show();
@@ -687,6 +527,10 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                     newLocation.longitude
             );
             ArrayList<Zone> zonesContainingUserLocation = ZoneManager.getInstance().getCurrentZones(userLocation);
+            if (zonesContainingUserLocation.size() != number_of_containing_zones) {
+                number_of_containing_zones = zonesContainingUserLocation.size();
+                updateNumberOfZonesView();
+            }
             if (zonesContainingUserLocation.size() == 0) {
                 Log.w("DZone", "new loc. No zone available.");
                 Toast.makeText(getApplicationContext(), "There are no zones containing your current location. The default zone is used til you entered an existing zone!", Toast.LENGTH_LONG).show();
@@ -716,6 +560,182 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                 // otherwise: do not do anything. just stay in the current selected zone
             }
 
+        }
+    }
+
+    public void initialiseTestZonesAndMessages(){
+        // create an example zone:
+        long expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 14; // 2 weeks
+        Date expDate = new Date(expDateMillis);
+        String[] topics = new String[3];
+        topics[0] = "Traffic";
+        topics[1] = "Sports";
+        topics[2] = "Restaurants";
+        ArrayList<LatLng> pts = new ArrayList<LatLng>();
+        pts.add(new LatLng(51.972673, 7.566503));
+        pts.add(new LatLng(51.972150, 7.566444));
+        pts.add(new LatLng(51.972150, 7.56544));
+        pts.add(new LatLng(51.972673, 7.56503));
+        Zone zone1 = new Zone("Münster Area 1", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
+
+        // create another example zone:
+        expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 3; // 3 days
+        expDate = new Date(expDateMillis);
+        topics = new String[2];
+        topics[0] = "Traffic";
+        topics[1] = "Shopping";
+        pts = new ArrayList<LatLng>();
+        pts.add(new LatLng(51.972671, 7.566375));
+        pts.add(new LatLng(51.972150, 7.566300));
+        pts.add(new LatLng(51.972150, 7.56804));
+        pts.add(new LatLng(51.972673, 7.56803));
+
+        Zone zone2 = new Zone("SodaSopa MS", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
+
+        // create another example zone:
+        expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 14; // 14 days
+        expDate = new Date(expDateMillis);
+        topics = new String[4];
+        topics[0] = "Clubs/Nightlive";
+        topics[1] = "Events";
+        topics[2] = "Neues auf dem Markt";
+        topics[3] = "Freizeitgestaltung";
+        pts = new ArrayList<LatLng>();
+        pts.add(new LatLng(52.293736, 7.438334));
+        pts.add(new LatLng(52.291743, 7.46296));
+        pts.add(new LatLng(52.28827, 7.4850));
+        pts.add(new LatLng(52.2722, 7.4750));
+        pts.add(new LatLng(52.2637, 7.43557));
+        pts.add(new LatLng(52.2742, 7.41326));
+        Zone zone3 = new Zone("Rheine", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
+
+        // add zone1, zone2 to ZoneManager:
+        ArrayList<Zone> zones = new ArrayList<Zone>();
+        zones.add(zone1);
+        zones.add(zone2);
+        // zones.add(zone3);
+        // If there are no zones in the DB, store the 2 example zones into it.
+        if (ZoneManager.getInstance().getAllZonesfromDatabase().size() == 0) {
+            ZoneManager.getInstance().updateZonesInDatabase(zones);
+        }
+        // use the default zone meanwhile:
+        if (current_selected_zone==null) {
+            // the zone is null per default, so set it to the default zone.
+            current_selected_zone = app.getDefaultZone(new LatLng(51.96958, 7.5956));
+            ZoneManager.getInstance().setCurrentZone(current_selected_zone);
+        }
+
+        // test if the saved zones are loaded from the ZoneManager methods:
+        ArrayList<Zone> zonesFromDB = new ArrayList<Zone>();
+        zonesFromDB = ZoneManager.getInstance().getAllZonesfromDatabase();
+        for (Zone z : zonesFromDB) {
+            Log.d(TAG, "zone from db: " + z.getName());
+        }
+
+        // create an example msg:
+        Date creationDate = new Date(); // now
+        expDateMillis = creationDate.getTime() + 1000 * 3600 * 18; // 18 hours
+        expDate = new Date(expDateMillis);
+        Message msg1 = new Message(UUID.randomUUID().toString(),
+                zonesFromDB.get(0).getZoneID(), creationDate,
+                51.9707, 7.6281, expDate, "Traffic", "Traffic Jam in the city center",
+                "There is a traffic jam in the city center", true
+        );
+        // send msg1 to the Messenger:
+        ArrayList<Message> msgs = new ArrayList<Message>();
+        msgs.add(msg1);
+        // if there are no msgs stored in the DB yet, add the 1 example msg to the first example zone.
+        if (Messenger.getInstance().getAllMessages().size() == 0)
+            Messenger.getInstance().updateMessengerFromP2P(msgs);
+
+        // test if the saved msgs are loaded from the Messenger methods:
+        ArrayList<Message> msgsFromMessenger = new ArrayList<Message>();
+        msgsFromMessenger = Messenger.getInstance().getAllMessages();
+        for (Message m : msgsFromMessenger) {
+            Log.d(TAG, "msg from Messenger:" + m.getZone_ID() + "-" + m.getTitle() + ":" + m.getMsg());
+        }
+    }
+
+    public void doBackgroundWork(){
+
+        if (userLocation != null) {
+            ArrayList<Zone> zonesFromDB = ZoneManager.getInstance().getCurrentZones(userLocation);
+            for (Zone z : zonesFromDB) {
+                Log.d(TAG, "zone from db: " + z.getName());
+            }
+
+            try {
+                current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+            } catch (NoZoneCurrentlySelectedException e) {
+                // what do, if no zone is currently selected?
+                // select the first zone of the zonemanager
+                current_selected_zone = zonesFromDB.get(0);
+                ZoneManager.getInstance().setCurrentZone(current_selected_zone);
+            }
+        }
+
+        try {
+            // enable Location service on phone if its not enabled already:
+            MyLocationManager.getInstance().setLocationChangedListener(this, MY_PERMISSION_ACCESS_COARSE_LOCATION);
+        } catch (SecurityException se) {
+            // in case of forbidden permission to access the user location, ask for it:
+            // ask for permission ACCESS_COARSE_LOCATION:
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSION_ACCESS_COARSE_LOCATION);
+        }
+
+        try {
+            // enable Location service on phone if its not enabled already:
+            MyLocationManager.getInstance().setLocationChangedListener(this, MY_PERMISSION_ACCESS_FINE_LOCATION);
+        } catch (SecurityException se) {
+            // in case of forbidden permission to access the user location, ask for it:
+            // ask for permission ACCESS_FINE_LCCATION:
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSION_ACCESS_FINE_LOCATION);
+        }
+        askUserToEnableLocationService();
+        //Zone-Select-Button:
+        Button btn_selectZone = (Button) findViewById(R.id.btn_selectZone);
+        btn_selectZone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    userLocation = MyLocationManager.getInstance().getUserLocation();
+                } catch (NoLocationKnownException e) {
+                    // no location known:
+                    // make a user feedback-Toast
+                    Toast.makeText(getApplicationContext(), "The application did not retrieve a location yet.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Intent intentSettings = new Intent(getApplicationContext(), SelectZoneActivity.class);
+                if (userLocation != null) {
+                    Log.i(TAG, "userlocation=(" + userLocation.latitude + "," + userLocation.longitude + ")");
+                } else
+                    Log.e(TAG, "no userlocation obtained!");
+                startActivityForResult(intentSettings, 1);
+            }
+        });
+
+        initThread.interrupt();
+    }
+
+    private class UpdateUiThread extends Thread {
+        @Override
+        public void run() {
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            doBackgroundWork();
+                        }
+                    });
+                    Thread.sleep(15000);
+                }
+            } catch (InterruptedException consumed) {
+            }
         }
     }
 }
