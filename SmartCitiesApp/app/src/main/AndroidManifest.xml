@@ -14,10 +14,10 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <!-- Application and Activity definitions -->
     <application
         android:name=".main.App"
@@ -62,7 +62,8 @@
         <activity
             android:name=".main.SelectZoneActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".main.SearchActivity"></activity>
+        <activity android:name=".main.SearchActivity" />
+        <activity android:name=".settings.AboutActivity"></activity>
     </application>
 
 </manifest>

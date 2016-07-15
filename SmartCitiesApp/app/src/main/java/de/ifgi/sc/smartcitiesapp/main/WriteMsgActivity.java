@@ -39,6 +39,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
+import com.google.maps.android.MarkerManager;
 import com.google.maps.android.PolyUtil;
 
 import java.util.ArrayList;
@@ -73,6 +74,8 @@ public class WriteMsgActivity extends AppCompatActivity {
     private Date msg_exp = null;
     private Date msg_create = null;
     private String msg_topic = "";
+    private Boolean msg_locationChecked;
+    private Boolean msg_shareToServer;
     private Zone current_selected_zone;
     private EnhancedPolygon current_zone;
 
@@ -146,7 +149,19 @@ public class WriteMsgActivity extends AppCompatActivity {
         }
 
         // get all topics within that zone:
-        String[] topics = current_selected_zone.getTopics();
+        String[] allTopics = current_selected_zone.getTopics();
+
+        ArrayList<String> subscribed_topics = new ArrayList<String>();
+        for (String s: allTopics){
+            if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("pref_"+current_selected_zone.getZoneID()+"_"+s, true)){
+                subscribed_topics.add(s);
+            }
+        }
+
+        String[] topics = new String[subscribed_topics.size()];
+        for (int i=0; i<subscribed_topics.size();i++){
+            topics[i] = subscribed_topics.get(i);
+        }
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this,
@@ -179,7 +194,7 @@ public class WriteMsgActivity extends AppCompatActivity {
         spn_selectExpireTime.setSelection(0);
 
         // show/hide map according to checkbox "add a location?" - selection:
-        CheckBox chb_addlocation = (CheckBox) findViewById(R.id.chb_addlocation);
+        final CheckBox chb_addlocation = (CheckBox) findViewById(R.id.chb_addlocation);
 
         mapcontainer = (LinearLayout) findViewById(R.id.ll_mapcontainer);
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -290,10 +305,11 @@ public class WriteMsgActivity extends AppCompatActivity {
 
                     String zoneID = current_selected_zone.getZoneID();
                     String msg_id = UUID.randomUUID().toString();
-                    if (msg_pos!=null){
-                        newMessage = new Message(msg_id, zoneID,msg_create,msg_pos.latitude,msg_pos.longitude,msg_exp,msg_topic, msg_title, msg_txt, true);
+
+                    if (msg_locationChecked){
+                        newMessage = new Message(msg_id, zoneID,msg_create,msg_pos.latitude,msg_pos.longitude,msg_exp,msg_topic, msg_title, msg_txt, msg_shareToServer);
                     } else {
-                        newMessage = new Message(msg_id, zoneID,msg_create,msg_exp,msg_topic, msg_title, msg_txt, true);
+                        newMessage = new Message(msg_id, zoneID,msg_create,msg_exp,msg_topic, msg_title, msg_txt, msg_shareToServer);
                     }
 
                     // create new UUID
@@ -302,7 +318,18 @@ public class WriteMsgActivity extends AppCompatActivity {
                     Messenger.getInstance().updateMessengerFromUI(msgs);
                     finish();
                 } else {
-                    Toast.makeText(getApplicationContext(), "You must set a title and a text!", Toast.LENGTH_LONG).show();
+                    // no title set:
+                    if (msg_title.length()<1){
+                        Toast.makeText(getApplicationContext(), "You must set a title!", Toast.LENGTH_LONG).show();
+                    }
+                    // no title set:
+                    if (msg_txt.length()<1){
+                        Toast.makeText(getApplicationContext(), "You must set a message text!", Toast.LENGTH_LONG).show();
+                    }
+                    // no location marked, but checked:
+                    if ((msg_locationChecked) && (msg_pos==null)) {
+                        Toast.makeText(getApplicationContext(), "You must mark a position if u select adding a location!", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         });
@@ -314,22 +341,27 @@ public class WriteMsgActivity extends AppCompatActivity {
         EditText edt_msgText = (EditText) findViewById(R.id.edt_msgText);
         Spinner spn_selectTopic = (Spinner) findViewById(R.id.spn_category);
         Spinner spn_selectExpire = (Spinner) findViewById(R.id.spn_expireTime);
+        CheckBox chb_shareToServer = (CheckBox) findViewById(R.id.chb_allowServerSharing);
+        CheckBox chb_addLocation = (CheckBox) findViewById(R.id.chb_addlocation);
 
+        // get title, and check if it's set
         msg_title = edt_msgTitle.getText().toString();
         if (msg_title.length() < 1)
             allFilled = false;
 
+        // get text, and check if it's set
         msg_txt = edt_msgText.getText().toString();
         if (msg_txt.length() < 1)
             allFilled = false;
 
+        // calculate expiring Date based upon current Date:
         msg_create = new Date(); // now
         long theFuture  = 0;
         switch (spn_selectExpire.getSelectedItemPosition()) {
             case 0: // + 7 days
                 theFuture = System.currentTimeMillis() + (86400 * 7 * 1000);
                 break;
-            case 1:
+            case 1: // + 5 days
                 theFuture = System.currentTimeMillis() + (86400 * 5 * 1000);
                 break;
             case 2:
@@ -358,11 +390,28 @@ public class WriteMsgActivity extends AppCompatActivity {
         }
         msg_exp = new Date(theFuture);
 
-        // get marked position:
-        if (msgLocMarker==null){
-            msg_pos = null;
+        // Add a location?
+        if (chb_addLocation.isChecked()) {
+            msg_locationChecked = true;
+            // get marked position:
+            if (msgLocMarker == null) {
+                // no position marked
+                msg_pos = null;
+                allFilled = false;
+            } else {
+                // position is marked
+                msg_pos = msgLocMarker.getPosition();
+                allFilled = true;
+            }
         } else {
-            msg_pos = msgLocMarker.getPosition();
+            msg_locationChecked = false;
+        }
+
+        // Share to server?
+        if (chb_shareToServer.isChecked()){
+            msg_shareToServer = true;
+        } else {
+            msg_shareToServer = false;
         }
 
         // get selected topic:

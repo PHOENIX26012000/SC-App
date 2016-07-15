@@ -18,22 +18,33 @@
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="0.5"
-            android:text="Click on zone to select it:"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+            android:text="These are currently available zones:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/map_zoneselect"
-            class ="com.google.android.gms.maps.SupportMapFragment"
+            class="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="4"/>
+            android:layout_weight="4">
+
+            <ImageButton
+                android:id="@+id/btn_moveToNextZone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|bottom"
+                android:padding="8dp"
+                android:backgroundTint="#88FFFFFF"
+                android:src="@android:drawable/ic_menu_mapmode"/>
+
+        </fragment>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="0.5"
-            android:text="Select the zone from the list:"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+            android:layout_weight="0.8"
+            android:text="Select the zone via clicking on it in the map, clicking the ZoneButton, or select it from list"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,14 +58,15 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Selected Zone:"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
-        <Spinner
-            android:id="@+id/spn_zoneSelecter"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="2">
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-        </Spinner>
+            <Spinner
+                android:id="@+id/spn_zoneSelecter"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="2">
+
+            </Spinner>
 
 
         </LinearLayout>
@@ -64,8 +76,8 @@
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="1"
-            android:text="Select"/>
+            android:text="Select" />
 
     </LinearLayout>
-    
+
 </RelativeLayout>
