@@ -576,11 +576,11 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         topics[1] = "Sports";
         topics[2] = "Restaurants";
         ArrayList<LatLng> pts = new ArrayList<LatLng>();
-        pts.add(new LatLng(51.972673, 7.566503));
-        pts.add(new LatLng(51.972150, 7.566444));
-        pts.add(new LatLng(51.972150, 7.56544));
-        pts.add(new LatLng(51.972673, 7.56503));
-        Zone zone1 = new Zone("Münster Area 1", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
+        pts.add(new LatLng(51.969879,7.595277));
+        pts.add(new LatLng(51.969742,7.596379));
+        pts.add(new LatLng(51.969038,7.596273));
+        pts.add(new LatLng(51.969251,7.595171));
+        Zone zone1 = new Zone("IfGI", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
 
         // create another example zone:
         expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 3; // 3 days
@@ -589,12 +589,12 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         topics[0] = "Traffic";
         topics[1] = "Shopping";
         pts = new ArrayList<LatLng>();
-        pts.add(new LatLng(51.972671, 7.566375));
-        pts.add(new LatLng(51.972150, 7.566300));
-        pts.add(new LatLng(51.972150, 7.56804));
-        pts.add(new LatLng(51.972673, 7.56803));
+        pts.add(new LatLng(51.969167,7.596247));
+        pts.add(new LatLng(51.967718,7.596182));
+        pts.add(new LatLng(51.967701,7.594269));
+        pts.add(new LatLng(51.969315,7.595183));
 
-        Zone zone2 = new Zone("SodaSopa MS", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
+        Zone zone2 = new Zone("FH Münster", UUID.randomUUID().toString(), D_format.format(expDate), topics, pts);
 
         // create another example zone:
         expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 14; // 14 days
