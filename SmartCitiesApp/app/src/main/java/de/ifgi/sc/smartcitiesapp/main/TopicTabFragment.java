@@ -16,6 +16,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 import de.ifgi.sc.smartcitiesapp.R;
@@ -57,7 +59,6 @@ public class TopicTabFragment extends Fragment {
             current_selected_zone = ZoneManager.getInstance().getCurrentZone();
         } catch (NoZoneCurrentlySelectedException e) {
             e.printStackTrace();
-            Log.d("AppZone", "No Zone selected error!");
         }
 
         // get all msgs for this current selected zone:
