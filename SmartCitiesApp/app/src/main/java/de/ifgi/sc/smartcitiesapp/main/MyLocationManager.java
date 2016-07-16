@@ -74,25 +74,25 @@ public class MyLocationManager {
             }
         };
 
-        if (provider == MainActivity.MY_PERMISSION_ACCESS_COARSE_LOCATION) {
-            instance.mLocationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER,
-                    15000,          // update every 15s
-                    0,
-                    instance.mLocationListener
-            );
-        }
         if (provider == MainActivity.MY_PERMISSION_ACCESS_FINE_LOCATION) {
             instance.mLocationManager.requestLocationUpdates(
                     LocationManager.PASSIVE_PROVIDER,
-                    15000,          // update every 15s
-                    0,
+                    60000,          // update every 60s
+                    5,
                     instance.mLocationListener
             );
             instance.mLocationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
                     15000,          // update every 15s
                     5,              // every 5 meters.
+                    instance.mLocationListener
+            );
+        }
+        if (provider == MainActivity.MY_PERMISSION_ACCESS_COARSE_LOCATION) {
+            instance.mLocationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    60000,          // update every 60s
+                    5,
                     instance.mLocationListener
             );
         }

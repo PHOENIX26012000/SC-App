@@ -17,7 +17,7 @@
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
-                android:text="You are in 0 zones"
+                android:text="0 zones available."
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
@@ -30,6 +30,15 @@
                 android:text="Select a zone"/>
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/txt_currentZone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You are curently in: DEFAULT_ZONE_NAME"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
         <TabWidget
             android:id="@android:id/tabs"
