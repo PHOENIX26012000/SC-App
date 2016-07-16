@@ -37,9 +37,9 @@
                     android:layout_width="0px"
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
-                    android:hint="Message Title_"
+                    android:hint="Message Title"
                     android:imeOptions="actionDone"
-                    android:inputType="text"
+                    android:inputType="text|textCapSentences"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large" />
             </LinearLayout>
 
@@ -62,7 +62,7 @@
                     android:layout_width="0px"
                     android:layout_height="140dp"
                     android:layout_weight="3"
-                    android:hint="Message Text_"
+                    android:hint="Message Text"
                     android:imeOptions="actionDone"
                     android:inputType="textAutoCorrect|textCapSentences|textMultiLine"
                     android:maxLines="5"
