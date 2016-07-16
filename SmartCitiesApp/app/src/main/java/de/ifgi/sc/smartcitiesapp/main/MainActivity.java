@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Messenger.getInstance().deleteZoneMessage();
 
         // Create the application context and its global state variables.
         if (app == null)
