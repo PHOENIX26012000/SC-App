@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
         if (app == null)
             app = (App) getApplication();
 
+        Messenger.getInstance().deleteZoneMessage();
+
         // set default zone:
         current_selected_zone = app.getDefaultZone(new LatLng(51.96958, 7.5956));
         ZoneManager.getInstance().setCurrentZone(current_selected_zone);
