@@ -58,7 +58,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
         //Sending Messages to Peer and UI
         if(!uarray_list.isEmpty()) {
                 Log.i("Array list empty: ",""+uarray_list.isEmpty());
-//                UIMessageManager.getInstance().enqueueMessagesIntoUIFromP2P(uarray_list);
+                UIMessageManager.getInstance().enqueueMessagesIntoUIFromP2P(uarray_list);
                 mP2PManager.shareMessage(uarray_list);
         }
     }
@@ -70,7 +70,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
 
         //Sending unique Messages to Peer and UI
         if(!uarray_list.isEmpty()) {
-//                UIMessageManager.getInstance().enqueueMessagesIntoUIFromP2P(uarray_list);
+                UIMessageManager.getInstance().enqueueMessagesIntoUIFromP2P(uarray_list);
             mP2PManager.shareMessage(uarray_list);
         }
     }
@@ -109,7 +109,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
         //Sending unique Messages to Peer and UI
         if(parray_list.size()!=0) {
 
-//            mP2PManager.shareMessage(parray_list);
+            mP2PManager.shareMessage(parray_list);
         }
 
     }

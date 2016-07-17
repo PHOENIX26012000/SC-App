@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
- * Created by Clara on 12.06.2016.
+ * This class describes a zone in which users of this app can exchange message.
+ * These Zones consist of a Name, ID, expiring Date, Polygon and Topics.
  */
 public class Zone {
 
@@ -18,6 +19,14 @@ public class Zone {
     private static final Logger logger =
             Logger.getLogger("Zone");
 
+    /**
+     * Constructor of Zones with all Attributes, Name, Zone-id, Expired Date, Topics, Polygon
+     * @param name  Name of the Zone
+     * @param zoneID    ID of the Zone
+     * @param expiredAt Date on which the Zone expires and is deleted from the Database
+     * @param topics    Topics of the Zone
+     * @param polygon   Area of the Zone
+     */
     public Zone (String name, String zoneID, String expiredAt, String[] topics, ArrayList<LatLng> polygon){
         this.name = name;
         this.zoneID = zoneID;

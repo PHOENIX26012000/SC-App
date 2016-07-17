@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
@@ -268,7 +269,7 @@ public class DatabaseHelper {
         Message mes;
         ArrayList<Message> array_list = new ArrayList<Message>();
 
-        Cursor res =  ourDatabase.rawQuery( "select * from TABLE_1", null );
+        Cursor res =  ourDatabase.rawQuery( "select * from TABLE_1 where Exp_time > '" + D_format.format(Calendar.getInstance().getTime()) + "'", null );
 
         res.moveToFirst();
 
@@ -356,7 +357,7 @@ public class DatabaseHelper {
 
         ArrayList<Zone> array_list = new ArrayList<Zone>();
 
-        Cursor res =  ourDatabase.rawQuery( "select * from TABLE_2", null );
+        Cursor res =  ourDatabase.rawQuery( "select * from TABLE_2 where Exp_time > '" + D_format.format(Calendar.getInstance().getTime()) + "'", null );
         res.moveToFirst();
         while(res.isAfterLast() == false){
 
@@ -386,7 +387,10 @@ public class DatabaseHelper {
     }
 
     public void deleteExpiredMnZ() {
-        ourDatabase.execSQL("Delete from TABLE_1 where Exp_time <= datetime(date('now'))");
-        ourDatabase.execSQL("Delete from TABLE_2 where Exp_time <= datetime(date('now'))");
+        String now_time = D_format.format(Calendar.getInstance().getTime());
+        String sql_query1 = "Delete from TABLE_1 where Exp_time <= '" + now_time + "'";
+        String sql_query2 = "Delete from TABLE_2 where Exp_time <= '" + now_time + "'";
+        ourDatabase.execSQL(sql_query1);
+        ourDatabase.execSQL(sql_query2);
     }
 }

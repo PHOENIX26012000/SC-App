@@ -49,8 +49,10 @@ public class MsgActivity extends AppCompatActivity {
         try {
             current_selected_zone = ZoneManager.getInstance().getCurrentZone();
         } catch (NoZoneCurrentlySelectedException e){
-            // TODO: if no zone is currently selected
-            e.printStackTrace();
+            // what do, if no zone is currently selected?
+            // select the first zone of the zonemanager:
+            current_selected_zone = ZoneManager.getInstance().getAllZonesfromDatabase().get(0);
+            ZoneManager.getInstance().setCurrentZone(current_selected_zone);
         }
 
         Log.d("MsgActivity","test #0 reached");
@@ -64,7 +66,6 @@ public class MsgActivity extends AppCompatActivity {
         ArrayList<String> newObtainedIDs = new ArrayList<String>();
         Log.d("MsgActivity","test #3 reached");
         if (newObtained!=null) {
-            Log.e("MsgActivity","NullException? " + newObtained.size());
             for (Message m : newObtained)
                 newObtainedIDs.add(m.getMessage_ID());
         }
@@ -149,7 +150,6 @@ public class MsgActivity extends AppCompatActivity {
         btn_writeMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: open writing a msg Activity for result
                 Intent intent = new Intent(getApplicationContext(), WriteMsgActivity.class);
                 intent.putExtra("TOPIC", selected_topic);
                 startActivity(intent);

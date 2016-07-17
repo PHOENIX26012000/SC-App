@@ -1,6 +1,5 @@
 package de.ifgi.sc.smartcitiesapp.zone;
 
-
 import android.content.Context;
 import android.util.Log;
 
@@ -16,6 +15,7 @@ import de.ifgi.sc.smartcitiesapp.messaging.DatabaseHelper;
  * Created by Clara on 13.06.2016.
  */
 public class ZoneManager {
+
     private ArrayList<Zone> allZones;
     private ArrayList<Zone> currentZones;
     private Context ourContext;

@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.ifgi.sc.smartcitiesapp">
-
     <!-- App permissions -->
     <!-- P2P -->
     <uses-sdk android:minSdkVersion="14" />
+
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- Other -->
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!-- Application and Activity definitions -->
     <application
@@ -37,7 +39,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".main.MsgActivity" />
-        <activity android:name=".main.WriteMsgActivity" />
+        <activity
+            android:name=".main.WriteMsgActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -47,6 +51,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.MainActivity" />
         </activity>
+
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
             android:value="AIzaSyDw7Pv8XpkB-XqeWt1wLpR2hZ4TDNiIcaw" />
@@ -54,7 +59,11 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDw7Pv8XpkB-XqeWt1wLpR2hZ4TDNiIcaw" />
 
-        <activity android:name=".main.SelectZoneActivity"></activity>
+        <activity
+            android:name=".main.SelectZoneActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".main.SearchActivity" />
+        <activity android:name=".settings.AboutActivity"></activity>
     </application>
 
 </manifest>
