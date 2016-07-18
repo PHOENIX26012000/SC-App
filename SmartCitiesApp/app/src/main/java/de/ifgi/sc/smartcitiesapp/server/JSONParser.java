@@ -195,12 +195,8 @@ public class JSONParser {
 
     public String parseMessageDateFormatToServerDateFormat(String string){
 
-        Log.i("Parser","ParseDateFormat, MessageDate: "+string);
         String substring = string.substring(0,string.length()-2);
-        Log.i("Parser","ParseDateFormat, substring: "+ substring);
         String dtstring = new String(substring+":00");
-        Log.i("Parser","ParseDateFormat, ServerDate: "+dtstring);
-
         return dtstring;
     }
 
