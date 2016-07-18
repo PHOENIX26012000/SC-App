@@ -74,6 +74,18 @@ Steps for the installation:
 
 The main three components of the application are the application itself, the connection to the server and the connection to other peers that are using the same application.
 
+### Application
+
+The application is dividet into 5 main components that internally connect and interact: The user interface, the messenger (message manager), the peer-to-peer connection manager, the server connection manager and the zone manager.
+
+The user interface is responsible for displaying the application with all its subtasks (writing messages, displaying incomming messages, etc.). It shares the written messages with the messenger and receives messages to display from the messenger.
+
+### Server Connection
+
+### Peer-to-Peer Connection
+
+
+
 ## Functionalities
 
 ![functionality](img/functionality.png)
