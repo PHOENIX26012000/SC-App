@@ -356,6 +356,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
     @Override
     public void onMessagesObtainedFromServer(ArrayList<Message> obtained) {
         boolean msg_within_current_zone_obtained = false;
+        relevant_msgs = new ArrayList<Message>();
         // messages obtained from server:
         // 1. check if new obtained msgs are within the current selected zone
         // figure out, which zone is currently selected:
