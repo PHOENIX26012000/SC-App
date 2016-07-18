@@ -60,12 +60,12 @@ After this step, there are two ways of installing the application, whereas both 
 
 ### User
 
-As a user the application can be installed by downloading the `.apk` file, which is provided at the main directory. If your phone prohibits installing applications form unknown sources, you have to go to your phone settings and enable this option.
+As a user the application can be installed by downloading the `happy_share.apk` file, which is provided at the main directory. If your phone prohibits installing applications form unknown sources, you have to go to your phone settings and enable this option.
 
 Steps for the installation:
-  1. Download the `.apk` file.
+  1. Download the `happy_share.apk` file.
   2. Enable the phone setting for installing applications from unknown sources.
-  3. Click the `.apk` file and select install.
+  3. Click the `happy_share.apk` file and select install.
   4. Enable the application permission in order to get the application work as intended.
 
 ## Architecture
@@ -79,12 +79,20 @@ The main three components of the application are the application itself, the con
 The application is dividet into 5 main components that internally connect and interact: The user interface, the messenger (message manager), the peer-to-peer connection manager, the server connection manager and the zone manager.
 
 The user interface is responsible for displaying the application with all its subtasks (writing messages, displaying incomming messages, etc.). It shares the written messages with the messenger and receives messages to display from the messenger. Moreover, it shows the zones that are retrieved from the server and displays the locations that have been attached to the messages.
+The Messenger is the heart of the messanging that is possible with the application. Every incomming and outgoing message in evaluated by the Messenger in terms of the zone it belongs to, the expiration date of the message, and if the message has already been received from someone else before. Depending on the decisions of the Messenger messages are then shared with peer, with the server, stored in the database and/or shown in the user interface.
+The peer-to-peer connection manager is responsible for sharing messages with other peers that are in range and receiving messages from peers that are in range.
+The server connection manager uses the API of the server application in order to connect of the server for requestion messages and zones and for sharing messages with the server.
+The zone manager is responsible for handling the zone and the events that may happen with respect to zones, e.g. leaving a zone, entering a zone, selecting a zone.
 
 ### Server Connection
 
+As already mentioned the server connection is responsible for exchanging messages and zones with the server. This connections are tiggered only when the application is stared or closed. On the start of the application the application requests zones and messages from the server. When closing the application the application sends the messages that have been written and received in the meantime to the server.
+
 ### Peer-to-Peer Connection
 
-
+The peer-to-peer connection is dependent on the lifecycle of the activity of the application and is able to share and receive messages with peers as long as the activity is active.
+This is required by the library which is used, which is [Android Nearby](https://developers.google.com/nearby/).
+The messages are shared anonymous, so that it is not known to the users to whom messages are send or from whom messages are received. When the activity is active messages that have not been expired will be published until they expired. Then the peer-to-peer connection manager will stop sharing the messages.  
 
 ## Functionalities
 
@@ -102,6 +110,9 @@ The user interface is responsible for displaying the application with all its su
 
 #### specify message settings
 
-## Limitations
+## Limitations & Future Work
 
-## Future Work
+The main drawback of the application is the dependency on the android nearby library, which required to be handled by an activity. This makes it impossible to receive messages from nearyby peers, when the device screen is off and the device is in the pocket. The service gets only active when the application does.
+However, in the time when the application is active the battery is drained a lot faster than usual, which is obivously because of the Android Nearby library, which constantly publishes and receives messages when active. Futher investigations have to be made in this regards to find a solution that lowers the battery consumption.
+
+By now all existing topics are open for everyone. In future it could be further investigated to create private topics that can only be entered by invited people. In such a case the concept of end-to-end encryption would have to be considered in order to avoid that people from 'outside' could incept and read the messages.  
