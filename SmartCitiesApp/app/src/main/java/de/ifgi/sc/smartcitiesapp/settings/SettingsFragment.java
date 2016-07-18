@@ -74,7 +74,7 @@ public class SettingsFragment extends PreferenceFragment {
         for (String topic : topics) {
             // create the pref item:
             SwitchPreference traffic_topic = new SwitchPreference(getActivity().getApplicationContext());
-            // preference key format: pref_<zoneID>_<Topic>
+            // preference key format: pref_<zoneID>_<topic>
             traffic_topic.setKey("pref_" + zoneID + "_" + topic);
             traffic_topic.setDefaultValue(true);
 

@@ -21,7 +21,7 @@ public class Message {
     // Date when message expires
     private String ex_Dt;
 
-    // Topic of message
+    // opic of message
     private String topic;
 
     // Title of the message
