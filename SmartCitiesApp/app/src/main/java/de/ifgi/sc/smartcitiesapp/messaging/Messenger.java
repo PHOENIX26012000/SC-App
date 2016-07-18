@@ -71,7 +71,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
 
         //Sending unique Messages to Peer and UI
         if(!uarray_list.isEmpty()) {
-                UIMessageManager.getInstance().enqueueMessagesIntoUIFromP2P(uarray_list);
+                UIMessageManager.getInstance().enqueueMessagesIntoUIFromServer(uarray_list);
             mP2PManager.shareMessage(uarray_list);
         }
     }
