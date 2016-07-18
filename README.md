@@ -56,6 +56,8 @@ After this step, there are two ways of installing the application, whereas both 
 
 **Option 2**: Select `Build` > `Build APK`. Navigate to the *apk* directory on your file system, select the `app-debug.apk` file and transfer it to your Smartphone. Follow the steps in the next section to install the application.
 
+**Note**: If you want to communicate with others all Apps need to be signed with the same API-Key. Apps that are signed with different API-Keys will no be able to communicate among each other. So make sure to generate a `.apk` file and deploy it to everyone you want to communicate with.
+
 ### User
 
 As a user the application can be installed by downloading the `.apk` file, which is provided at the main directory. If your phone prohibits installing applications form unknown sources, you have to go to your phone settings and enable this option.
