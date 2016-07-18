@@ -78,7 +78,7 @@ The main three components of the application are the application itself, the con
 
 The application is dividet into 5 main components that internally connect and interact: The user interface, the messenger (message manager), the peer-to-peer connection manager, the server connection manager and the zone manager.
 
-The user interface is responsible for displaying the application with all its subtasks (writing messages, displaying incomming messages, etc.). It shares the written messages with the messenger and receives messages to display from the messenger.
+The user interface is responsible for displaying the application with all its subtasks (writing messages, displaying incomming messages, etc.). It shares the written messages with the messenger and receives messages to display from the messenger. Moreover, it shows the zones that are retrieved from the server and displays the locations that have been attached to the messages.
 
 ### Server Connection
 
