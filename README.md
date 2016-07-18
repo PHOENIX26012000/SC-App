@@ -76,6 +76,18 @@ Steps for the installation:
 
 ![functionality](img/functionality.png)
 
+#### select and show zones
+
+#### select and show topics
+
+#### receive and write messages
+
+#### reshare messages
+
+#### share message to server
+
+#### specify message settings
+
 ## Limitations
 
 ## Future Work
