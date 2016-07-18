@@ -28,7 +28,6 @@ public class TopicView extends LinearLayout implements View.OnClickListener {
     TextView msgView;
     TextView newView;
     boolean newObtainedMsg;
-    private OnClickListener ocl;
 
     public TopicView(Context context, AttributeSet attrs, String topic, String message, boolean newObtained){
         super(context, attrs);

@@ -1,9 +1,10 @@
 package de.ifgi.sc.smartcitiesapp.settings;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

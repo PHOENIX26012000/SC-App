@@ -49,8 +49,12 @@ import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 public class MainActivity extends AppCompatActivity implements MessagesObtainedListener, LocationChangedListener {
 
     protected App app;
+
+    // request codes:
     public static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 10042; // just a random unique int resource.
-    public static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 10043; // just a random unique int resource.
+    public static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 10043;   // just a random unique int resource.
+    public static final int LOCATION_SERVICE_PROMPT = 10044;              // ID for the location service prompt.
+    public static final int ZONE_SELECTION_PROMPT = 10045;                // ID ZoneSelection.
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -213,7 +217,6 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
     }
 
     // --- Menu ---
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -243,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
             case R.id.menu_item_search:
                 // Open the search activity
                 Intent intentSearch = new Intent(getApplicationContext(), SearchActivity.class);
-                startActivity(intentSearch);
+                startActivityForResult(intentSearch,123);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -311,19 +314,42 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
             Toast.makeText(this, "Please enable the GPS location service", Toast.LENGTH_LONG).show();
             // activate Location Service
             Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            this.startActivityForResult(myIntent, 123);
+            this.startActivityForResult(myIntent, LOCATION_SERVICE_PROMPT);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.w(TAG, "onActResult");
-        if (requestCode == 123) {
+        if (requestCode == LOCATION_SERVICE_PROMPT) {
             Log.w(TAG, "requestCode 123");
             // user enabled location service on his device.
-            // Check for real zones!
+            // initialise the custom locationManager!
             MyLocationManager.getInstance().setLocationChangedListener(MainActivity.this, MY_PERMISSION_ACCESS_FINE_LOCATION);
             MyLocationManager.getInstance().setLocationChangedListener(MainActivity.this, MY_PERMISSION_ACCESS_COARSE_LOCATION);
+        } else if (requestCode == ZONE_SELECTION_PROMPT) {
+            if (resultCode == SelectZoneActivity.ZONE_SELECTED_SUCCESSFUL) {
+                // get the selected zone:
+                try {
+                    current_selected_zone = ZoneManager.getInstance().getCurrentZone();
+                } catch (NoZoneCurrentlySelectedException nzcse) {
+                    // select default zone:
+                    if (userLocation != null)
+                        current_selected_zone = app.getDefaultZone(userLocation);
+                    else {
+                        try {
+                            current_selected_zone = app.getDefaultZone(MyLocationManager.getInstance().getUserLocation());
+                        } catch (NoLocationKnownException nlke) {
+                            current_selected_zone = app.getDefaultZone(new LatLng(
+                                    51.969879, 7.595277 // muenster (at the GEO1)
+                            ));
+                        }
+                    }
+                }
+                updateUIcurrentZoneName();
+            } else if (resultCode == SelectZoneActivity.ZONE_SELECTION_ABORTED){
+                // do nothing;
+            }
         }
     }
 
@@ -705,7 +731,7 @@ public class MainActivity extends AppCompatActivity implements MessagesObtainedL
                     Log.i(TAG, "userlocation=(" + userLocation.latitude + "," + userLocation.longitude + ")");
                 } else
                     Log.e(TAG, "no userlocation obtained!");
-                startActivityForResult(intentSettings, 1);
+                MainActivity.this.startActivityForResult(intentSettings, ZONE_SELECTION_PROMPT);
             }
         });
 

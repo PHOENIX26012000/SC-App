@@ -35,7 +35,8 @@ import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyCallback, LocationChangedListener{
 
-    public final static int ZONE_SELECTED_SUCCESSFUL = 15335815;
+    public final static int ZONE_SELECTED_SUCCESSFUL    = 15001;
+    public final static int ZONE_SELECTION_ABORTED      = 15002;
 
     private GoogleMap map;
     private ArrayList<EnhancedPolygon> zones;
@@ -100,12 +101,14 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
             userLocation = MyLocationManager.getInstance().getUserLocation();
         } catch (NoLocationKnownException e){
             Log.e("SelectZone", "No Location known. Finishing Activity...");
+            setResult(ZONE_SELECTION_ABORTED);
             finish();
         }
 
         // access the ZoneManager and get a list of all zones containing current user location:
         zonesFromDB = new ArrayList<Zone>();
         zonesFromDB = ZoneManager.getInstance().getCurrentZones(userLocation);
+
         // if the user is still in int he current selected zone, preselect it as default:
         try {
             current_selected_zone = ZoneManager.getInstance().getCurrentZone();
@@ -202,6 +205,7 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
                 int zoneNumber = spn_zoneSelecter.getSelectedItemPosition();
                 Zone selectedZone = zonesFromDB.get(zoneNumber);
                 ZoneManager.getInstance().setCurrentZone(selectedZone);
+                setResult(ZONE_SELECTED_SUCCESSFUL);
                 finish();
             }
         });
@@ -250,6 +254,7 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
             // if here, then no zone contains the user location... er..
             // okay... let's give some feedback to the user, and finish the useless zoneselection Activity:
             Toast.makeText(getApplicationContext(),"You are currently in no zone. Default zone is selected til you enter an existing one", Toast.LENGTH_LONG ).show();
+            setResult(ZONE_SELECTION_ABORTED);
             finish();
         }
         int padding = 0;
@@ -258,6 +263,7 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
         try {
             map.animateCamera(cu);
         } catch (IllegalStateException ise) {
+            setResult(ZONE_SELECTION_ABORTED);
             finish();
         }
         try {

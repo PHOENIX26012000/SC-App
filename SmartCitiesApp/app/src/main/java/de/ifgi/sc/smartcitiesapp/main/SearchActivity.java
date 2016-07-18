@@ -1,5 +1,6 @@
 package de.ifgi.sc.smartcitiesapp.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +22,7 @@ import de.ifgi.sc.smartcitiesapp.R;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends Activity {
 
     private SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
@@ -29,10 +30,6 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
-        // add Back Button on Actionbar:
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Change default behaviour of the edittextSearch: On Enter: close EditText and conduct the search:
         final EditText edt_lookup = (EditText) findViewById(R.id.edt_lookup);
@@ -92,18 +89,6 @@ public class SearchActivity extends AppCompatActivity {
             String expiresIn = days + "d " + hours + "h " + mins + "m";
             MessageView mv = new MessageView(this,m.getTitle(),m.getMsg(),expiresIn,false);
             ll_results.addView(mv);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                // app icon in action bar clicked; goto parent activity.
-                this.finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
     }
 }
