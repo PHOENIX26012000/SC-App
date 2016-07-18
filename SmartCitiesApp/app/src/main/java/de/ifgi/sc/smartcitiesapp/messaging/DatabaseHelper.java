@@ -55,6 +55,11 @@ public class DatabaseHelper {
     private final Context ourContext;
     private SQLiteDatabase ourDatabase;
 
+    /**
+     * This method will check if zone already exists in database
+     * @param zn
+     * @return
+     */
     public boolean zoneAlreadyExist(Zone zn) {
         boolean match = false;
 
@@ -106,6 +111,10 @@ public class DatabaseHelper {
 
         }
 
+        /**
+         * Creating Table to write Message entries in database
+         * @param db
+         */
         private void createMessagesTable(SQLiteDatabase db) {
             String query="CREATE TABLE " + TABLE_NAME + "(" + MESSAGE_ID + " TEXT NOT NULL, " +
                     ZONE_ID + " TEXT NOT NULL, " + CREATED_AT + " DATETIME, "+LATITUDE + " DOUBLE, " + LONGITUDE + " DOUBLE, " +
@@ -115,6 +124,11 @@ public class DatabaseHelper {
             db.execSQL(query);
             Log.i("Msgs Table created ", "no exception");
         }
+
+        /**
+         * Creating Table to write zone entries in database
+         * @param db
+         */
         private void createZoneTable(SQLiteDatabase db) {
             String query="CREATE TABLE " + ZONE_TABLE_NAME + "(" + ZONE_NAME +
                     " TEXT NOT NULL, " +
@@ -182,6 +196,14 @@ public class DatabaseHelper {
         }
     }
 
+    /**
+     * This method will write a single row entry in database
+     * @param z_name Zone name
+     * @param z_id Zone ID
+     * @param ex_time Zone Expired time
+     * @param topics Array list of topics in Zone
+     * @param Coords ArrayList of LatLng coordinates
+     */
     public void createZoneEntry(String z_name, String z_id, String ex_time,String[] topics, ArrayList<LatLng> Coords){
         try {
             ContentValues cv = new ContentValues();
@@ -203,8 +225,12 @@ public class DatabaseHelper {
         }
     }
 
-    //This method will convert Array of LatLong to type String to be stored in table
-    //Output will be Lat Long comma separated values
+    /**
+     * This method will convert Array of LatLong to type String to be stored in table
+     * Output will be Lat Long comma separated values
+     * @param Coords
+     * @return
+     */
     private String convCordsToString(ArrayList<LatLng> Coords) {
         int size;
         size= Coords.size();
@@ -217,6 +243,7 @@ public class DatabaseHelper {
         }
         return temp.substring(0,temp.length()-1); // Deleting last comma
     }
+
     //This method will convert Array of Topics to comma separated values in String to be stored in table
     private String convertTopToString(String[] topics) {
         int size;
@@ -230,7 +257,19 @@ public class DatabaseHelper {
         return temp.substring(0,temp.length()-1); // Deleting last comma
     }
 
-
+    /**
+     * This method will write a single message entry in Database
+     * @param m_id Message ID
+     * @param z_id Zone ID inwhich message was generated
+     * @param cr_time Message creation time
+     * @param lat Latitude
+     * @param lon Longitude
+     * @param ex_time Expired time of message
+     * @param top Topic for Message
+     * @param title Title of Message
+     * @param msg Message body
+     * @param reshare Message to be re-shared or not
+     */
     public void createEntry(String m_id, String z_id, String cr_time, Double lat,Double lon, String  ex_time, String top, String title, String msg,boolean reshare) {
         try {
             ContentValues cv = new ContentValues();
@@ -260,8 +299,10 @@ public class DatabaseHelper {
     }
 
 
-
-
+    /**
+     * This method will return all messages stored in database
+     * @return
+     */
     public ArrayList<Message> getAllMessages()
     {
         Date ex_date = null;
@@ -328,6 +369,11 @@ public class DatabaseHelper {
 
     }
 
+    /**
+     * This method checks if message already exists in database or not
+     * @param msg
+     * @return
+     */
     public boolean messageAlreadyExist(Message msg) {
         boolean match = false;
 
@@ -352,6 +398,11 @@ public class DatabaseHelper {
         return match;
 
     }
+
+    /**
+     * This methods returns all stored values from database
+     * @return
+     */
     public ArrayList<Zone> getAllZones_DB(){
         Date ex_date = null;
 
@@ -375,6 +426,11 @@ public class DatabaseHelper {
         return array_list;
     }
 
+    /**
+     * This method coverts String of comma separated lat long to ArrayList of type LatLng
+     * @param string
+     * @return
+     */
     private ArrayList<LatLng> stringToCoords(String string) {
         String[] list=string.split(",");
         ArrayList<LatLng> coords=new ArrayList<LatLng>();
@@ -386,6 +442,9 @@ public class DatabaseHelper {
         return coords;
     }
 
+    /**
+     * This method deletes all expired messages and zones from their respective tables
+     */
     public void deleteExpiredMnZ() {
         String now_time = D_format.format(Calendar.getInstance().getTime());
         String sql_query1 = "Delete from TABLE_1 where Exp_time <= '" + now_time + "'";

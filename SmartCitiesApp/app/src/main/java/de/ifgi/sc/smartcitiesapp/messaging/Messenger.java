@@ -9,6 +9,7 @@ import de.ifgi.sc.smartcitiesapp.main.MainActivity;
 import de.ifgi.sc.smartcitiesapp.main.UIMessageManager;
 import de.ifgi.sc.smartcitiesapp.p2p.P2PManager;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
+import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 /**
  * Created by SAAD on 5/11/2016.
@@ -77,7 +78,8 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
 
     //This function will get user zoneID from ZoneManager Class and return it
     private String currentUserZone() {
-        return null;
+        Log.i(ZoneManager.getInstance().getCurrentZoneID(),"Current Zone is");
+        return ZoneManager.getInstance().getCurrentZoneID();
     }
 
     /**This method will be called by main Interface to write and store message locally
@@ -134,7 +136,7 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
             t_msg= msgs.get(i);
             //will change to this once implemented by ZoneManager
             //db.messageAlreadyExist(t_msg) == false && userZoneID!=null && userZoneID.equals(t_msg.getZone_ID())
-            if(!db.messageAlreadyExist(t_msg) && !t_msg.messageExpired()){
+            if(!db.messageAlreadyExist(t_msg) && !t_msg.messageExpired()&& userZoneID.equals(t_msg.getZone_ID())){
                 Log.i(" Messenger", "Message not existing in db yet. " + t_msg.getMessage_ID());
                 createMessageEntry(db,t_msg);
                 uarray_list.add(t_msg);
@@ -178,42 +180,6 @@ public class Messenger implements de.ifgi.sc.smartcitiesapp.interfaces.Messenger
         db.close();
 
         return msgs;
-    }
-
-    //This methods will store all zones in database having unique Zone_IDs.
-    //Zone with prematching zoneID will simply be ignored
-    public void updateZonesInDatabase(ArrayList<Zone> zones){
-        //Checking size of Arraylist
-        int size;
-        size= zones.size();
-        Zone zn;
-
-        DatabaseHelper db = new DatabaseHelper(ourContext);
-        db.open();
-
-        for(int i=0;i<size;i++){
-            Log.i("This is Zone  "+i," Number");
-            zn= zones.get(i);
-            if(db.zoneAlreadyExist(zn) == false){
-                db.createZoneEntry(zn.getName(),zn.getZoneID(),zn.getExpiredAt(),zn.getTopics(),zn.getPolygon());
-
-            }
-
-        }
-        // db.getAllMessages();
-        Log.i("Zones  "," stored");
-        db.close();
-
-    }
-
-    //This method will return all zones stored in Database
-    public ArrayList<Zone> getAllZonesfromDatabase(){
-        DatabaseHelper db = new DatabaseHelper(ourContext);
-        db.open();
-        ArrayList<Zone> zones= db.getAllZones_DB();
-        db.close();
-
-        return zones;
     }
 
 
