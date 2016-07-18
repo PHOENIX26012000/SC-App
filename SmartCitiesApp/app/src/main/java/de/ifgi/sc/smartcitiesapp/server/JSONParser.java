@@ -82,10 +82,12 @@ public class JSONParser {
             message = m;
             messageID = message.getMessage_ID();
             zoneID = message.getZone_ID();
-             crDt = message.getCreated_At();
+            crDt = message.getCreated_At();
+            crDt = parseMessageDateFormatToServerDateFormat(crDt);
             topic = message.getTopic();
             title = message.getTitle();
             exDt = message.getExpired_At();
+            exDt = parseMessageDateFormatToServerDateFormat(exDt);
             msg = message.getMsg();
             longitude = message.getLongitude();
             latitude = message.getLatitude();
@@ -177,10 +179,10 @@ public class JSONParser {
         return this.msglist;
     }
 
-    public Date parseStringToDate(String string){
+    public Date parseStringToDate(String string) {
 
-        String substring = string.substring(0,(string.length()-1));
-        String dtstring = new String(substring+"+0000");
+        String substring = string.substring(0, (string.length() - 1));
+        String dtstring = new String(substring + "+0000");
         SimpleDateFormat D_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
         try {
@@ -189,6 +191,17 @@ public class JSONParser {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String parseMessageDateFormatToServerDateFormat(String string){
+
+        Log.i("Parser","ParseDateFormat, MessageDate: "+string);
+        String substring = string.substring(0,string.length()-2);
+        Log.i("Parser","ParseDateFormat, substring: "+ substring);
+        String dtstring = new String(substring+":00");
+        Log.i("Parser","ParseDateFormat, ServerDate: "+dtstring);
+
+        return dtstring;
     }
 
     /**
