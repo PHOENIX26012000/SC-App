@@ -72,6 +72,8 @@ Steps for the installation:
 
 ![functionality](img/architecture_model.png)
 
+The main three components of the application are the application itself, the connection to the server and the connection to other peers that are using the same application.
+
 ## Functionalities
 
 ![functionality](img/functionality.png)
