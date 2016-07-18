@@ -120,15 +120,16 @@ public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbac
         List<String> list = Arrays.asList(str.split(","));
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         de.ifgi.sc.smartcitiesapp.messaging.Message m = null;
+        //Log.d(MainActivity.TAG + " P2P", "Parse found message: " + list);
         try {
             try {
                 m = new de.ifgi.sc.smartcitiesapp.messaging.Message(list.get(1), list.get(3),
                         format.parse(list.get(5)), Double.parseDouble(list.get(15)), Double.parseDouble(list.get(17)), format.parse(list.get(7)), list.get(9),
-                        list.get(11), list.get(13), Boolean.parseBoolean(list.get(15)));
+                        list.get(11), list.get(13), Boolean.parseBoolean(list.get(19)));
             } catch (NumberFormatException e) {
                 m = new de.ifgi.sc.smartcitiesapp.messaging.Message(list.get(1), list.get(3),
                         format.parse(list.get(5)), format.parse(list.get(7)), list.get(9),
-                        list.get(11), list.get(13), Boolean.parseBoolean(list.get(15)));
+                        list.get(11), list.get(13), Boolean.parseBoolean(list.get(19)));
             }
         } catch (ParseException e) {
             e.printStackTrace();

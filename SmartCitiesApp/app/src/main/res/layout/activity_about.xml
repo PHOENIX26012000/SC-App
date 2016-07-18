@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="de.ifgi.sc.smartcitiesapp.settings.AboutActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:text="HappyShare is an application which is used to share some important, exciting, or valuable information with the people who are present in your zones.
+
+\n\nYou can share messages about topics like Traffic, Food &amp; Drink, Events such as traffic jams, certain restaurant's specials, upcoming sport tournaments or concerts which are in your zone and you feel to share.
+
+\n\nYou can send &amp; receive messages of the topics you like. If you don't like certain topics, you can unsubscribe them via the settings."/>
+
+</RelativeLayout>

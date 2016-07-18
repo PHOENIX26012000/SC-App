@@ -13,7 +13,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
@@ -34,6 +37,7 @@ public class TopicTabFragment extends Fragment {
     private LinearLayout ll_topics;
     private ScrollView slv_topics;
     private ArrayList<TopicView> shown_topics;
+    private Boolean flag_unsubscribed_topics_exist = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,12 +53,12 @@ public class TopicTabFragment extends Fragment {
     }
 
     public void createAllViews(){
+        flag_unsubscribed_topics_exist = false;
         // Get the current selected zone:
         try {
             current_selected_zone = ZoneManager.getInstance().getCurrentZone();
         } catch (NoZoneCurrentlySelectedException e) {
             e.printStackTrace();
-            Log.d("AppZone", "No Zone selected error!");
         }
 
         // get all msgs for this current selected zone:
@@ -126,7 +130,18 @@ public class TopicTabFragment extends Fragment {
                 tv.setClickable(true);
 
                 shown_topics.add(tv);
+            } else {
+                flag_unsubscribed_topics_exist = true;
             }
+        }
+        if (flag_unsubscribed_topics_exist){
+            TopicView tv = new TopicView(
+                    getContext(),
+                    "more topics available." ,
+                    "Select more topics in the settings.",
+                    false);
+            tv.setClickable(false);
+            shown_topics.add(tv);
         }
 
         // add TopicViews to ScrollView into LinearLayout:

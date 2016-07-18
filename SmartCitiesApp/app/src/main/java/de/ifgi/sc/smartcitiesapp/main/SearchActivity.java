@@ -1,9 +1,11 @@
 package de.ifgi.sc.smartcitiesapp.main;
 
 import android.content.Context;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -27,6 +29,10 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        // add Back Button on Actionbar:
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Change default behaviour of the edittextSearch: On Enter: close EditText and conduct the search:
         final EditText edt_lookup = (EditText) findViewById(R.id.edt_lookup);
@@ -86,6 +92,18 @@ public class SearchActivity extends AppCompatActivity {
             String expiresIn = days + "d " + hours + "h " + mins + "m";
             MessageView mv = new MessageView(this,m.getTitle(),m.getMsg(),expiresIn,false);
             ll_results.addView(mv);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
