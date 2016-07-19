@@ -31,11 +31,11 @@ Git Flow is a powerful branching concept for git, which is easy to understand an
 
 ## Installation
 
-This application was mainly developed for the means of the study project, so that it is currently not released into the Google Play Store. There are to ways of installing the application: A developer may clone this repository and deploy the application via Android Studio, whereas a normal user may install the application via a pre-build `.apk` file.
+This application was mainly developed for the means of the study project, so that it is currently not released into the Google Play Store. There are to ways of installing the application: A developer may clone this repository and deploy the application via Android Studio, whereas a normal user may install the application via a pre-build `happy_share.apk` file.
 
 ### Developer
 
-The application was developed with [Android Studio](https://developer.android.com/studio/index.html). The Target Sdk Version was set to *API 23: Android 6.0 (Marshmallow)*, whereas the Min Sdk Version was set to *API 21: Android 5.0 (Lollipop)*. In order to build the application on your own, please make sure to install Android Studio, preferably the latest version, and install the required Android Sdks (Software Development Kits).
+The application was developed with [Android Studio](https://developer.android.com/studio/index.html). The target sdk version was set to *API 23: Android 6.0 (Marshmallow)*, whereas the min sdk version was set to *API 21: Android 5.0 (Lollipop)*. In order to build the application on your own, please make sure to install Android Studio, preferably the latest version, and install the required Android Sdks (Software Development Kits).
 After this step, there are two ways of installing the application, whereas both require a preliminary step.
 
 **Preliminary Step**: The application uses external Google services that require an API_KEY.
@@ -56,7 +56,7 @@ After this step, there are two ways of installing the application, whereas both 
 
 **Option 2**: Select `Build` > `Build APK`. Navigate to the *apk* directory on your file system, select the `app-debug.apk` file and transfer it to your Smartphone. Follow the steps in the next section to install the application.
 
-**Note**: If you want to communicate with others all Apps need to be signed with the same API-Key. Apps that are signed with different API-Keys will no be able to communicate among each other. So make sure to generate a `.apk` file and deploy it to everyone you want to communicate with.
+**Note**: If you want to communicate with others all Apps need to be signed with the same API-Key. Apps that are signed with different API-Keys will not be able to communicate among each other. So make sure to generate a `.apk` file and deploy it to everyone you want to communicate with.
 
 ### User
 
@@ -98,17 +98,17 @@ The messages are shared anonymous, so that it is not known to the users to whom 
 
 ![functionality](img/functionality.png)
 
-#### Select and show zones on a map
+### Select and show zones on a map
 
-#### Select and show interested topics
+### Select and show interested topics
 
-#### Receive and write messages
+### Receive and write messages
 
-##### Reshare messages
+#### Reshare messages
 
-##### Share message to server
+#### Share message to server
 
-#### Specify message settings
+### Specify message settings
 
 ## Limitations & Future Work
 
