@@ -25,20 +25,20 @@ The decision was made to use a [Github](https://github.com) Repository as versio
 
 ### Git Flow
 
-Git Flow is a powerfull branching concept for git, which is easy to understand and to learn, and has proofed itself during the project to be indispensabel. [This Graph](https://github.com/heinrichloewen/SC-App/network) visualizes how the concept was implemented according to the following simplified graphic.
+Git Flow is a powerful branching concept for git, which is easy to understand and to learn, and has proofed itself during the project to be indispensable. [This Graph](https://github.com/heinrichloewen/SC-App/network) visualizes how the concept was implemented according to the following simplified graphic.
 
 ![functionality](img/git branching.png)
 
 ## Installation
 
-This application was mainly developed for the means of the study project, so that it is currently not released into the Google Play Store. There are to ways of installing the application: A developer may clone this repository and deploy the application via Android Studio, whereas a normal user may install the application via a pre-build `.apk` file.  
+This application was mainly developed for the means of the study project, so that it is currently not released into the Google Play Store. There are to ways of installing the application: A developer may clone this repository and deploy the application via Android Studio, whereas a normal user may install the application via a pre-build `.apk` file.
 
 ### Developer
 
 The application was developed with [Android Studio](https://developer.android.com/studio/index.html). The Target Sdk Version was set to *API 23: Android 6.0 (Marshmallow)*, whereas the Min Sdk Version was set to *API 21: Android 5.0 (Lollipop)*. In order to build the application on your own, please make sure to install Android Studio, preferably the latest version, and install the required Android Sdks (Software Development Kits).
 After this step, there are two ways of installing the application, whereas both require a preliminary step.
 
-**Preliminary Step**: The application uses external google services that require an API_KEY.
+**Preliminary Step**: The application uses external Google services that require an API_KEY.
   1. Go to your [Google Developer Console](https://console.developers.google.com/) and generate an API_KEY.
   2. Activate the services **Google Maps Android API** and **Nearby Messages API** for this API_KEY.
   3. Go to your `AndroidManifest.xml` and insert your API_KEY as follows:
@@ -76,23 +76,23 @@ The main three components of the application are the application itself, the con
 
 ### Application
 
-The application is dividet into 5 main components that internally connect and interact: The user interface, the messenger (message manager), the peer-to-peer connection manager, the server connection manager and the zone manager.
+The application is divided into 5 main components that internally connect and interact: The user interface, the messenger (message manager), the peer-to-peer connection manager, the server connection manager and the zone manager.
 
-The user interface is responsible for displaying the application with all its subtasks (writing messages, displaying incomming messages, etc.). It shares the written messages with the messenger and receives messages to display from the messenger. Moreover, it shows the zones that are retrieved from the server and displays the locations that have been attached to the messages.
-The Messenger is the heart of the messanging that is possible with the application. Every incomming and outgoing message in evaluated by the Messenger in terms of the zone it belongs to, the expiration date of the message, and if the message has already been received from someone else before. Depending on the decisions of the Messenger messages are then shared with peer, with the server, stored in the database and/or shown in the user interface.
+The user interface is responsible for displaying the application with all its subtasks (writing messages, displaying incoming messages, etc.). It shares the written messages with the messenger and receives messages to display from the messenger. Moreover, it shows the zones that are retrieved from the server and displays the locations that have been attached to the messages.
+The Messenger is the heart of the messaging that is possible with the application. Every incoming and outgoing message in evaluated by the Messenger in terms of the zone it belongs to, the expiration date of the message, and if the message has already been received from someone else before. Depending on the decisions of the Messenger messages are then shared with peer, with the server, stored in the database and/or shown in the user interface.
 The peer-to-peer connection manager is responsible for sharing messages with other peers that are in range and receiving messages from peers that are in range.
-The server connection manager uses the API of the server application in order to connect of the server for requestion messages and zones and for sharing messages with the server.
+The server connection manager uses the API of the server application in order to connect of the server for requesting messages and zones and for sharing messages with the server.
 The zone manager is responsible for handling the zone and the events that may happen with respect to zones, e.g. leaving a zone, entering a zone, selecting a zone.
 
 ### Server Connection
 
-As already mentioned the server connection is responsible for exchanging messages and zones with the server. This connections are tiggered only when the application is stared or closed. On the start of the application the application requests zones and messages from the server. When closing the application the application sends the messages that have been written and received in the meantime to the server.
+As already mentioned the server connection is responsible for exchanging messages and zones with the server. This connections are triggered only when the application is stared or closed. On the start of the application the application requests zones and messages from the server. When closing the application the application sends the messages that have been written and received in the meantime to the server.
 
 ### Peer-to-Peer Connection
 
 The peer-to-peer connection is dependent on the lifecycle of the activity of the application and is able to share and receive messages with peers as long as the activity is active.
 This is required by the library which is used, which is [Android Nearby](https://developers.google.com/nearby/).
-The messages are shared anonymous, so that it is not known to the users to whom messages are send or from whom messages are received. When the activity is active messages that have not been expired will be published until they expired. Then the peer-to-peer connection manager will stop sharing the messages.  
+The messages are shared anonymous, so that it is not known to the users to whom messages are send or from whom messages are received. When the activity is active messages that have not been expired will be published until they expired. Then the peer-to-peer connection manager will stop sharing the messages.
 
 ## Functionalities
 
@@ -108,11 +108,13 @@ The messages are shared anonymous, so that it is not known to the users to whom 
 
 ##### Share message to server
 
-#### specify message settings
+#### Specify message settings
 
 ## Limitations & Future Work
 
-The main drawback of the application is the dependency on the android nearby library, which required to be handled by an activity. This makes it impossible to receive messages from nearyby peers, when the device screen is off and the device is in the pocket. The service gets only active when the application does.
-However, in the time when the application is active the battery is drained a lot faster than usual, which is obivously because of the Android Nearby library, which constantly publishes and receives messages when active. Futher investigations have to be made in this regards to find a solution that lowers the battery consumption.
+During the design and implementation process of the app it was thought of and discussed a lot about the usibility of the app. It was tried to design the app as intuitive as possible, however an in-app tutorial of the purpose and the usage of the app is still missing. Whithout knowing about the background of the app, new users would probably get confused. However, such a feature could easily be implemented in future work.
 
-By now all existing topics are open for everyone. In future it could be further investigated to create private topics that can only be entered by invited people. In such a case the concept of end-to-end encryption would have to be considered in order to avoid that people from 'outside' could incept and read the messages.  
+The main drawback of the application is the dependency on the android nearby library, which required to be handled by an activity. This makes it impossible to receive messages from nearby peers, when the device screen is off and the device is in the pocket. The service gets only active when the application does.
+However, in the time when the application is active the battery is drained a lot faster than usual, which is obviously because of the Android Nearby library, which constantly publishes and receives messages when active. Further investigations have to be made in this regards to find a solution that lowers the battery consumption.
+
+By now all existing topics are open for everyone. In future it could be further investigated to create private topics that can only be entered by invited people. In such a case the concept of end-to-end encryption would have to be considered in order to avoid that people from 'outside' could incept and read the messages.
