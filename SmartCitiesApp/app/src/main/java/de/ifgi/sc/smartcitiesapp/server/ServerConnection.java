@@ -1,45 +1,27 @@
 package de.ifgi.sc.smartcitiesapp.server;
 
-import android.nfc.Tag;
 import android.os.AsyncTask;
-import android.os.StrictMode;
 import android.util.Log;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-//import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-//import java.io.OutputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.io.StringWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-//import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import de.ifgi.sc.smartcitiesapp.interfaces.Connection;
-import de.ifgi.sc.smartcitiesapp.interfaces.Messenger;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
-
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
-
 import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
+/**
+ *  Server Connection Class responsible for exchange of messages and zones with the server
+ */
 
 public class ServerConnection implements Connection{
 
@@ -53,7 +35,7 @@ public class ServerConnection implements Connection{
 
     @Override
     /**
-     *  gets a set of Messages in form of an ArrayList and pushs it to the Server
+     *  Method that gets a set of Messages in form of an ArrayList and pushes it to the Server
      */
     public void shareMessage(ArrayList<Message> messages) {
         ArrayList<Message> listmsg = new ArrayList<>();
@@ -64,30 +46,33 @@ public class ServerConnection implements Connection{
         }
         JSONParser parser = new JSONParser();
         this.obj = parser.parseMessagetoJSON(listmsg);
-        //Log.i("Server","JSON"+ obj);
 
         new PostMsgTask().execute("http://giv-project6.uni-muenster.de:8080/api/addmessages");
     }
 
 
-
     /**
-     *  requests the server for Messages and shares them with the Messenger
+     *  Method that requests the server for Messages and shares them with the Messenger
      */
     public void getMessages(String zoneID) {
+
         new GetMsgTask().execute("http://giv-project6.uni-muenster.de:8080/api/messages?zone="+zoneID);
+
     }
 
-
+    /**
+     *  Method to Get all the zones from the server
+     */
     public void getZones() {
 
         new GetZoneTask().execute("http://giv-project6.uni-muenster.de:8080/api/zones");
-        //Log.i("ServerConnection","called method getZones()");
 
     }
 
-
-
+    /**
+     *  PostMsgTask Class to make an http url connection to the server and POST messages to the server
+     *  extends AsyncTask to allow network operations to be done in the background
+     */
     public class PostMsgTask extends AsyncTask<String,Integer, String>{
 
         String responseString= "";
@@ -104,7 +89,6 @@ public class ServerConnection implements Connection{
 
         @Override
         protected String doInBackground(String... urls) {
-            //DataOutputStream wr= null;
             try
             {
                 URL url = new URL(urls[0]);
@@ -117,7 +101,6 @@ public class ServerConnection implements Connection{
 
                 // Create JSONObject:
                 String jsonString = obj.toString();
-                //Log.i("Server postMessages","JSONObject"+jsonString);
 
                 conn.setRequestProperty("Content-length", jsonString.getBytes().length + "");
                 conn.setDoInput(true);
@@ -126,13 +109,11 @@ public class ServerConnection implements Connection{
 
                 OutputStream os = conn.getOutputStream();
                 os.write(jsonString.getBytes("UTF-8"));
-                //Log.i("ServerConnection","Writing Message");
                 os.close();
 
                 conn.connect();
 
                 response = conn.getResponseCode();
-                //Log.d("Server Response","The response is:"+response);
                 if (response == 201){
                     is = conn.getInputStream();
                 } else if (response == 404) {
@@ -142,7 +123,6 @@ public class ServerConnection implements Connection{
                 // Convert the InputStream into a string
                 String contentAsString = readIt(is, 2000);
                 responseString = contentAsString;
-                //Log.i("ServerConnection","Successful sending");
                 conn.disconnect();
 
                 } catch (Exception e) {
@@ -172,6 +152,10 @@ public class ServerConnection implements Connection{
 
     }
 
+    /**
+     *  GetMsgTask Class to make an http url connection to the server and GET messages from the server
+     *  extends AsyncTask to allow network operations to be done in the background
+     */
     public class GetMsgTask extends AsyncTask<String,Integer, String> {
 
         JSONParser parser = new JSONParser();
@@ -183,7 +167,6 @@ public class ServerConnection implements Connection{
         private boolean errorOccured = false;
 
         @Override
-
 
         protected String doInBackground(String... urls) {
             try {
@@ -230,11 +213,8 @@ public class ServerConnection implements Connection{
                 Log.i("Server getMessage","Response: Success");
                 try {
                     JSONObject obj = new JSONObject(result);
-                    //Log.i("Server getMessages","JSONobj: "+obj);
                     if(obj.getJSONArray("Messages").isNull(0)== false) {
                         messages = parser.parseJSONtoMessage(obj);
-                        //Log.i("Server getMessage","Message: "+messages);
-                        //Log.i("Server getMessage", "Messageslength: "+messages.size());
                         de.ifgi.sc.smartcitiesapp.messaging.Messenger.getInstance().updateMessengerFromServer(messages);
                     }
                     else{
@@ -253,7 +233,10 @@ public class ServerConnection implements Connection{
 
     }
 
-
+    /**
+     *  GetZoneTask Class to make an http url connection to the server and GET Zones from the server
+     *  extends AsyncTask to allow network operations to be done in the background
+     */
     public class GetZoneTask extends AsyncTask <String, Integer, String> {
 
         JSONParser parser = new JSONParser();
@@ -318,7 +301,6 @@ public class ServerConnection implements Connection{
                     }
                     else{
                         zones = parser.parseJSONtoZone(obj);
-                        //Log.i("Server getZones","Zones number: "+ zones.size());
                         ZoneManager.getInstance().updateZonesInDatabase(zones);
 
                         // get all Messages for all Zones
@@ -333,9 +315,6 @@ public class ServerConnection implements Connection{
             else{
                 Log.i("Server getZones","Response: Failure "+result);
             }
-
-
         }
-
     }
 }
