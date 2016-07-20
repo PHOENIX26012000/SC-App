@@ -100,6 +100,8 @@ The messages are shared anonymous, so that it is not known to the users to whom 
 
 ### Select and show zones on a map
 
+When the app opens and the user is physically in more than one zone, they have to select one zone they want to operate and communicate in. 
+
 ### Select and show interested topics
 
 ### Receive and write messages
