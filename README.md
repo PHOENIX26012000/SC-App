@@ -1,6 +1,10 @@
 # Happy Share
 
-This application was developed in the Study Project "Smart Cities" at the Institute for Geoinformatics, University of Muenster. The idea behind the project is to develop software for the cities of the future. Using the SCRUM software development method, this application was developed by a team of 7 students. It relates to the concept of opportunistic information sharing, where the inhabitants of a city may share information with other people they meet once they are in range of their mobile phones.
+This application was developed in the Study Project "Smart Cities" at the Institute for Geoinformatics, University of Muenster.
+The idea behind the project is to develop software for the cities of the future. Using the SCRUM software development method, this application was developed by a team of 7 students.
+It relates to a server part, which was developed by a second group of students within the study project and can be found here: [https://github.com/chack05/sc16-ephemeral-lbs-server](https://github.com/chack05/sc16-ephemeral-lbs-server).
+
+The project to the concept of opportunistic information sharing, where the inhabitants of a city may share information with other people they meet once they are in range of their mobile phones.
 
 The developers of the project are:
 ##### ![alt GitHub](http://i.imgur.com/0o48UoR.png") [Heinrich Löwen](https://github.com/heinrichloewen)
