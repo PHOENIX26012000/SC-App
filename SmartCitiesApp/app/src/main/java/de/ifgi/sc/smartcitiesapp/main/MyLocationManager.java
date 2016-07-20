@@ -10,9 +10,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import de.ifgi.sc.smartcitiesapp.interfaces.LocationChangedListener;
 
-/**
- * Created by Maurin on 09.07.2016.
- */
+
 public class MyLocationManager {
 
     public final int MINIMUM_UPDATE_DISTANCE = 5; // 5 meters.
@@ -30,6 +28,11 @@ public class MyLocationManager {
         // constructor hidden because this is a singleton
     }
 
+    /**
+     * Initializes the Location Manager
+     *
+     * @param c context
+     */
     public static void initInstance(Context c) {
         if (instance == null) {
             // Create the instance
@@ -41,20 +44,27 @@ public class MyLocationManager {
         }
     }
 
+    /**
+     * Sets the location changed listener
+     *
+     * @param lcl      listener
+     * @param provider
+     * @throws SecurityException
+     */
     public synchronized void setLocationChangedListener(LocationChangedListener lcl, int provider) throws SecurityException {
         instance.lcl = lcl;
         instance.mLocationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
 
-                    instance.userLocation = new LatLng(
-                            location.getLatitude(),
-                            location.getLongitude()
-                    );
-                    instance.lcl.onLocationChanged(
-                            new LatLng(location.getLatitude(),
-                                    location.getLongitude())
-                    );
+                instance.userLocation = new LatLng(
+                        location.getLatitude(),
+                        location.getLongitude()
+                );
+                instance.lcl.onLocationChanged(
+                        new LatLng(location.getLatitude(),
+                                location.getLongitude())
+                );
 
             }
 
@@ -109,7 +119,8 @@ public class MyLocationManager {
                         l.getLongitude()
                 );
                 loc_obtained = true;
-            } catch (NullPointerException npe) {}
+            } catch (NullPointerException npe) {
+            }
         } catch (SecurityException se) {
         }
 
@@ -121,7 +132,8 @@ public class MyLocationManager {
                         l.getLongitude()
                 );
                 loc_obtained = true;
-            } catch (NullPointerException npe) {}
+            } catch (NullPointerException npe) {
+            }
         } catch (SecurityException se) {
         }
 
@@ -133,7 +145,8 @@ public class MyLocationManager {
                         l.getLongitude()
                 );
                 loc_obtained = true;
-            } catch (NullPointerException npe) { }
+            } catch (NullPointerException npe) {
+            }
         } catch (SecurityException se) {
         }
 
@@ -143,10 +156,21 @@ public class MyLocationManager {
         }
     }
 
+    /**
+     * Get an instance of the Location Manager Singleton
+     *
+     * @return
+     */
     public static MyLocationManager getInstance() {
         return instance;
     }
 
+    /**
+     * Return the users current location
+     *
+     * @return location
+     * @throws NoLocationKnownException
+     */
     public synchronized LatLng getUserLocation() throws NoLocationKnownException {
         if (instance.userLocation == null) {
             throw new NoLocationKnownException();

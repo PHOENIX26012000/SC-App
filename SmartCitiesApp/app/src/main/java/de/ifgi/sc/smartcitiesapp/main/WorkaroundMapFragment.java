@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
+
 public class WorkaroundMapFragment extends SupportMapFragment {
     private OnTouchListener mListener;
 
@@ -28,14 +29,23 @@ public class WorkaroundMapFragment extends SupportMapFragment {
         return layout;
     }
 
+    /**
+     * @param listener
+     */
     public void setListener(OnTouchListener listener) {
         mListener = listener;
     }
 
+    /**
+     *
+     */
     public interface OnTouchListener {
         public abstract void onTouch();
     }
 
+    /**
+     *
+     */
     public class TouchableWrapper extends FrameLayout {
 
         public TouchableWrapper(Context context) {
@@ -44,7 +54,7 @@ public class WorkaroundMapFragment extends SupportMapFragment {
 
         @Override
         public boolean dispatchTouchEvent(MotionEvent event) {
-            Log.d("map","moved");
+            Log.d("map", "moved");
             switch (event.getAction()) {
                 case MotionEvent.ACTION_MOVE:
                     mListener.onTouch();

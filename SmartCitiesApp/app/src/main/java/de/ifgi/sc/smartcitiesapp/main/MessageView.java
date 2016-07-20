@@ -2,22 +2,14 @@ package de.ifgi.sc.smartcitiesapp.main;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.text.SpannableString;
-import android.text.style.StyleSpan;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import java.text.SimpleDateFormat;
 
 import de.ifgi.sc.smartcitiesapp.R;
 
-/**
- * Created by Maurin on 22.05.2016.
- */
+
 public class MessageView extends LinearLayout {
 
     View rootView;
@@ -27,18 +19,45 @@ public class MessageView extends LinearLayout {
     TextView newView;
     boolean newObtainedMsg;
 
-    public MessageView(Context context, AttributeSet attrs, String title, String message, String expDate, boolean newObtained){
+    /**
+     * First constructor: Message with attributes
+     *
+     * @param context
+     * @param attrs
+     * @param title
+     * @param message
+     * @param expDate
+     * @param newObtained
+     */
+    public MessageView(Context context, AttributeSet attrs, String title, String message, String expDate, boolean newObtained) {
         super(context, attrs);
         init(context, title, message, expDate, newObtained);
     }
 
-    public MessageView(Context context, String title, String message, String expDate, boolean newObtained){
+    /**
+     * Second constructor: Message without attributes
+     *
+     * @param context
+     * @param title
+     * @param message
+     * @param expDate
+     * @param newObtained
+     */
+    public MessageView(Context context, String title, String message, String expDate, boolean newObtained) {
         super(context);
         init(context, title, message, expDate, newObtained);
     }
 
-    // adding title, message, expiredate to textviews:
-    private void init(Context context, String title, String message, String expDate, boolean newObtained){
+    /**
+     * Adding title, message, expiredate to textviews:
+     *
+     * @param context
+     * @param title
+     * @param message
+     * @param expDate
+     * @param newObtained
+     */
+    private void init(Context context, String title, String message, String expDate, boolean newObtained) {
         rootView = inflate(context, R.layout.row_msg_layout, this);
         newObtainedMsg = newObtained;
         titleView = (TextView) rootView.findViewById(R.id.msg_title);
@@ -57,6 +76,6 @@ public class MessageView extends LinearLayout {
         titleView.setTextColor(Color.BLACK);
         titleView.setText(title);
         textView.setText(message);
-        expDateView.setText("expires in: "+expDate);
+        expDateView.setText("expires in: " + expDate);
     }
 }

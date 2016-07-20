@@ -1,4 +1,5 @@
 package de.ifgi.sc.smartcitiesapp.server;
+
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -11,11 +12,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.TimeZone;
 
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
-
 
 
 public class JSONParser {
@@ -49,22 +48,23 @@ public class JSONParser {
     /**
      * Constructor
      */
-    public JSONParser(){
+    public JSONParser() {
 
     }
 
     /**
      * parses a ArrayList of Messages to an JSONObject, containing a JSONArray with messages
+     *
      * @param //ArrayList<Message>
      * @return JSONObject
      */
-    public JSONObject parseMessagetoJSON(ArrayList<Message> msglist){
+    public JSONObject parseMessagetoJSON(ArrayList<Message> msglist) {
 
         this.msglist = msglist;
 
         //clear the jsonObject and the jsonArrays
         this.jsonObject.remove("Messages");
-        for(int j = 0; j< jsonArray.length(); j++) {
+        for (int j = 0; j < jsonArray.length(); j++) {
             this.jsonArray.remove(j);
         }
         this.jsonMsg.remove("Client-id");
@@ -77,7 +77,7 @@ public class JSONParser {
         this.jsonLoc.remove("Coordinate");
 
         // get Messages from msglist and write them into the jsonArray
-        for (Message m : msglist){
+        for (Message m : msglist) {
 
             message = m;
             messageID = message.getMessage_ID();
@@ -96,7 +96,7 @@ public class JSONParser {
                 JSONObject obj = new JSONObject();
                 obj.put("Message-id", messageID);
                 obj.put("Zone-id", zoneID);
-                obj.put("Created-at",crDt);
+                obj.put("Created-at", crDt);
                 obj.put("Expired-at", exDt);
                 obj.put("Topic", topic);
                 obj.put("Title", title);
@@ -104,19 +104,18 @@ public class JSONParser {
 
 
                 JSONObject Loc = null;
-                if(latitude != null && longitude != null){
+                if (latitude != null && longitude != null) {
                     Loc = new JSONObject();
                     JSONArray Coords = new JSONArray();
                     Coords.put(latitude);
                     Coords.put(longitude);
-                    Loc.put("Type","Point");
-                    Loc.put("Coordinate",Coords);
-                    obj.put("Location",Loc);
+                    Loc.put("Type", "Point");
+                    Loc.put("Coordinate", Coords);
+                    obj.put("Location", Loc);
+                } else {
+                    obj.put("Location", JSONObject.NULL);
                 }
-                else{
-                    obj.put("Location",JSONObject.NULL);
-                }
-                Log.i("Parser","Location into object: Loc: "+ Loc);
+                Log.i("Parser", "Location into object: Loc: " + Loc);
                 this.jsonArray.put(obj);
 
             } catch (JSONException e) {
@@ -129,13 +128,14 @@ public class JSONParser {
             jsonObject.put("Messages", jsonArray);
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.i("MsgToJSON","putting jsonArray into jsonObject didn't work");
+            Log.i("MsgToJSON", "putting jsonArray into jsonObject didn't work");
         }
         return jsonObject;
     }
 
     /**
      * parses a jsonObject, containing a JsonArray, to an ArrayList of messages
+     *
      * @param jsonObject
      * @return ArrayList<Message>
      */
@@ -146,7 +146,7 @@ public class JSONParser {
 
         try {
             jsonArray = jsonObject.getJSONArray("Messages");
-            for(int i = 0; i < jsonArray.length(); i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
                 jsonMsg = jsonArray.getJSONObject(i);
                 messageID = (String) jsonMsg.get("Message-id");
                 zoneID = (String) jsonMsg.get("Zone-id");
@@ -158,17 +158,16 @@ public class JSONParser {
                 title = (String) jsonMsg.get("Title");
                 msg = (String) jsonMsg.get("Message");
 
-                if(jsonMsg.isNull("Location")){
+                if (jsonMsg.isNull("Location")) {
                     latitude = null;
                     longitude = null;
-                }
-                else{
+                } else {
                     jsonLoc = jsonMsg.getJSONObject("Location");
                     jsonCoords = jsonLoc.getJSONArray("Coordinate");
                     latitude = (Double) jsonCoords.get(0);
                     longitude = (Double) jsonCoords.get(1);
                 }
-                message = new Message(messageID,zoneID,creationDate,latitude,longitude,expiredDate,topic,title,msg,true);
+                message = new Message(messageID, zoneID, creationDate, latitude, longitude, expiredDate, topic, title, msg, true);
                 this.msglist.add(message);
 
             }
@@ -179,6 +178,11 @@ public class JSONParser {
         return this.msglist;
     }
 
+    /**
+     *
+     * @param string
+     * @return
+     */
     public Date parseStringToDate(String string) {
 
         String substring = string.substring(0, (string.length() - 1));
@@ -193,26 +197,32 @@ public class JSONParser {
         return null;
     }
 
-    public String parseMessageDateFormatToServerDateFormat(String string){
+    /**
+     *
+     * @param string
+     * @return
+     */
+    public String parseMessageDateFormatToServerDateFormat(String string) {
 
-        String substring = string.substring(0,string.length()-2);
-        String dtstring = new String(substring+":00");
+        String substring = string.substring(0, string.length() - 2);
+        String dtstring = new String(substring + ":00");
         return dtstring;
     }
 
     /**
      * Converts a JSON file into a ArrayList of Zones
+     *
      * @param jsonObject
      * @return ArrayList of Zone
      */
-    public ArrayList<Zone> parseJSONtoZone(JSONObject jsonObject){
+    public ArrayList<Zone> parseJSONtoZone(JSONObject jsonObject) {
 
         this.jsonObject = jsonObject;
         this.zonelist.clear();
 
         try {
             jsonArray = this.jsonObject.getJSONArray("Zones");
-            for(int i = 0; i < jsonArray.length(); i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonZone = jsonArray.getJSONObject(i);
                 String name = (String) jsonZone.get("Name");
                 String zoneID = (String) jsonZone.get("Zone-id");
@@ -221,17 +231,17 @@ public class JSONParser {
 
                 JSONArray jsonCoords = geom.getJSONArray("Coordinates");
                 ArrayList<LatLng> polygon = new ArrayList<LatLng>();
-                for(int k = 0; k < jsonCoords.length(); k++){
+                for (int k = 0; k < jsonCoords.length(); k++) {
                     JSONArray coords2 = jsonCoords.getJSONArray(k);
                     polygon.add(new LatLng((Double) coords2.get(0), (Double) coords2.get(1)));
                 }
-                Log.i("Parser JSONtoMsg","Polygon: "+polygon);
+                Log.i("Parser JSONtoMsg", "Polygon: " + polygon);
                 JSONArray jsonTopics = jsonZone.getJSONArray("Topics");
                 zoneTopics = new String[jsonTopics.length()];
-                for (int m = 0; m< jsonTopics.length(); m++) {
+                for (int m = 0; m < jsonTopics.length(); m++) {
                     zoneTopics[m] = (String) jsonTopics.get(m);
                 }
-                Zone zone = new Zone(name, zoneID, exDt,zoneTopics, polygon);
+                Zone zone = new Zone(name, zoneID, exDt, zoneTopics, polygon);
                 zonelist.add(zone);
             }
 

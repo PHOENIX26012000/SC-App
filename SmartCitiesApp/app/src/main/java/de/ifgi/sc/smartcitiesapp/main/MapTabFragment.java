@@ -1,13 +1,10 @@
 package de.ifgi.sc.smartcitiesapp.main;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
@@ -17,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,6 +34,7 @@ import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
 import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
+
 
 public class MapTabFragment extends Fragment implements OnMapReadyCallback {
 
@@ -240,7 +237,7 @@ public class MapTabFragment extends Fragment implements OnMapReadyCallback {
         mMap.animateCamera(cu);
     }
 
-    private void updateMapMarkers(){
+    private void updateMapMarkers() {
         // get all msgs for the current selected zone:
         msgs = Messenger.getInstance().getAllMessages();
         msgs_in_current_zone = new ArrayList<Message>();
@@ -249,7 +246,7 @@ public class MapTabFragment extends Fragment implements OnMapReadyCallback {
         initColors();
         for (Message m : msgs) {
             // if m's topic is subscribed:
-            if (isTopicPreferred(current_selected_zone.getZoneID(),m.getTopic())) {
+            if (isTopicPreferred(current_selected_zone.getZoneID(), m.getTopic())) {
                 // if m is inside current selected zone
                 if (m.getZone_ID().equals(current_selected_zone.getZoneID()))
                     // if m has location information:
@@ -315,6 +312,7 @@ public class MapTabFragment extends Fragment implements OnMapReadyCallback {
 
     /**
      * assignes a predefined color to a topic
+     *
      * @param topic the topic which a color needs to be assigned to
      * @return the color assigned to the topic
      */
@@ -327,8 +325,8 @@ public class MapTabFragment extends Fragment implements OnMapReadyCallback {
         }
         // otherwise, assign new color and return it:
         used_topics.add(topic);
-        if (used_topics.size()>used_colors.size())
-            used_colors.add(new int[] {(int) (Math.random()*255),(int) (Math.random()*255),(int) (Math.random()*255)});
+        if (used_topics.size() > used_colors.size())
+            used_colors.add(new int[]{(int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255)});
         return used_colors.get(used_topics.size() - 1);
     }
 
@@ -357,12 +355,13 @@ public class MapTabFragment extends Fragment implements OnMapReadyCallback {
 
     /**
      * checks, if a topic of a zone is subscribed by the user
+     *
      * @param zone_id - the zone, the topic is part of
-     * @param topic - the topic, that is to be subscribed
+     * @param topic   - the topic, that is to be subscribed
      * @return true - if the topic is subscribed in that zone, false otherwise
      */
-    private boolean isTopicPreferred(String zone_id,String topic){
+    private boolean isTopicPreferred(String zone_id, String topic) {
         return PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext())
-                .getBoolean("pref_"+zone_id+"_"+topic,true);
+                .getBoolean("pref_" + zone_id + "_" + topic, true);
     }
 }

@@ -2,8 +2,10 @@ package de.ifgi.sc.smartcitiesapp.server;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,13 +22,11 @@ import de.ifgi.sc.smartcitiesapp.zone.Zone;
 import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
 /**
- *  Server Connection Class responsible for exchange of messages and zones with the server
+ * Server Connection Class responsible for exchange of messages and zones with the server
  */
-
-public class ServerConnection implements Connection{
+public class ServerConnection implements Connection {
 
     private JSONObject obj = new JSONObject();
-
 
 
     public ServerConnection() {
@@ -39,8 +39,8 @@ public class ServerConnection implements Connection{
      */
     public void shareMessage(ArrayList<Message> messages) {
         ArrayList<Message> listmsg = new ArrayList<>();
-        for (Message m: messages){
-            if(m.getShareWithServer() &&  m.getZone_ID() != "UMPA-UMPA-UMPA-TÖTÖRÖ"){
+        for (Message m : messages) {
+            if (m.getShareWithServer() && m.getZone_ID() != "UMPA-UMPA-UMPA-TÖTÖRÖ") {
                 listmsg.add(m);
             }
         }
@@ -52,16 +52,16 @@ public class ServerConnection implements Connection{
 
 
     /**
-     *  Method that requests the server for Messages and shares them with the Messenger
+     * Method that requests the server for Messages and shares them with the Messenger
      */
     public void getMessages(String zoneID) {
 
-        new GetMsgTask().execute("http://giv-project6.uni-muenster.de:8080/api/messages?zone="+zoneID);
+        new GetMsgTask().execute("http://giv-project6.uni-muenster.de:8080/api/messages?zone=" + zoneID);
 
     }
 
     /**
-     *  Method to Get all the zones from the server
+     * Method to Get all the zones from the server
      */
     public void getZones() {
 
@@ -70,12 +70,12 @@ public class ServerConnection implements Connection{
     }
 
     /**
-     *  PostMsgTask Class to make an http url connection to the server and POST messages to the server
-     *  extends AsyncTask to allow network operations to be done in the background
+     * PostMsgTask Class to make an http url connection to the server and POST messages to the server
+     * extends AsyncTask to allow network operations to be done in the background
      */
-    public class PostMsgTask extends AsyncTask<String,Integer, String>{
+    public class PostMsgTask extends AsyncTask<String, Integer, String> {
 
-        String responseString= "";
+        String responseString = "";
         int response;
         InputStream is = null;
 
@@ -89,8 +89,7 @@ public class ServerConnection implements Connection{
 
         @Override
         protected String doInBackground(String... urls) {
-            try
-            {
+            try {
                 URL url = new URL(urls[0]);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000 /* milliseconds */);
@@ -114,7 +113,7 @@ public class ServerConnection implements Connection{
                 conn.connect();
 
                 response = conn.getResponseCode();
-                if (response == 201){
+                if (response == 201) {
                     is = conn.getInputStream();
                 } else if (response == 404) {
                     is = conn.getErrorStream();
@@ -125,17 +124,18 @@ public class ServerConnection implements Connection{
                 responseString = contentAsString;
                 conn.disconnect();
 
-                } catch (Exception e) {
-                 responseString = "error occured: "+e + "|||  " + responseString;
-            }
-
-            finally {
-                if (is != null){
-                    try { is.close();} catch (Exception e) {}
+            } catch (Exception e) {
+                responseString = "error occured: " + e + "|||  " + responseString;
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (Exception e) {
+                    }
                 }
             }
 
-            return responseString+response;
+            return responseString + response;
 
 
         }
@@ -143,20 +143,19 @@ public class ServerConnection implements Connection{
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             if (result.contains("201")) {
-                Log.i("Server","Successful"+result);
-            }
-            else if (result.contains("404")) {
-                Log.i("Server","Failure"+result);
+                Log.i("Server", "Successful" + result);
+            } else if (result.contains("404")) {
+                Log.i("Server", "Failure" + result);
             }
         }
 
     }
 
     /**
-     *  GetMsgTask Class to make an http url connection to the server and GET messages from the server
-     *  extends AsyncTask to allow network operations to be done in the background
+     * GetMsgTask Class to make an http url connection to the server and GET messages from the server
+     * extends AsyncTask to allow network operations to be done in the background
      */
-    public class GetMsgTask extends AsyncTask<String,Integer, String> {
+    public class GetMsgTask extends AsyncTask<String, Integer, String> {
 
         JSONParser parser = new JSONParser();
         ArrayList<Message> messages = new ArrayList<Message>();
@@ -184,7 +183,7 @@ public class ServerConnection implements Connection{
                 StringBuilder sb = new StringBuilder();
 
                 String line = null;
-                while ((line = reader.readLine()) != null){
+                while ((line = reader.readLine()) != null) {
                     sb.append(line);
                 }
 
@@ -208,25 +207,23 @@ public class ServerConnection implements Connection{
 
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Log.i("Server getMessages", "test: "+result.charAt(0)+" "+result.charAt(result.length()-1));
-            if(result.charAt(0) == '{' && result.charAt(result.length()-1)== '}'){
-                Log.i("Server getMessage","Response: Success");
+            Log.i("Server getMessages", "test: " + result.charAt(0) + " " + result.charAt(result.length() - 1));
+            if (result.charAt(0) == '{' && result.charAt(result.length() - 1) == '}') {
+                Log.i("Server getMessage", "Response: Success");
                 try {
                     JSONObject obj = new JSONObject(result);
-                    if(obj.getJSONArray("Messages").isNull(0)== false) {
+                    if (obj.getJSONArray("Messages").isNull(0) == false) {
                         messages = parser.parseJSONtoMessage(obj);
                         de.ifgi.sc.smartcitiesapp.messaging.Messenger.getInstance().updateMessengerFromServer(messages);
-                    }
-                    else{
-                        Log.i("Server getMessage", "Response is empty JSONObject: "+result);
+                    } else {
+                        Log.i("Server getMessage", "Response is empty JSONObject: " + result);
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
-            else{
-                Log.i("Server getMessage","Response: Failure "+result);
+            } else {
+                Log.i("Server getMessage", "Response: Failure " + result);
             }
 
         }
@@ -234,10 +231,10 @@ public class ServerConnection implements Connection{
     }
 
     /**
-     *  GetZoneTask Class to make an http url connection to the server and GET Zones from the server
-     *  extends AsyncTask to allow network operations to be done in the background
+     * GetZoneTask Class to make an http url connection to the server and GET Zones from the server
+     * extends AsyncTask to allow network operations to be done in the background
      */
-    public class GetZoneTask extends AsyncTask <String, Integer, String> {
+    public class GetZoneTask extends AsyncTask<String, Integer, String> {
 
         JSONParser parser = new JSONParser();
         ArrayList<Zone> zones = new ArrayList<>();
@@ -265,7 +262,7 @@ public class ServerConnection implements Connection{
                 StringBuilder sb = new StringBuilder();
 
                 String line = null;
-                while ((line = reader.readLine()) != null){
+                while ((line = reader.readLine()) != null) {
                     sb.append(line);
                 }
 
@@ -291,29 +288,27 @@ public class ServerConnection implements Connection{
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             //test if response can be a JSON object
-            if(result.charAt(0) == '{' && result.charAt(result.length()-1)== '}'){
-                Log.i("Server getZones","Response: Success");
+            if (result.charAt(0) == '{' && result.charAt(result.length() - 1) == '}') {
+                Log.i("Server getZones", "Response: Success");
                 try {
                     JSONObject obj = new JSONObject(result);
                     //test if response is empty
-                    if(obj.getJSONArray("Zones").isNull(0)){
-                        Log.i("Server getZones", "Response is empty JSONObject: "+result);
-                    }
-                    else{
+                    if (obj.getJSONArray("Zones").isNull(0)) {
+                        Log.i("Server getZones", "Response is empty JSONObject: " + result);
+                    } else {
                         zones = parser.parseJSONtoZone(obj);
                         ZoneManager.getInstance().updateZonesInDatabase(zones);
 
                         // get all Messages for all Zones
-                        for (Zone z: zones){
+                        for (Zone z : zones) {
                             getMessages(z.getZoneID());
                         }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
-            else{
-                Log.i("Server getZones","Response: Failure "+result);
+            } else {
+                Log.i("Server getZones", "Response: Failure " + result);
             }
         }
     }

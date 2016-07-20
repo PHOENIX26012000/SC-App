@@ -11,7 +11,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.messages.Message;
-import com.google.android.gms.nearby.messages.MessageFilter;
 import com.google.android.gms.nearby.messages.MessageListener;
 import com.google.android.gms.nearby.messages.PublishCallback;
 import com.google.android.gms.nearby.messages.PublishOptions;
@@ -32,7 +31,6 @@ import de.ifgi.sc.smartcitiesapp.interfaces.Connection;
 import de.ifgi.sc.smartcitiesapp.main.MainActivity;
 
 /**
- * Created by Heinrich.
  * The P2PManager handles the connection between different peers in the network.
  */
 public class P2PManager implements Connection, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {

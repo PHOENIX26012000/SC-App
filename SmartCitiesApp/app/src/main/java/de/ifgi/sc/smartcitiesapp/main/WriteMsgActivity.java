@@ -1,7 +1,6 @@
 package de.ifgi.sc.smartcitiesapp.main;
 
 import android.Manifest;
-import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -17,19 +16,16 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -163,7 +159,7 @@ public class WriteMsgActivity extends AppCompatActivity {
 
         // if we're in the default zone, disable 'shareToServerOption':
         CheckBox chb_shareToServer = (CheckBox) findViewById(R.id.chb_allowServerSharing);
-        if (current_selected_zone.getZoneID().equals(this.DEFAULT_ZONE_ID)){
+        if (current_selected_zone.getZoneID().equals(this.DEFAULT_ZONE_ID)) {
             // disable shareToServerOption:
             chb_shareToServer.setChecked(false);
             chb_shareToServer.setEnabled(false);
@@ -239,7 +235,7 @@ public class WriteMsgActivity extends AppCompatActivity {
                         public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
                             expDate_hours = hourOfDay;
                             expDate_mins = minute;
-                            Log.d("OnTimeChanged","hours: "+hourOfDay+ ", mins: " + minute);
+                            Log.d("OnTimeChanged", "hours: " + hourOfDay + ", mins: " + minute);
                         }
                     });
 
@@ -554,7 +550,7 @@ public class WriteMsgActivity extends AppCompatActivity {
                 expTimeCreatedCustomly = true;
                 break;
         }
-        if (expTimeCreatedCustomly){
+        if (expTimeCreatedCustomly) {
             // msg_exp is set alrdy.
         } else
             msg_exp = new Date(theFuture);

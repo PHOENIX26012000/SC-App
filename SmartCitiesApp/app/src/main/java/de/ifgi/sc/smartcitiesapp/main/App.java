@@ -24,7 +24,7 @@ public class App extends Application {
     public final String DEFAULT_ZONE_ID = "UMPA-UMPA-UMPA-TÖTÖRÖÖÖ";
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
         initSingletons();
     }
@@ -32,7 +32,7 @@ public class App extends Application {
     /**
      * initialise all global singleton variables
      */
-    protected void initSingletons(){
+    protected void initSingletons() {
 
         UIMessageManager.initInstance();        // Singleton of UIMessageManager
         ZoneManager.initInstance(this);         // Singleton of ZoneManager
@@ -43,9 +43,10 @@ public class App extends Application {
 
     /**
      * To be called, if server is not accessible or userlocation is not in any zone.
+     *
      * @return
      */
-    protected Zone getDefaultZone(LatLng userLocation){
+    protected Zone getDefaultZone(LatLng userLocation) {
         // create the default zone:
         long expDateMillis = new Date().getTime() + 1000 * 3600 * 24 * 365; // 1 year
         Date expDate = new Date(expDateMillis);
@@ -62,12 +63,12 @@ public class App extends Application {
         // (note: mercator projection distortions 1 Lat != 1 Lon!
         // => result is ellipse, not circle [unless u're @ equator]):
         double length = 0.01d;
-        for (int degree = 0; degree < 360; degree=degree+10){
-            LatLng nextPoint = new LatLng(0,0.1);
+        for (int degree = 0; degree < 360; degree = degree + 10) {
+            LatLng nextPoint = new LatLng(0, 0.1);
             // rotate the next Point by degree:
             nextPoint = new LatLng(
-                    Math.sin(Math.toRadians(degree))*length+userLocation.latitude,
-                    Math.cos(Math.toRadians(degree))*length+userLocation.longitude
+                    Math.sin(Math.toRadians(degree)) * length + userLocation.latitude,
+                    Math.cos(Math.toRadians(degree)) * length + userLocation.longitude
             );
             pts.add(nextPoint);
         }

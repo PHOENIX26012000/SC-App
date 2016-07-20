@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,10 +33,11 @@ import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
 import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
 
-public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyCallback, LocationChangedListener{
 
-    public final static int ZONE_SELECTED_SUCCESSFUL    = 15001;
-    public final static int ZONE_SELECTION_ABORTED      = 15002;
+public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyCallback, LocationChangedListener {
+
+    public final static int ZONE_SELECTED_SUCCESSFUL = 15001;
+    public final static int ZONE_SELECTION_ABORTED = 15002;
 
     private GoogleMap map;
     private ArrayList<EnhancedPolygon> zones;
@@ -59,16 +60,16 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
                 // animate Camera to next zone:
-                current_focused_zone_index = (current_focused_zone_index+1) % zones.size();
+                current_focused_zone_index = (current_focused_zone_index + 1) % zones.size();
                 // zoom into polygons:
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    for (LatLng pt : zones.get(current_focused_zone_index).getPoints()) {
-                        builder.include(pt);
-                    }
-                LatLngBounds bounds = new LatLngBounds(new LatLng(0,0), new LatLng(0,0));
+                for (LatLng pt : zones.get(current_focused_zone_index).getPoints()) {
+                    builder.include(pt);
+                }
+                LatLngBounds bounds = new LatLngBounds(new LatLng(0, 0), new LatLng(0, 0));
                 try {
                     bounds = builder.build();
-                } catch (IllegalStateException ise){
+                } catch (IllegalStateException ise) {
                     // if here, then no zone contains the user location... er..
                     // okay... let's give some feedback to the user, and finish the useless zoneselection Activity:
                     Log.e("SelectZone", "Error on next zone: " + ise.getMessage());
@@ -82,7 +83,7 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
                     Log.e("SelectZone", "Error on next zone: " + ise.getMessage());
                 }
                 // select the zone in the UI:
-                for (int i=0; i<zones.size(); i++){
+                for (int i = 0; i < zones.size(); i++) {
                     Polygon selected = zones.get(i).getPolygonRef();
                     if (i == current_focused_zone_index) {
                         selected.setFillColor(Color.argb(200, 50, 255, 50));
@@ -99,7 +100,7 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
         // access the current user location:
         try {
             userLocation = MyLocationManager.getInstance().getUserLocation();
-        } catch (NoLocationKnownException e){
+        } catch (NoLocationKnownException e) {
             Log.e("SelectZone", "No Location known. Finishing Activity...");
             setResult(ZONE_SELECTION_ABORTED);
             finish();
@@ -119,27 +120,27 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
             ZoneManager.getInstance().setCurrentZone(current_selected_zone);
         }
         int index_selected = 0;
-        for (int i=0; i<zonesFromDB.size();i++){
+        for (int i = 0; i < zonesFromDB.size(); i++) {
             if (current_selected_zone.getZoneID().equals(zonesFromDB.get(i).getZoneID()))
                 index_selected = i;
         }
 
         zones = new ArrayList<EnhancedPolygon>();
 
-        for (Zone z : zonesFromDB){
+        for (Zone z : zonesFromDB) {
             // create enhanced Polygon for zone z with random color:
-            int[] rgb = {((int) (Math.random()*255)),
-                    ((int) (Math.random()*255)),
-                    ((int) (Math.random()*255))};
+            int[] rgb = {((int) (Math.random() * 255)),
+                    ((int) (Math.random() * 255)),
+                    ((int) (Math.random() * 255))};
             EnhancedPolygon ep = new EnhancedPolygon(z.getPolygon(), rgb, z.getName());
             zones.add(ep);
-            Log.d("zons","zone name:"+z.getName());
+            Log.d("zons", "zone name:" + z.getName());
         }
 
         // add zone names into spinner:
         spn_zoneSelecter = (Spinner) findViewById(R.id.spn_zoneSelecter);
         final String[] zoneNames = new String[zones.size()];
-        for (int i=0; i<zones.size();i++){
+        for (int i = 0; i < zones.size(); i++) {
             zoneNames[i] = zones.get(i).getName();
         }
 
@@ -156,8 +157,8 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
         spn_zoneSelecter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                for (int i=0; i<zones.size();i++){
-                    if (i != position){
+                for (int i = 0; i < zones.size(); i++) {
+                    if (i != position) {
                         zones.get(i).setDefaultColor();
                         zones.get(i).getPolygonRef().setZIndex(100);
                     } else {
@@ -170,10 +171,10 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
                         for (LatLng pt : zones.get(position).getPoints()) {
                             builder.include(pt);
                         }
-                        LatLngBounds bounds = new LatLngBounds(new LatLng(0,0), new LatLng(0,0));
+                        LatLngBounds bounds = new LatLngBounds(new LatLng(0, 0), new LatLng(0, 0));
                         try {
                             bounds = builder.build();
-                        } catch (IllegalStateException ise){
+                        } catch (IllegalStateException ise) {
                             // if here, then no zone contains the user location... er..
                             // okay... let's give some feedback to the user, and finish the useless zoneselection Activity:
                             Log.e("SelectZone", "Error on next zone: " + ise.getMessage());
@@ -216,7 +217,7 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
         map = googleMap;
 
         // add zones onto map + safe the polygon references to the EnhancedPolygon objects:
-        for (EnhancedPolygon ep : zones){
+        for (EnhancedPolygon ep : zones) {
             ep.setPolygon(map.addPolygon(ep.getPolygon()));
             // make polygon clickable:
             ep.getPolygonRef().setClickable(true);
@@ -226,7 +227,7 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
         map.setOnPolygonClickListener(new GoogleMap.OnPolygonClickListener() {
             @Override
             public void onPolygonClick(Polygon polygon) {
-                for (int i=0; i<zones.size(); i++){
+                for (int i = 0; i < zones.size(); i++) {
                     Polygon selected = zones.get(i).getPolygonRef();
                     if (selected.equals(polygon)) {
                         selected.setFillColor(Color.argb(200, 50, 255, 50));
@@ -247,13 +248,13 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
                 builder.include(pt);
             }
         }
-        LatLngBounds bounds = new LatLngBounds(new LatLng(0,0), new LatLng(0,0));
+        LatLngBounds bounds = new LatLngBounds(new LatLng(0, 0), new LatLng(0, 0));
         try {
             bounds = builder.build();
-        } catch (IllegalStateException ise){
+        } catch (IllegalStateException ise) {
             // if here, then no zone contains the user location... er..
             // okay... let's give some feedback to the user, and finish the useless zoneselection Activity:
-            Toast.makeText(getApplicationContext(),"You are currently in no zone. Default zone is selected til you enter an existing one", Toast.LENGTH_LONG ).show();
+            Toast.makeText(getApplicationContext(), "You are currently in no zone. Default zone is selected til you enter an existing one", Toast.LENGTH_LONG).show();
             setResult(ZONE_SELECTION_ABORTED);
             finish();
         }
@@ -279,13 +280,13 @@ public class SelectZoneActivity extends AppCompatActivity implements OnMapReadyC
             }
 
             if (!network_enabled) {
-                Toast.makeText(this,"Please enable location service",Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Please enable location service", Toast.LENGTH_LONG).show();
                 // activate Location Service
                 Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 SelectZoneActivity.this.startActivity(myIntent);
             }
         } catch (SecurityException e) {
-            Log.d("maptab","Security Exception: " + e);
+            Log.d("maptab", "Security Exception: " + e);
             // request location permission to the user:
 
         } finally {

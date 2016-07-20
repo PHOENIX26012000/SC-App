@@ -1,6 +1,5 @@
 package de.ifgi.sc.smartcitiesapp.main;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,10 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
@@ -52,7 +47,10 @@ public class TopicTabFragment extends Fragment {
         createAllViews();
     }
 
-    public void createAllViews(){
+    /**
+     * Create all views
+     */
+    public void createAllViews() {
         flag_unsubscribed_topics_exist = false;
         // Get the current selected zone:
         try {
@@ -117,7 +115,7 @@ public class TopicTabFragment extends Fragment {
 
         // create TopicViews for each topic:
         for (int i = 0; i < topics.length; i++) {
-            if (isTopicPreferred(current_selected_zone.getZoneID(),topics[i])) {
+            if (isTopicPreferred(current_selected_zone.getZoneID(), topics[i])) {
                 TopicView tv;
                 if (topic_hasNewEntry[i]) {
                     // highlight it:
@@ -134,10 +132,10 @@ public class TopicTabFragment extends Fragment {
                 flag_unsubscribed_topics_exist = true;
             }
         }
-        if (flag_unsubscribed_topics_exist){
+        if (flag_unsubscribed_topics_exist) {
             TopicView tv = new TopicView(
                     getContext(),
-                    "more topics available." ,
+                    "more topics available.",
                     "Select more topics in the settings.",
                     false);
             tv.setClickable(false);
@@ -155,13 +153,14 @@ public class TopicTabFragment extends Fragment {
 
     /**
      * checks, if a topic of a zone is subscribed by the user
+     *
      * @param zone_id - the zone, the topic is part of
-     * @param topic - the topic, that is to be subscribed
+     * @param topic   - the topic, that is to be subscribed
      * @return true - if the topic is subscribed in that zone, false otherwise
      */
-    private boolean isTopicPreferred(String zone_id,String topic){
+    private boolean isTopicPreferred(String zone_id, String topic) {
         return PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext())
-                .getBoolean("pref_"+zone_id+"_"+topic,true);
+                .getBoolean("pref_" + zone_id + "_" + topic, true);
     }
 
     @Override

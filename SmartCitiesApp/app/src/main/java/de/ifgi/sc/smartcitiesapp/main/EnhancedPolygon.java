@@ -8,9 +8,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.util.ArrayList;
 
-/**
- * Created by Maurin on 15.06.2016.
- */
+
 public class EnhancedPolygon {
 
     private int colorRed;
@@ -20,9 +18,9 @@ public class EnhancedPolygon {
     private Polygon polygon;
     private String name;
 
-    public EnhancedPolygon(ArrayList<LatLng> coordinates, int[] color, String name){
+    public EnhancedPolygon(ArrayList<LatLng> coordinates, int[] color, String name) {
         points = new ArrayList<LatLng>();
-        for (LatLng lt : coordinates){
+        for (LatLng lt : coordinates) {
             points.add(lt);
         }
         this.colorRed = color[0];
@@ -31,32 +29,32 @@ public class EnhancedPolygon {
         this.name = name;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public PolygonOptions getPolygon(){
+    public PolygonOptions getPolygon() {
         return new PolygonOptions()
                 .zIndex(100)
-                .fillColor(android.graphics.Color.argb(100,this.colorRed, this.colorGreen, this.colorBlue))
+                .fillColor(android.graphics.Color.argb(100, this.colorRed, this.colorGreen, this.colorBlue))
                 .strokeWidth(1)
-                .strokeColor(android.graphics.Color.argb(100,this.colorRed, this.colorGreen, this.colorBlue))
+                .strokeColor(android.graphics.Color.argb(100, this.colorRed, this.colorGreen, this.colorBlue))
                 .addAll(this.points);
     }
 
-    public void setPolygon(Polygon polygon){
+    public void setPolygon(Polygon polygon) {
         this.polygon = polygon;
     }
 
-    public Polygon getPolygonRef(){
+    public Polygon getPolygonRef() {
         return this.polygon;
     }
 
-    public void setDefaultColor(){
+    public void setDefaultColor() {
         this.polygon.setFillColor(Color.argb(100, this.colorRed, this.colorGreen, this.colorBlue));
     }
 
-    public ArrayList<LatLng> getPoints(){
+    public ArrayList<LatLng> getPoints() {
         return this.points;
     }
 

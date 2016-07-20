@@ -1,14 +1,12 @@
 package de.ifgi.sc.smartcitiesapp.main;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -19,12 +17,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import de.ifgi.sc.smartcitiesapp.R;
-import de.ifgi.sc.smartcitiesapp.interfaces.MessagesObtainedListener;
 import de.ifgi.sc.smartcitiesapp.messaging.Message;
 import de.ifgi.sc.smartcitiesapp.messaging.Messenger;
 import de.ifgi.sc.smartcitiesapp.zone.NoZoneCurrentlySelectedException;
 import de.ifgi.sc.smartcitiesapp.zone.Zone;
 import de.ifgi.sc.smartcitiesapp.zone.ZoneManager;
+
 
 public class MsgActivity extends AppCompatActivity {
 
@@ -38,50 +36,50 @@ public class MsgActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("MsgActivity","test #-2 reached");
+        Log.d("MsgActivity", "test #-2 reached");
         // fill message activity with messages of selected topic type
         LinearLayout ll_messages = (LinearLayout) findViewById(R.id.ll_messages);
         ll_messages.removeAllViews();
         shown_messages = new ArrayList<MessageView>();
 
-        Log.d("MsgActivity","test #-1 reached");
+        Log.d("MsgActivity", "test #-1 reached");
         // Get the current selected zone:
         try {
             current_selected_zone = ZoneManager.getInstance().getCurrentZone();
-        } catch (NoZoneCurrentlySelectedException e){
+        } catch (NoZoneCurrentlySelectedException e) {
             // what do, if no zone is currently selected?
             // select the first zone of the zonemanager:
             current_selected_zone = ZoneManager.getInstance().getAllZonesfromDatabase().get(0);
             ZoneManager.getInstance().setCurrentZone(current_selected_zone);
         }
 
-        Log.d("MsgActivity","test #0 reached");
+        Log.d("MsgActivity", "test #0 reached");
         // get all msgs for this current selected zone:
         msgs = Messenger.getInstance().getAllMessages();
         msgs_in_current_zone = new ArrayList<Message>();
-        Log.d("MsgActivity","test #1 reached");
+        Log.d("MsgActivity", "test #1 reached");
         ArrayList<Message> newObtained = UIMessageManager.getInstance().getNew_obtained_msgs();
-        Log.d("MsgActivity","test #2 reached");
+        Log.d("MsgActivity", "test #2 reached");
 
         ArrayList<String> newObtainedIDs = new ArrayList<String>();
-        Log.d("MsgActivity","test #3 reached");
-        if (newObtained!=null) {
+        Log.d("MsgActivity", "test #3 reached");
+        if (newObtained != null) {
             for (Message m : newObtained)
                 newObtainedIDs.add(m.getMessage_ID());
         }
-        Log.d("MsgActivity","test #4 reached");
+        Log.d("MsgActivity", "test #4 reached");
         ArrayList<String> newObtainedIDsInThisTopics = new ArrayList<String>();
 
         // for each message m from the Messenger:
-        for (Message m : msgs){
+        for (Message m : msgs) {
             // if m is inside current selected zone
             if (m.getZone_ID().equals(current_selected_zone.getZoneID()))
                 msgs_in_current_zone.add(m);
         }
-        Log.d("HS_msgs",msgs_in_current_zone.size()+"");
+        Log.d("HS_msgs", msgs_in_current_zone.size() + "");
 
         // add messages into UI:
-        for (Message msg: msgs_in_current_zone){
+        for (Message msg : msgs_in_current_zone) {
             if (msg.getTopic().equals(selected_topic)) {
                 // create MessageView from msg for the layout:
                 Date exp_date = new Date();
@@ -100,7 +98,7 @@ public class MsgActivity extends AppCompatActivity {
                 MessageView mv;
                 if (newObtainedIDs.contains(msg.getMessage_ID())) {
                     // highlight, if its new:
-                    Log.e("HIGH","LIGHTING message: "+msg.getTitle());
+                    Log.e("HIGH", "LIGHTING message: " + msg.getTitle());
                     mv = new MessageView(this, msg.getTitle(), msg.getMsg(), expiresIn, true);
                     newObtainedIDsInThisTopics.add(msg.getMessage_ID());
                 } else {

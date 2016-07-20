@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import de.ifgi.sc.smartcitiesapp.R;
@@ -15,6 +14,11 @@ public class MySimpleArrayAdapter extends ArrayAdapter<String> {
     private final String[] topics;
     private final String[] msgs;
 
+    /**
+     * @param context
+     * @param topics
+     * @param msgs
+     */
     public MySimpleArrayAdapter(Context context, String[] topics, String[] msgs) {
         super(context, R.layout.row_layout_listitem, topics);
         this.context = context;
