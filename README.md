@@ -111,7 +111,7 @@ When the app opens and the user is physically in more than one zone, they have t
 ### Select and show interested topics
 
 <img src="img/Screenshot_20160717-211401.png" width="200"/>
-<img src="img/Screenshot_20160717-211355" width="200"/>
+<img src="img/Screenshot_20160717-211355.png" width="200"/>
 <img src="img/Screenshot_20160717-211627.png" width="200"/>
 
 Topic may be different for zones. By default all topic are shown in the main view, and when selecting a topic all messages within that topic are shown. When opening the settings, the user might disable topics they are not interested in.
