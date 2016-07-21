@@ -104,7 +104,7 @@ The messages are shared anonymous, so that it is not known to the users to whom 
 
 ### Select and show zones on a map
 
-![functionality](img/Screenshot_20160717-211820.png)
+![functionality](img/Screenshot_20160717-211820.png =250x)
 
 When the app opens and the user is physically in more than one zone, they have to select one zone they want to operate and communicate in. If they are in just one zone, this is automatically chosen and the user can see the text "You are currently in: [Zone]". If the user wants to change the zone they can do it by tapping "Select a zone" and they are shown all zones they are currently in on a map.
 
