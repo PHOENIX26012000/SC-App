@@ -122,6 +122,7 @@ Topic may be different for zones. By default all topic are shown in the main vie
 ### Receive and write messages
 
 <img src="img/Screenshot_20160717-220623.png" width="200"/>
+<img src="img/Screenshot_20160717-212117.png" width="200"/>
 
 The peer-to-peer connection service runs in the background of the app so that the user does not necessarily notice it. Only an indicator in the toolbar indicates that the android nearby service is active. When the service receives new messages the user will get notified and the messages will be shown in the particular topic lists. Moreover the are visually indicated to be new. When selecting the "Write message..." button, the user can write messages. A message consists of a title, a message, a topic and an expiry date. Optionally the user might allow the message to be shared with the server and they might attach a location to the message, which can be any point within the current zone. When selecting "Submit" the message will be shared with nearby devices.
 
