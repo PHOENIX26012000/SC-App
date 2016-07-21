@@ -104,21 +104,21 @@ The messages are shared anonymous, so that it is not known to the users to whom 
 
 ### Select and show zones on a map
 
-![functionality](img/Screenshot_20160717-211820.png =250x)
+<img src="img/Screenshot_20160717-211820.png" width="200"/>
 
 When the app opens and the user is physically in more than one zone, they have to select one zone they want to operate and communicate in. If they are in just one zone, this is automatically chosen and the user can see the text "You are currently in: [Zone]". If the user wants to change the zone they can do it by tapping "Select a zone" and they are shown all zones they are currently in on a map.
 
 ### Select and show interested topics
 
-![functionality] (img/Screenshot_20160717-211401.png)
-![functionality] (img/Screenshot_20160717-211627.png)
-![functionality] (img/Screenshot_20160717-211925.png)
+<img src="img/Screenshot_20160717-211401.png" width="200"/>
+<img src="img/Screenshot_20160717-211627.png" width="200"/>
+<img src="img/Screenshot_20160717-211925.png" width="200"/>
 
 Topic may be different for zones. By default all topic are shown in the main view, and when selecting a topic all messages within that topic are shown. When opening the settings, the user might disable topics they are not interested in.
 
 ### Receive and write messages
 
-![functionality] (img/Screenshot_20160717-220623.png)
+<img src="img/Screenshot_20160717-220623.png" width="200"/>
 
 The peer-to-peer connection service runs in the background of the app so that the user does not necessarily notice it. Only an indicator in the toolbar indicates that the android nearby service is active. When the service receives new messages the user will get notified and the messages will be shown in the particular topic lists. Moreover the are visually indicated to be new. When selecting the "Write message..." button, the user can write messages. A message consists of a title, a message, a topic and an expiry date. Optionally the user might allow the message to be shared with the server and they might attach a location to the message, which can be any point within the current zone. When selecting "Submit" the message will be shared with nearby devices.
 
